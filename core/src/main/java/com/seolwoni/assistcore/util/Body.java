@@ -108,9 +108,39 @@ public final class Body {
 		return false;
 	}
 
+	/**
+	 * Walks through {@code cell} on the way to {@code next} without stopping: aims a little ahead, keeps
+	 * the forward key down and jumps up steps. Returns true once {@code cell} has been passed.
+	 */
+	public static boolean walkThrough(LocalPlayer p, BlockPos cell, BlockPos next, boolean sprint) {
+		Minecraft mc = Minecraft.getInstance();
+		walkTicks++;
+		Vec3 pos = p.position();
+		double cx = cell.getX() + 0.5, cz = cell.getZ() + 0.5;
+		double dist = Math.sqrt((cx - pos.x) * (cx - pos.x) + (cz - pos.z) * (cz - pos.z));
+		double dyFeet = cell.getY() - pos.y;
+		if (dist < 0.55 && Math.abs(dyFeet) < 0.6) return true;
+		// Look ahead: once close, already steer between this cell and the next one.
+		double tx = cx, tz = cz;
+		if (dist < 1.1) {
+			tx = (cx + next.getX() + 0.5) / 2;
+			tz = (cz + next.getZ() + 0.5) / 2;
+		}
+		float yaw = (float) (Math.toDegrees(Math.atan2(tz - pos.z, tx - pos.x)) - 90.0);
+		float pitch = Math.max(-10f, Math.min(30f, p.getXRot()));
+		turnTo(p, yaw, pitch, 1f);
+		float yawErr = Math.abs(wrap(yaw - p.getYRot()));
+		mc.options.keyUp.setDown(yawErr < 45f);
+		mc.options.keySprint.setDown(sprint && yawErr < 20f && p.getFoodData().getFoodLevel() > 6);
+		mc.options.keyJump.setDown(dyFeet > 0.5 && p.onGround());
+		return false;
+	}
+
 	public static void release(Minecraft mc) {
 		mc.options.keyUp.setDown(false);
 		mc.options.keyJump.setDown(false);
 		mc.options.keyAttack.setDown(false);
+		mc.options.keySprint.setDown(false);
+		if (mc.player != null) mc.player.setSprinting(false);
 	}
 }

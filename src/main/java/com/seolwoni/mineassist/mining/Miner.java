@@ -294,7 +294,7 @@ public final class Miner {
 	static void goHomeAndFinish() {
 		finishing = true;
 		status("시작 지점으로 돌아가는 중");
-		for (BlockPos b : geo.routeToOrigin(here)) add(new WalkAction(b));
+		add(new RouteAction(geo.routeToOrigin(here)));
 		run(() -> here = Loc.origin());
 		MineConfig cfg = MineConfig.get();
 		if (cfg.storeEnabled && !cfg.chests.isEmpty()) {
@@ -376,9 +376,11 @@ public final class Miner {
 		if (d >= job.branchLength) {
 			status(sideName + " 가지굴에서 돌아오는 중");
 			int reached = here.kind() == Loc.BRANCH ? here.c() : 0;
-			for (int j = reached - 1; j >= 1; j--) add(new WalkAction(geo.branch(k, side, j)));
-			if (side == 1) add(new WalkAction(geo.lane1(k)));
-			add(new WalkAction(geo.main(k)));
+			List<BlockPos> back = new ArrayList<>();
+			for (int j = reached - 1; j >= 1; j--) back.add(geo.branch(k, side, j));
+			if (side == 1) back.add(geo.lane1(k));
+			back.add(geo.main(k));
+			add(new RouteAction(back));
 			run(() -> {
 				here = Loc.main(k, 0);
 				job.branchSide = side + 1;
@@ -419,7 +421,7 @@ public final class Miner {
 	static void storageTrip(boolean forTorches) {
 		Loc back = here;
 		status("상자로 보관하러 가는 중");
-		for (BlockPos b : geo.routeToOrigin(here)) add(new WalkAction(b));
+		add(new RouteAction(geo.routeToOrigin(here)));
 		run(() -> here = Loc.origin());
 		add(new Storage.TripAction(geo.origin, geo.d));
 		status("다시 파러 가는 중");
@@ -434,13 +436,19 @@ public final class Miner {
 	static void addRouteOut(Loc l) {
 		MineConfig cfg = MineConfig.get();
 		List<BlockPos> route = geo.routeFromOrigin(l);
+		List<BlockPos> seg = new ArrayList<>();
 		for (int idx = 0; idx < route.size(); idx++) {
-			add(new WalkAction(route.get(idx)));
+			seg.add(route.get(idx));
 			int stairNo = idx + 1;
-			if (cfg.torches && stairNo <= geo.stairs && stairNo > 1 && (stairNo - 1) % cfg.torchInterval == 0) {
+			if (cfg.torches && stairNo <= geo.stairs && stairNo > 1 && (stairNo - 1) % cfg.torchInterval == 0
+					&& !Blocks2.isTorch(geo.stair(stairNo - 1).above())) {
+				// A stair torch is missing: stop here to put it up, then walk on.
+				add(new RouteAction(seg));
+				seg = new ArrayList<>();
 				add(new PlaceAction(geo.stair(stairNo - 1).above(), PlaceAction.WALL_TORCH, SKIP));
 			}
 		}
+		if (!seg.isEmpty()) add(new RouteAction(seg));
 	}
 
 	/** True for cells the miner walks through (stairs, main tunnel, branches): never fill these. */
@@ -520,6 +528,49 @@ public final class Miner {
 		@Override
 		public int tick(Minecraft mc, LocalPlayer p) {
 			return --t <= 0 ? DONE : RUN;
+		}
+	}
+
+	/**
+	 * Walks a known route in one go (no stop at every cell, runs on straight stretches). If something lies in
+	 * the way, or the walk gets stuck, it falls back to careful cell-by-cell walking that clears the way.
+	 */
+	static final class RouteAction implements Action {
+		private final List<BlockPos> cells;
+		private com.seolwoni.assistcore.engine.RouteWalkAction walk;
+
+		RouteAction(List<BlockPos> cells) {
+			this.cells = new ArrayList<>(cells);
+		}
+
+		private static boolean free(BlockPos b) {
+			return (Blocks2.isOpen(b) || Blocks2.isTorch(b)) && !Blocks2.isFluid(b);
+		}
+
+		private void fallback(int from) {
+			List<Action> steps = new ArrayList<>();
+			for (int i = from; i < cells.size(); i++) steps.add(new WalkAction(cells.get(i)));
+			pushFront(steps);
+		}
+
+		@Override
+		public int tick(Minecraft mc, LocalPlayer p) {
+			if (cells.isEmpty()) return DONE;
+			if (walk == null) {
+				for (BlockPos b : cells) {
+					if (!free(b) || !free(b.above())) {
+						fallback(0);
+						return DONE;
+					}
+				}
+				walk = new com.seolwoni.assistcore.engine.RouteWalkAction(cells);
+			}
+			int r = walk.tick(mc, p);
+			if (r == FAIL) {
+				fallback(walk.index());
+				return DONE;
+			}
+			return r;
 		}
 	}
 
