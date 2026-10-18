@@ -211,7 +211,7 @@ public final class Storage {
 					if (p.getEyePosition().distanceTo(Vec3.atCenterOf(c)) <= 4.0) {
 						Body.release(mc);
 						face = Miner.faceToward(p.getEyePosition(), c);
-						aim = Miner.facePoint(c, face, 0.2);
+						aim = Miner.facePoint(c, face, 0.1);
 						delay = Human.delay(2, 6);
 						stage = 3;
 						return Miner.RUN;

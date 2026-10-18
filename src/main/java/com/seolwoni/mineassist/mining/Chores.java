@@ -153,14 +153,14 @@ final class Chores {
 					slots = junkSlots(p);
 					if (slots.isEmpty()) return Miner.DONE;
 					Miner.status("필요 없는 블록 버리는 중");
-					yaw = toward.toYRot() + (float) Human.jitter(12);
+					yaw = toward.toYRot() + (float) Human.jitter(5);
 					Body.newTurn();
 					delay = Human.delay(2, 6);
 					stage = 1;
 					return Miner.RUN;
 				}
 				case 1 -> {
-					if (Body.turnTo(p, yaw, 8f + (float) Human.jitter(6), 3f) && delay-- <= 0) stage = 2;
+					if (Body.turnTo(p, yaw, Math.max(-5f, Math.min(30f, p.getXRot())), 3f) && delay-- <= 0) stage = 2;
 					return Miner.RUN;
 				}
 				default -> {

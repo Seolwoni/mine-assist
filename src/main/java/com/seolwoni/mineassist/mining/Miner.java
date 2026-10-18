@@ -131,7 +131,7 @@ public final class Miner {
 			here = Loc.origin();
 			Loc frontier = frontier();
 			status("이어서 파러 가는 중");
-			for (BlockPos b : geo.routeFromOrigin(frontier)) add(new WalkAction(b));
+			addRouteOut(frontier);
 			run(() -> here = frontier);
 			Alerts.actionBar("이어서 파기 시작", 0xFF55FF55);
 		} else {
@@ -326,6 +326,10 @@ public final class Miner {
 				job.save();
 			});
 			add(new OreScanAction(col));
+			add(new CollectAction());
+			if (cfg.torches && i > 1 && (i - 1) % cfg.torchInterval == 0) {
+				add(new PlaceAction(geo.stair(i - 1).above(), PlaceAction.WALL_TORCH, SKIP));
+			}
 			return;
 		}
 
@@ -356,6 +360,7 @@ public final class Miner {
 			job.save();
 		});
 		add(new OreScanAction(col));
+		add(new CollectAction());
 		if (cfg.torches && nk % cfg.torchInterval == 0) add(new PlaceAction(l, PlaceAction.TORCH, SKIP));
 	}
 
@@ -401,6 +406,7 @@ public final class Miner {
 			job.save();
 		});
 		add(new OreScanAction(col));
+		add(new CollectAction());
 		if (cfg.torches && nd % cfg.torchInterval == 0 && nd > 1) {
 			add(new PlaceAction(geo.branch(k, side, nd - 1), PlaceAction.TORCH, SKIP));
 		}
@@ -414,11 +420,24 @@ public final class Miner {
 		run(() -> here = Loc.origin());
 		add(new Storage.TripAction(geo.origin, geo.d));
 		status("다시 파러 가는 중");
-		for (BlockPos b : geo.routeFromOrigin(back)) add(new WalkAction(b));
+		addRouteOut(back);
 		run(() -> {
 			here = back;
 			if (forTorches) torchFetchTried = true;
 		});
+	}
+
+	/** Walk from the origin out to {@code l}, putting up any stair torches that are missing on the way. */
+	static void addRouteOut(Loc l) {
+		MineConfig cfg = MineConfig.get();
+		List<BlockPos> route = geo.routeFromOrigin(l);
+		for (int idx = 0; idx < route.size(); idx++) {
+			add(new WalkAction(route.get(idx)));
+			int stairNo = idx + 1;
+			if (cfg.torches && stairNo <= geo.stairs && stairNo > 1 && (stairNo - 1) % cfg.torchInterval == 0) {
+				add(new PlaceAction(geo.stair(stairNo - 1).above(), PlaceAction.WALL_TORCH, SKIP));
+			}
+		}
 	}
 
 	static boolean torchFetchTried() {
@@ -471,20 +490,51 @@ public final class Miner {
 
 	static final class WalkAction implements Action {
 		private final BlockPos target;
+		private final boolean skippable;
 		private boolean started;
-		private int pre, post = -1;
+		private int pre, post = -1, clears;
 
 		WalkAction(BlockPos target) {
+			this(target, false);
+		}
+
+		WalkAction(BlockPos target, boolean skippable) {
 			this.target = target;
+			this.skippable = skippable;
+		}
+
+		@Override
+		public int failMode() {
+			return skippable ? SKIP : STOP;
+		}
+
+		/** Blocks that must be open to step onto the target (gravel or sand may have fallen in). */
+		private List<BlockPos> blockers(LocalPlayer p) {
+			List<BlockPos> out = new ArrayList<>();
+			List<BlockPos> need = new ArrayList<>(List.of(target, target.above()));
+			if (target.getY() < p.blockPosition().getY()) need.add(target.above(2));
+			if (target.getY() > p.blockPosition().getY()) need.add(p.blockPosition().above(2));
+			for (BlockPos b : need) {
+				if (!Blocks2.isTorch(b) && (!Blocks2.isOpen(b) || Blocks2.isFluid(b))) out.add(b);
+			}
+			return out;
 		}
 
 		@Override
 		public int tick(Minecraft mc, LocalPlayer p) {
 			if (!started) {
 				started = true;
-				pre = Human.delay(0, 4);
+				pre = Human.delay(0, 3);
 				Body.resetWalk();
 				Body.newTurn();
+				List<BlockPos> blocked = blockers(p);
+				if (!blocked.isEmpty() && clears++ < 6) {
+					started = false;
+					List<Action> digs = new ArrayList<>();
+					for (BlockPos b : blocked) digs.add(new MineAction(b, skippable ? SKIP : END));
+					pushFront(digs);
+					return RUN;
+				}
 			}
 			if (pre-- > 0) return RUN;
 			if (post >= 0) return post-- <= 0 ? DONE : RUN;
@@ -494,6 +544,11 @@ public final class Miner {
 			}
 			if (Body.walkTicks() > 200) {
 				Body.release(mc);
+				// Something may have fallen in while walking: look again before giving up.
+				if (!blockers(p).isEmpty() && clears < 6) {
+					started = false;
+					return RUN;
+				}
 				return FAIL;
 			}
 			return RUN;
@@ -573,9 +628,9 @@ public final class Miner {
 					}
 					oreId = Blocks2.id(pos);
 					face = faceToward(p.getEyePosition(), pos);
-					aim = facePoint(pos, face, 0.28);
+					aim = facePoint(pos, face, 0.1);
 					Body.newTurn();
-					delay = Human.delay(1, 6);
+					delay = Human.delay(0, 4);
 					stage = 1;
 					return RUN;
 				}
@@ -626,7 +681,7 @@ public final class Miner {
 
 	/** Places a filler block (cobblestone) or a torch at a position. */
 	static final class PlaceAction implements Action {
-		static final int PLUG = 0, TORCH = 1;
+		static final int PLUG = 0, TORCH = 1, WALL_TORCH = 2;
 		private final BlockPos pos;
 		private final int kind, failMode;
 		private int stage, wait, attempts, delay, slot;
@@ -656,6 +711,10 @@ public final class Miner {
 			return kind == PLUG ? Blocks2.isSolid(pos) : Blocks2.isTorch(pos);
 		}
 
+		private boolean torchKind() {
+			return kind != PLUG;
+		}
+
 		@Override
 		public int tick(Minecraft mc, LocalPlayer p) {
 			switch (stage) {
@@ -663,16 +722,16 @@ public final class Miner {
 					if (done()) return DONE;
 					if (attempts == 0) wasFluid = Blocks2.isFluid(pos);
 					if (kind == PLUG && !Blocks2.isOpen(pos) && !Blocks2.isFluid(pos)) return DONE;
-					if (kind == TORCH && (!Blocks2.isOpen(pos) || Blocks2.isFluid(pos))) return DONE;
+					if (torchKind() && (!Blocks2.isOpen(pos) || Blocks2.isFluid(pos))) return DONE;
 					if (kind == PLUG && occupiedByPlayer(p, pos)) return DONE;
 					if (!findSupport(p)) {
 						reason = kind == PLUG ? "막을 자리를 찾지 못했어요 (큰 동굴이나 용암 호수)" : "";
-						return kind == TORCH ? DONE : FAIL;
+						return torchKind() ? DONE : FAIL;
 					}
 					slot = Inv.bringToHotbar(mc, p, kind == PLUG ? Inv::isPlug : Inv::isTorch);
 					if (slot == -1) {
 						reason = kind == PLUG ? "막을 조약돌이 없어요" : "";
-						return kind == TORCH ? DONE : FAIL;
+						return torchKind() ? DONE : FAIL;
 					}
 					delay = Human.delay(1, 5);
 					Body.newTurn();
@@ -701,7 +760,7 @@ public final class Miner {
 					}
 					if (++attempts >= 3) {
 						reason = kind == PLUG ? "블록을 놓지 못했어요" : "";
-						return kind == TORCH ? DONE : FAIL;
+						return torchKind() ? DONE : FAIL;
 					}
 					stage = 0;
 					return RUN;
@@ -713,12 +772,13 @@ public final class Miner {
 			Vec3 eye = p.getEyePosition();
 			double best = Double.MAX_VALUE;
 			support = null;
-			Direction[] dirs = kind == TORCH ? new Direction[] {Direction.DOWN} : Direction.values();
+			Direction[] dirs = kind == TORCH ? new Direction[] {Direction.DOWN}
+					: kind == WALL_TORCH ? new Direction[] {geo.r, geo.r.getOpposite()} : Direction.values();
 			for (Direction dir : dirs) {
 				BlockPos q = pos.relative(dir);
 				if (!Blocks2.isSolid(q)) continue;
 				Direction f = dir.getOpposite();
-				Vec3 h = facePoint(q, f, kind == TORCH ? 0.15 : 0.2);
+				Vec3 h = facePoint(q, f, 0.08);
 				double dist = eye.distanceTo(h);
 				if (dist > 4.4 || dist >= best) continue;
 				best = dist;
@@ -727,6 +787,61 @@ public final class Miner {
 				hit = h;
 			}
 			return support != null;
+		}
+	}
+
+	/** Picks up drops lying in the tunnel just out of pickup range, then steps back. */
+	static final class CollectAction implements Action {
+		private int wait = -1;
+
+		@Override
+		public int failMode() {
+			return SKIP;
+		}
+
+		private static boolean standable(BlockPos b) {
+			return Blocks2.isOpen(b) && !Blocks2.isFluid(b) && Blocks2.isOpen(b.above()) && Blocks2.isSolid(b.below());
+		}
+
+		@Override
+		public int tick(Minecraft mc, LocalPlayer p) {
+			// Fresh drops cannot be picked up for a moment.
+			if (wait < 0) wait = Human.rand(10, 14);
+			if (wait-- > 0) return RUN;
+			BlockPos home = p.blockPosition();
+			AABB area = p.getBoundingBox().inflate(3.5, 2.5, 3.5);
+			AABB reach = p.getBoundingBox().inflate(1.0, 0.5, 1.0);
+			List<Action> walks = new ArrayList<>();
+			BlockPos last = home;
+			for (Entity e : mc.level.getEntities(p, area)) {
+				if (!(e instanceof net.minecraft.world.entity.item.ItemEntity) || !e.isAlive()) continue;
+				if (reach.intersects(e.getBoundingBox())) continue;
+				BlockPos at = e.blockPosition();
+				BlockPos best = null;
+				double bestD = Double.MAX_VALUE;
+				for (int dx = -1; dx <= 1; dx++) {
+					for (int dz = -1; dz <= 1; dz++) {
+						for (int dy = -1; dy <= 0; dy++) {
+							BlockPos c = at.offset(dx, dy, dz);
+							if (!standable(c) || Math.abs(c.getY() - home.getY()) > 1) continue;
+							double d = c.distSqr(at);
+							if (d < bestD) {
+								bestD = d;
+								best = c;
+							}
+						}
+					}
+				}
+				if (best == null || best.equals(last) || best.distManhattan(home) > 4) continue;
+				walks.add(new WalkAction(best, true));
+				last = best;
+			}
+			if (walks.isEmpty()) return DONE;
+			status("떨어진 아이템 줍는 중");
+			walks.add(new WalkAction(home, false));
+			pushFront(walks);
+			wait = 0;
+			return DONE;
 		}
 	}
 
