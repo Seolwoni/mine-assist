@@ -23,8 +23,8 @@
 		"minecraft": "~26.2",
 		"java": ">=25",
 		"fabric-api": "*",
-		"assistcore": ">=1.4.0",
-		"assistpath": ">=0.2.0"
+		"assistcore": ">=1.4.1",
+		"assistpath": ">=0.2.1"
 	},
 	"suggests": {
 		"modmenu": "*"
