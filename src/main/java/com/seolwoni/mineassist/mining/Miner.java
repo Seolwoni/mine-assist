@@ -944,8 +944,55 @@ public final class Miner {
 	}
 
 	/** Picks up drops lying in the tunnel just out of pickup range, then steps back. */
+	/** Steps towards an item without leaving {@code cell}, until it is picked up or a short time is over. */
+	static final class LeanAction implements Action {
+		private final BlockPos cell;
+		private final net.minecraft.world.entity.item.ItemEntity item;
+		private int ticks;
+
+		LeanAction(BlockPos cell, net.minecraft.world.entity.item.ItemEntity item) {
+			this.cell = cell;
+			this.item = item;
+		}
+
+		@Override
+		public int failMode() {
+			return SKIP;
+		}
+
+		@Override
+		public int tick(Minecraft mc, LocalPlayer p) {
+			if (!item.isAlive() || ticks++ > Human.delay(16, 24)) {
+				Body.release(mc);
+				return DONE;
+			}
+			double cx = cell.getX() + 0.5, cz = cell.getZ() + 0.5;
+			double tx = cx + Math.max(-0.42, Math.min(0.42, item.getX() - cx));
+			double tz = cz + Math.max(-0.42, Math.min(0.42, item.getZ() - cz));
+			Vec3 pos = p.position();
+			double dx = tx - pos.x, dz = tz - pos.z;
+			if (Math.sqrt(dx * dx + dz * dz) < 0.08) {
+				mc.options.keyUp.setDown(false);
+				return RUN;
+			}
+			float yaw = (float) (Math.toDegrees(Math.atan2(dz, dx)) - 90.0);
+			Body.turnTo(p, yaw, Math.max(-10f, Math.min(35f, p.getXRot())), 1f);
+			mc.options.keyUp.setDown(ticks % 2 == 0);
+			return RUN;
+		}
+	}
+
 	static final class CollectAction implements Action {
 		private int wait = -1;
+		private final int pass;
+
+		CollectAction() {
+			this(0);
+		}
+
+		CollectAction(int pass) {
+			this.pass = pass;
+		}
 
 		@Override
 		public int failMode() {
@@ -993,13 +1040,18 @@ public final class Miner {
 						}
 					}
 				}
-				if (best == null || best.equals(last) || best.distManhattan(home) > 4) continue;
-				walks.add(new WalkAction(best, true));
+				if (best == null || best.distManhattan(home) > 4) continue;
+				if (!best.equals(last)) walks.add(new WalkAction(best, true));
+				// Standing on the right cell is not always close enough (an item tucked into a hole):
+				// lean over towards it inside the cell.
+				walks.add(new LeanAction(best, ie));
 				last = best;
 			}
 			if (walks.isEmpty()) return DONE;
 			status("떨어진 아이템 줍는 중");
 			walks.add(new WalkAction(home, false));
+			// Look once more: something may have rolled away while walking.
+			if (pass < 2) walks.add(new CollectAction(pass + 1));
 			pushFront(walks);
 			wait = 0;
 			return DONE;
