@@ -1,0 +1,24 @@
+{
+	"schemaVersion": 1,
+	"id": "mineassist",
+	"version": "${version}",
+	"name": "Mine Assist",
+	"description": "자동 가지굴 채광 모드 — 계단으로 원하는 Y까지 내려가 2x2 가운데 굴과 1x2 가지굴을 파고, 용암·물을 막고, 광석을 덩어리째 캐고, 횃불을 만들어 설치하고, 여러 상자에 분류 보관해요.\nMade by seolwoni",
+	"authors": [
+		"seolwoni"
+	],
+	"license": "All-Rights-Reserved",
+	"icon": "assets/mineassist/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.seolwoni.mineassist.MineAssistClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	},
+	"suggests": {
