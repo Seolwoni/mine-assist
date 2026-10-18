@@ -115,6 +115,9 @@ public final class Storage {
 		private final List<Integer> order = new ArrayList<>();
 		private boolean[] full;
 		private int stage, idx, delay, waitTicks, pass, moved;
+		/** Assist Path walk to the chest (or back), then the last bit directly. */
+		private com.seolwoni.assistpath.walk.PathWalker walker;
+		private BlockPos walkerFor;
 		private Vec3 aim;
 		private Direction face;
 		private String reason = "";
@@ -206,6 +209,17 @@ public final class Storage {
 						stage = 3;
 						return Miner.RUN;
 					}
+					if (!c.equals(walkerFor)) {
+						walkerFor = c;
+						walker = new com.seolwoni.assistpath.walk.PathWalker(new com.seolwoni.assistpath.goals.GoalNear(c, 2));
+					}
+					if (walker != null) {
+						if (walker.tick(mc, p) == Miner.RUN) return Miner.RUN;
+						walker = null;
+						Body.resetWalk();
+						Body.newTurn();
+						return Miner.RUN;
+					}
 					Body.walkTo(p, c);
 					if (Body.walkTicks() > 160) {
 						Body.release(mc);
@@ -266,6 +280,16 @@ public final class Storage {
 					return Miner.RUN;
 				}
 				default -> {
+					if (!origin.equals(walkerFor)) {
+						walkerFor = origin;
+						walker = new com.seolwoni.assistpath.walk.PathWalker(new com.seolwoni.assistpath.goals.GoalBlock(origin));
+					}
+					if (walker != null) {
+						if (walker.tick(mc, p) == Miner.RUN) return Miner.RUN;
+						walker = null;
+						Body.resetWalk();
+						return Miner.RUN;
+					}
 					if (!Body.walkTo(p, origin)) {
 						if (Body.walkTicks() > 160) {
 							reason = "시작 지점으로 돌아오지 못했어요";

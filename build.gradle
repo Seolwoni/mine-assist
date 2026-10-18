@@ -16,6 +16,9 @@ dependencies {
 	// Assist Core (shared library), bundled inside this jar.
 	implementation project(':core')
 	include project(':core')
+	// Assist Path: route planning and walking (LGPL-3.0, separate bundled jar)
+	implementation project(':path')
+	include project(':path')
 }
 
 processResources {
