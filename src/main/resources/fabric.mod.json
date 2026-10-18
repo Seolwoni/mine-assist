@@ -13,6 +13,9 @@
 	"entrypoints": {
 		"client": [
 			"com.seolwoni.mineassist.MineAssistClient"
+		],
+		"modmenu": [
+			"com.seolwoni.mineassist.compat.ModMenuIntegration"
 		]
 	},
 	"depends": {
@@ -22,3 +25,6 @@
 		"fabric-api": "*"
 	},
 	"suggests": {
+		"modmenu": "*"
+	}
+}
