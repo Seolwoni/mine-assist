@@ -18,7 +18,6 @@ import net.fabricmc.loader.api.FabricLoader;
 public class MineConfig {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("mineassist.json");
-	private static MineConfig instance = new MineConfig();
 
 	public static final List<String> DEFAULT_ORES = List.of(
 			"minecraft:coal_ore", "minecraft:deepslate_coal_ore",
@@ -31,6 +30,9 @@ public class MineConfig {
 			"minecraft:emerald_ore", "minecraft:deepslate_emerald_ore",
 			"minecraft:nether_gold_ore", "minecraft:nether_quartz_ore",
 			"minecraft:ancient_debris");
+
+	// Must come after DEFAULT_ORES: the field initialisers below copy it.
+	private static MineConfig instance = new MineConfig();
 
 	// ---- Master / run ----
 	public boolean modEnabled = true;
