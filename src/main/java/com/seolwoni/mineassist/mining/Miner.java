@@ -819,13 +819,13 @@ public final class Miner {
 					if (kind == WALL && (Blocks2.isTorch(pos) || Inv.count(p, Inv::isPlug) <= WALL_RESERVE)) return DONE;
 					if (torchKind() && (!Blocks2.isOpen(pos) || Blocks2.isFluid(pos))) return DONE;
 					if (block() && occupiedByPlayer(p, pos)) return DONE;
-					if (!findSupport(p) && kind == PLUG && bridges < 3 && Inv.count(p, Inv::isPlug) > 0) {
+					if (!findSupport(p) && (kind == PLUG || kind == WALL) && bridges < 3 && Inv.count(p, Inv::isPlug) > 0) {
 						List<BlockPos> chain = bridgeChain(p);
 						if (!chain.isEmpty()) {
 							bridges++;
-							status("동굴 위에 다리 놓는 중");
+							status(kind == PLUG ? "동굴 위에 다리 놓는 중" : "동굴 벽 쌓는 중");
 							List<Action> puts = new ArrayList<>();
-							for (BlockPos c : chain) puts.add(new PlaceAction(c, PLUG, failMode));
+							for (BlockPos c : chain) puts.add(new PlaceAction(c, kind, kind == PLUG ? failMode : SKIP));
 							pushFront(puts);
 							return RUN;
 						}

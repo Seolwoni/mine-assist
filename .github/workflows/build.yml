@@ -63,11 +63,16 @@ jobs:
         with:
           name: mineassist-jar
           path: build/libs/
+      - name: release notes
+        run: |
+          VER=$(grep '^version=' gradle.properties | cut -d= -f2)
+          awk -v v="## $VER" '$0 ~ "^## " { if (p) exit; if (index($0, v) == 1) p = 1 } p' CHANGELOG.md > release-notes.md
+          printf '\n---\nFabric 26.2용. 아래 jar 파일을 받아 mods 폴더에 넣으세요. (Fabric API 필요, Mod Menu 권장)\n' >> release-notes.md
       - name: release
-        if: github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[no release]')
+        if: github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[no release]') && steps.gametest.outcome == 'success'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
           name: Mine Assist (build ${{ github.run_number }})
-          body: "Fabric 26.2용 Mine Assist. 아래 jar 파일을 받아 mods 폴더에 넣으세요. (Fabric API 필요, Mod Menu 권장)"
+          body_path: release-notes.md
           files: build/libs/*.jar

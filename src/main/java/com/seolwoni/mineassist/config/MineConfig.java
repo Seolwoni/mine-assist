@@ -74,7 +74,9 @@ public class MineConfig {
 	public boolean stopOnMob = true;
 	public int mobRange = 8;
 	public int minHealth = 8;
-	public int plugKeep = 64;
+	public int plugKeep = 128;
+	/** Settings format version, for one-time migrations. */
+	public int cfgVersion = 0;
 
 	// ---- Food ----
 	public boolean autoEat = true;
@@ -130,6 +132,11 @@ public class MineConfig {
 		if (c.chests == null) c.chests = new ArrayList<>();
 		for (ChestEntry e : c.chests) if (e.items == null) e.items = new ArrayList<>();
 		c.running = false;
+		if (c.cfgVersion < 1) {
+			// 1.2.5: keep two stacks of cobblestone by default (caves now use a lot for floors and walls).
+			if (c.plugKeep <= 64) c.plugKeep = 128;
+			c.cfgVersion = 1;
+		}
 		c.mainLength = clamp(c.mainLength, 3, 2000);
 		c.branchLength = clamp(c.branchLength, 0, 2000);
 		c.branchSpacing = clamp(c.branchSpacing, 2, 32);
