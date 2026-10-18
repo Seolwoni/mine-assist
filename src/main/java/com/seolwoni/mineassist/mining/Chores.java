@@ -78,7 +78,7 @@ final class Chores {
 		// Junk: only when space is getting short, thrown back the way we came.
 		int free = Inv.freeSlots(p);
 		if (cfg.discardEnabled && free <= 3 && !junkSlots(p).isEmpty() && Inv.canClick(mc, p)) {
-			Miner.add(new DiscardAction(backwards(), false));
+			Miner.add(new DumpAction());
 			return true;
 		}
 
@@ -130,14 +130,61 @@ final class Chores {
 
 	// ------------------------------------------------------------------ discard
 
+	/** True if the stack is on the discard list (or cobblestone beyond what we keep): never pick it back up. */
+	static boolean isJunk(LocalPlayer p, ItemStack s) {
+		MineConfig cfg = MineConfig.get();
+		if (!cfg.discardEnabled || s.isEmpty() || !cfg.discardItems.contains(Inv.id(s))) return false;
+		return !Inv.isPlug(s) || Inv.count(p, Inv::isPlug) >= cfg.plugKeep;
+	}
+
+	/**
+	 * Throws junk into a small pit dug in the side wall, one block below the floor: items lying there are
+	 * out of pickup reach when walking past, so they are not picked back up on the way out.
+	 */
+	static final class DumpAction implements Miner.Action {
+		@Override
+		public int failMode() {
+			return Miner.SKIP;
+		}
+
+		@Override
+		public int tick(Minecraft mc, LocalPlayer p) {
+			if (junkSlots(p).isEmpty()) return Miner.DONE;
+			Geo g = Miner.geo;
+			Loc h = Miner.here;
+			Direction[] sides = h.kind() == Loc.BRANCH ? new Direction[] {g.d, g.d.getOpposite()} : new Direction[] {g.r, g.r.getOpposite()};
+			net.minecraft.core.BlockPos feet = p.blockPosition();
+			for (Direction side : sides) {
+				net.minecraft.core.BlockPos a = feet.relative(side), b = a.below();
+				if (Miner.tunnelSpace(a) || Miner.tunnelSpace(b)) continue;
+				if (com.seolwoni.assistcore.util.Blocks2.isFluid(a) || com.seolwoni.assistcore.util.Blocks2.isFluid(b)) continue;
+				if (com.seolwoni.assistcore.util.Blocks2.unbreakable(a) || com.seolwoni.assistcore.util.Blocks2.unbreakable(b)) continue;
+				Miner.status("필요 없는 블록 버리는 중");
+				Miner.pushFront(List.of(new Miner.MineAction(a, Miner.SKIP), new Miner.MineAction(b, Miner.SKIP),
+						new DiscardAction(side, 45f)));
+				return Miner.DONE;
+			}
+			Miner.pushFront(new DiscardAction(backwards(), false));
+			return Miner.DONE;
+		}
+	}
+
 	static final class DiscardAction implements Miner.Action {
 		private final Direction toward;
+		private final Float pitch;
 		private List<Integer> slots;
 		private int stage, delay;
 		private float yaw;
 
 		DiscardAction(Direction toward, boolean unused) {
 			this.toward = toward;
+			this.pitch = null;
+		}
+
+		/** Throws looking {@code pitch} degrees down (into a pit). */
+		DiscardAction(Direction toward, float pitch) {
+			this.toward = toward;
+			this.pitch = pitch;
 		}
 
 		@Override
@@ -160,7 +207,8 @@ final class Chores {
 					return Miner.RUN;
 				}
 				case 1 -> {
-					if (Body.turnTo(p, yaw, Math.max(-5f, Math.min(30f, p.getXRot())), 3f) && delay-- <= 0) stage = 2;
+					float look = pitch != null ? pitch : Math.max(-5f, Math.min(30f, p.getXRot()));
+					if (Body.turnTo(p, yaw, look, 3f) && delay-- <= 0) stage = 2;
 					return Miner.RUN;
 				}
 				default -> {

@@ -48,6 +48,8 @@ public class MineConfig {
 
 	// ---- Timing ----
 	public boolean humanDelay = true;
+	/** Work pace: 0 = relaxed, 1 = normal, 2 = fast. */
+	public int pace = 1;
 
 	// ---- Ores ----
 	public List<String> ores = new ArrayList<>(DEFAULT_ORES);
@@ -82,6 +84,8 @@ public class MineConfig {
 	// ---- Food ----
 	public boolean autoEat = true;
 	public int eatThreshold = 14;
+	/** Food to carry; topped up from the chests. */
+	public int foodKeep = 16;
 
 	// ---- Discard ----
 	public boolean discardEnabled = true;
@@ -134,6 +138,8 @@ public class MineConfig {
 			c.cfgVersion = 1;
 		}
 		c.mainLength = clamp(c.mainLength, 3, 2000);
+		c.pace = clamp(c.pace, 0, 2);
+		c.foodKeep = clamp(c.foodKeep, 0, 64);
 		c.branchLength = clamp(c.branchLength, 0, 2000);
 		c.branchSpacing = clamp(c.branchSpacing, 2, 32);
 		c.torchInterval = clamp(c.torchInterval, 3, 64);

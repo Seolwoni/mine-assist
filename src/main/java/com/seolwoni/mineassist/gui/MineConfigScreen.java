@@ -153,6 +153,14 @@ public class MineConfigScreen extends Screen {
 		labels.add(new Object[] {j.active ? "진행 중: 시작 " + j.ox + ", " + j.oy + ", " + j.oz + " · 가운데 " + j.mainK + "/" + j.mainLength
 				: "진행 중인 작업 없음", left + 106, y + 6, 0xFFAAAAAA, false});
 		y += ROW;
+		String[] paces = {"느긋", "보통", "빠름"};
+		addRenderableWidget(Button.builder(Component.literal("작업 속도: " + paces[Math.max(0, Math.min(2, c.pace))]), b -> {
+			c.pace = (c.pace + 1) % 3;
+			MineConfig.save();
+			rebuildWidgets();
+		}).bounds(left, y, 150, 20).build());
+		labels.add(new Object[] {"느긋 = 가장 사람 같게 · 빠름 = 효율 위주", right, y + 6, 0xFFAAAAAA, false});
+		y += ROW;
 		note("Y·길이는 새로 시작할 때 적용 · 지금보다 아래 Y면 계단으로 내려가요", y);
 	}
 
@@ -213,6 +221,8 @@ public class MineConfigScreen extends Screen {
 		y += ROW;
 		toggle(left, y, 150, "자동 밥", () -> c.autoEat, v -> c.autoEat = v);
 		slider(right, y, 150, "배고픔 기준", "/20", 1, 19, c.eatThreshold, v -> c.eatThreshold = v);
+		y += ROW;
+		slider(left, y, 150, "챙길 음식", "개", 0, 64, c.foodKeep, v -> c.foodKeep = v);
 		y += ROW + 4;
 		note("용암·물은 캐기 전에 미리 조약돌로 막아요. 막을 수 없으면 그 가지굴을 버리거나 멈춰요.", y);
 		note("체력 1 = 하트 반 칸", y + 12);

@@ -53,8 +53,16 @@ public class MineGameTest implements FabricClientGameTest {
 				c.torchInterval = 4;
 				c.craftTorches = false;
 				c.stopOnMob = false;
-				c.storeEnabled = false;
+				c.storeEnabled = true;
 				c.chests.clear();
+				com.seolwoni.assistcore.storage.ChestEntry ch = new com.seolwoni.assistcore.storage.ChestEntry();
+				ch.x = 2;
+				ch.y = 100;
+				ch.z = -2;
+				c.chests.add(ch);
+				c.pace = 1;
+				c.foodKeep = 16;
+				c.autoEat = true;
 				Miner.resetJob();
 				mc.player.setYRot(0f);
 				mc.player.setXRot(10f);
@@ -62,6 +70,15 @@ public class MineGameTest implements FabricClientGameTest {
 				if (Miner.job().mainK != 0) failures.add("new job does not start at main step 0 (mainK=" + Miner.job().mainK + ")");
 			});
 			context.takeScreenshot("mine-00-start");
+			// It should first fetch food from the chest (it starts with none).
+			context.waitTicks(200);
+			int food = context.computeOnClient(mc -> {
+				int n = 0;
+				for (int i = 0; i < 36; i++) if (mc.player.getInventory().getItem(i).is(Items.BREAD)) n += mc.player.getInventory().getItem(i).getCount();
+				return n;
+			});
+			log.add("bread after setting off: " + food);
+			if (food < 16) failures.add("did not take food from the chest before starting (has " + food + ")");
 
 			int shots = 1;
 			int ticks = 0;
@@ -97,8 +114,16 @@ public class MineGameTest implements FabricClientGameTest {
 				}
 				return n;
 			});
-			log.add("raw iron picked up: " + iron);
-			if (iron < 3) failures.add("picked up only " + iron + " of 3 raw iron");
+			int stored = sp.getServer().computeOnServer(server -> {
+				int n = 0;
+				if (server.overworld().getBlockEntity(new BlockPos(2, 100, -2)) instanceof net.minecraft.world.Container ct) {
+					for (int i = 0; i < ct.getContainerSize(); i++) if (ct.getItem(i).is(Items.RAW_IRON)) n += ct.getItem(i).getCount();
+				}
+				return n;
+			});
+			log.add("raw iron in inventory: " + iron + ", in chest: " + stored);
+			if (iron + stored < 3) failures.add("picked up only " + (iron + stored) + " of 3 raw iron");
+			if (stored < 3 && !running) failures.add("finished without putting the raw iron in the chest");
 
 			checkWorld(sp);
 		} catch (Throwable t) {
@@ -141,7 +166,8 @@ public class MineGameTest implements FabricClientGameTest {
 		cmd(sp, "give @a minecraft:netherite_pickaxe");
 		cmd(sp, "give @a minecraft:torch 64");
 		cmd(sp, "give @a minecraft:cobblestone 128");
-		cmd(sp, "give @a minecraft:bread 16");
+		cmd(sp, "setblock 2 100 -2 minecraft:chest[facing=north]");
+		cmd(sp, "item replace block 2 100 -2 container.0 with minecraft:bread 32");
 		cmd(sp, "effect give @a minecraft:haste infinite 1 true");
 		cmd(sp, "effect give @a minecraft:night_vision infinite 0 true");
 		cmd(sp, "effect give @a minecraft:saturation infinite 0 true");

@@ -153,6 +153,10 @@ public final class Miner {
 			here = Loc.origin();
 			Alerts.actionBar("채광 시작: " + geo.d.getName() + " 방향, Y " + job.targetY, 0xFF55FF55);
 		}
+		// Gear up at the chests before setting off (food, torches, a spare pickaxe).
+		if (cfg.storeEnabled && !cfg.chests.isEmpty() && Storage.needsSupplies(p)) {
+			pushFront(new Storage.TripAction(geo.origin, geo.d));
+		}
 		nextPause = Human.rand(1500, 4000);
 		cfg.running = true;
 		MineConfig.save();
@@ -219,6 +223,7 @@ public final class Miner {
 		com.seolwoni.mineassist.hud.MineStats.tick();
 
 		Human.humanLike = cfg.humanDelay;
+		Human.pace = cfg.pace;
 		if (queue.tick(mc, p)) return;
 		plan(mc, p, cfg);
 	}
@@ -290,11 +295,15 @@ public final class Miner {
 		finishing = true;
 		status("시작 지점으로 돌아가는 중");
 		for (BlockPos b : geo.routeToOrigin(here)) add(new WalkAction(b));
+		run(() -> here = Loc.origin());
+		MineConfig cfg = MineConfig.get();
+		if (cfg.storeEnabled && !cfg.chests.isEmpty()) {
+			add(new Storage.TripAction(geo.origin, geo.d, true));
+		}
 		run(() -> {
-			here = Loc.origin();
 			job.active = false;
 			job.save();
-			stop("채광 완료!", "시작 지점으로 돌아왔어요", true);
+			stop("채광 완료!", "정리까지 끝내고 시작 지점으로 돌아왔어요", true);
 			Alerts.ding();
 		});
 	}
@@ -680,7 +689,7 @@ public final class Miner {
 							job.oresMined++;
 							com.seolwoni.mineassist.hud.MineStats.ore(oreId);
 						}
-						settle = Human.rand(3, 6);
+						settle = Human.delay(1, 5);
 						stage = 3;
 					} else if (ticks > 400) {
 						mc.gameMode.stopDestroyBlock();
@@ -898,8 +907,15 @@ public final class Miner {
 
 		@Override
 		public int tick(Minecraft mc, LocalPlayer p) {
-			// Fresh drops cannot be picked up for a moment.
-			if (wait < 0) wait = Human.rand(10, 14);
+			// Fresh drops cannot be picked up for a moment, but only wait if something is lying around.
+			if (wait < 0) {
+				boolean any = false;
+				for (Entity e : mc.level.getEntities(p, p.getBoundingBox().inflate(3.5, 2.5, 3.5))) {
+					if (e instanceof net.minecraft.world.entity.item.ItemEntity ie && ie.isAlive() && !Chores.isJunk(p, ie.getItem())) any = true;
+				}
+				if (!any) return DONE;
+				wait = Human.delay(8, 14);
+			}
 			if (wait-- > 0) return RUN;
 			BlockPos home = p.blockPosition();
 			AABB area = p.getBoundingBox().inflate(3.5, 2.5, 3.5);
@@ -907,7 +923,8 @@ public final class Miner {
 			List<Action> walks = new ArrayList<>();
 			BlockPos last = home;
 			for (Entity e : mc.level.getEntities(p, area)) {
-				if (!(e instanceof net.minecraft.world.entity.item.ItemEntity) || !e.isAlive()) continue;
+				if (!(e instanceof net.minecraft.world.entity.item.ItemEntity ie) || !e.isAlive()) continue;
+				if (Chores.isJunk(p, ie.getItem())) continue;
 				if (reach.intersects(e.getBoundingBox())) continue;
 				BlockPos at = e.blockPosition();
 				BlockPos best = null;

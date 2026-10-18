@@ -33,7 +33,7 @@ public final class Body {
 
 	/** Start a new turn: picks a fresh top speed so every movement looks a little different. */
 	public static void newTurn() {
-		turnSpeed = 7f + Human.RANDOM.nextFloat() * 7f;
+		turnSpeed = (7f + Human.RANDOM.nextFloat() * 7f) * Human.turnScale();
 	}
 
 	/** Current angular speed in degrees per tick. Kept between targets so the head never jerks. */

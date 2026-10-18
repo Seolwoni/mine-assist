@@ -12,6 +12,17 @@ public final class Human {
 	 */
 	public static boolean humanLike = true;
 
+	/** Work pace chosen in a mod's settings: 0 = relaxed (slowest, most human), 1 = normal, 2 = fast. */
+	public static int pace = 0;
+
+	private static final double[] DELAY_SCALE = {1.0, 0.6, 0.3};
+	private static final float[] TURN_SCALE = {1.0f, 1.25f, 1.6f};
+
+	/** How much faster heads turn at the current pace. */
+	public static float turnScale() {
+		return TURN_SCALE[Math.max(0, Math.min(2, pace))];
+	}
+
 	private Human() {
 	}
 
@@ -20,7 +31,14 @@ public final class Human {
 		return min + RANDOM.nextInt(max - min + 1);
 	}
 
+	/** A reaction delay in ticks, shortened by the work pace. */
 	public static int delay(int min, int max) {
+		double scale = DELAY_SCALE[Math.max(0, Math.min(2, pace))];
+		if (scale >= 1.0) return rawDelay(min, max);
+		return (int) Math.round(rawDelay(min, max) * scale);
+	}
+
+	private static int rawDelay(int min, int max) {
 		if (max <= min) return min;
 		if (!humanLike) return rand(min, max);
 		double span = max - min;

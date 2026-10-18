@@ -56,14 +56,29 @@ public final class Storage {
 		Set<Integer> keep = new HashSet<>();
 		keep.add(inv.getSelectedSlot());
 		List<Integer> coal = new ArrayList<>();
+		List<Integer> plugs = new ArrayList<>();
 		for (int i = 0; i < 36; i++) {
 			ItemStack s = inv.getItem(i);
 			if (s.isEmpty()) continue;
-			if (Inv.isPick(s) || Inv.isTorch(s) || Inv.isPlug(s) || Inv.isLog(s) || Inv.isPlank(s)
-					|| Inv.isStick(s) || Inv.isFood(s) || cfg.discardItems.contains(Inv.id(s))) {
+			if (Inv.isPlug(s)) {
+				plugs.add(i);
+			} else if (Inv.isPick(s) || Inv.isTorch(s) || Inv.isLog(s) || Inv.isPlank(s)
+					|| Inv.isStick(s) || Inv.isFood(s) || (cfg.discardEnabled && cfg.discardItems.contains(Inv.id(s)))) {
 				keep.add(i);
 			} else if (Inv.isCoal(s)) {
 				coal.add(i);
+			}
+		}
+		// Cobblestone: keep plugKeep for floors and walls. The rest goes in a chest
+		// (or gets thrown away later, if it is on the discard list).
+		plugs.sort(Comparator.comparingInt((Integer i) -> inv.getItem(i).getCount()).reversed());
+		int keptPlugs = 0;
+		for (int i : plugs) {
+			if (keptPlugs < cfg.plugKeep) {
+				keep.add(i);
+				keptPlugs += inv.getItem(i).getCount();
+			} else if (cfg.discardEnabled && cfg.discardItems.contains(Inv.id(inv.getItem(i)))) {
+				keep.add(i);
 			}
 		}
 		coal.sort(Comparator.comparingInt((Integer i) -> inv.getItem(i).getCount()).reversed());
@@ -83,6 +98,16 @@ public final class Storage {
 
 	// ------------------------------------------------------------------ trip
 
+	/** Something worth fetching from the chests: torches, a pickaxe, food, torch materials. */
+	static boolean needsSupplies(LocalPlayer p) {
+		MineConfig cfg = MineConfig.get();
+		return (cfg.torches && Inv.count(p, Inv::isTorch) < cfg.torchKeep / 2)
+				|| Inv.count(p, Inv::usablePick) == 0
+				|| (cfg.autoEat && Inv.count(p, Inv::isFood) < Math.max(1, cfg.foodKeep / 2))
+				|| (cfg.torches && Inv.count(p, Inv::isCoal) < 4)
+				|| (cfg.torches && Inv.count(p, s -> Inv.isLog(s) || Inv.isPlank(s) || Inv.isStick(s)) == 0);
+	}
+
 	/** Stands at the origin, visits each chest that has something to take, then comes back. */
 	static final class TripAction implements Miner.Action {
 		private final BlockPos origin;
@@ -95,7 +120,15 @@ public final class Storage {
 		private String reason = "";
 		private Miner.Action finalDiscard;
 
+		private final boolean finishing;
+
 		TripAction(BlockPos origin, Direction tunnelDir) {
+			this(origin, tunnelDir, false);
+		}
+
+		/** finishing = the job is over: store everything and do not fetch supplies. */
+		TripAction(BlockPos origin, Direction tunnelDir, boolean finishing) {
+			this.finishing = finishing;
 			this.origin = origin;
 			this.tunnelDir = tunnelDir;
 		}
@@ -120,12 +153,7 @@ public final class Storage {
 		}
 
 		private boolean needsFrom(LocalPlayer p) {
-			MineConfig cfg = MineConfig.get();
-			return (cfg.torches && Inv.count(p, Inv::isTorch) < cfg.torchKeep / 2)
-					|| Inv.count(p, Inv::usablePick) == 0
-					|| (cfg.autoEat && Inv.count(p, Inv::isFood) == 0)
-					|| (cfg.torches && Inv.count(p, Inv::isCoal) < 4)
-					|| (cfg.torches && Inv.count(p, s -> Inv.isLog(s) || Inv.isPlank(s) || Inv.isStick(s)) == 0);
+			return !finishing && needsSupplies(p);
 		}
 
 		@Override
@@ -286,12 +314,12 @@ public final class Storage {
 
 		/** Takes one stack of something we are running out of: torches, coal, wood, a pickaxe, food. */
 		private boolean takeOne(Minecraft mc, LocalPlayer p, AbstractContainerMenu menu) {
-			if (Inv.freeSlots(p) <= 1) return false;
+			if (finishing || Inv.freeSlots(p) <= 1) return false;
 			MineConfig cfg = MineConfig.get();
 			List<java.util.function.Predicate<ItemStack>> wants = new ArrayList<>();
 			if (cfg.torches && Inv.count(p, Inv::isTorch) < cfg.torchKeep / 2) wants.add(Inv::isTorch);
 			if (Inv.count(p, Inv::usablePick) == 0) wants.add(Inv::usablePick);
-			if (cfg.autoEat && Inv.count(p, Inv::isFood) == 0) wants.add(Inv::isFood);
+			if (cfg.autoEat && Inv.count(p, Inv::isFood) < cfg.foodKeep) wants.add(Inv::isFood);
 			if (cfg.torches && Inv.count(p, Inv::isCoal) < 4) wants.add(Inv::isCoal);
 			if (cfg.torches && Inv.count(p, s -> Inv.isLog(s) || Inv.isPlank(s) || Inv.isStick(s)) == 0) wants.add(Inv::isLog);
 			for (java.util.function.Predicate<ItemStack> want : wants) {
