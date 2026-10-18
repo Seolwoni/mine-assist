@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.seolwoni.assistcore.storage.ChestEntry;
 import com.seolwoni.mineassist.MineAssistClient;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -104,11 +105,6 @@ public class MineConfig {
 	/** false = this session, true = all-time totals. */
 	public boolean statsTotals = false;
 
-	public static class ChestEntry {
-		public int x, y, z;
-		/** Item ids this chest takes. Empty = overflow chest, filled in order. */
-		public List<String> items = new ArrayList<>();
-	}
 
 	public static MineConfig get() {
 		return instance;

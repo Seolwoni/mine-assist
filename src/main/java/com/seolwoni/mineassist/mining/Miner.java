@@ -1,19 +1,20 @@
 package com.seolwoni.mineassist.mining;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.seolwoni.assistcore.engine.ActionQueue;
 import com.seolwoni.mineassist.config.JobState;
 import com.seolwoni.mineassist.config.MineConfig;
 import com.seolwoni.mineassist.mining.Geo.Loc;
-import com.seolwoni.mineassist.util.Alerts;
-import com.seolwoni.mineassist.util.Blocks2;
-import com.seolwoni.mineassist.util.Body;
-import com.seolwoni.mineassist.util.Human;
+import com.seolwoni.assistcore.util.Alerts;
+import com.seolwoni.assistcore.util.Blocks2;
+import com.seolwoni.assistcore.util.Body;
+import com.seolwoni.assistcore.util.Human;
 import com.seolwoni.mineassist.util.Inv;
 
 import net.minecraft.client.Minecraft;
@@ -35,26 +36,20 @@ import net.minecraft.world.phys.Vec3;
  * throw away junk, go store loot) when one is due.
  */
 public final class Miner {
-	public static final int RUN = 0, DONE = 1, FAIL = 2;
+	public static final int RUN = com.seolwoni.assistcore.engine.Action.RUN, DONE = com.seolwoni.assistcore.engine.Action.DONE,
+			FAIL = com.seolwoni.assistcore.engine.Action.FAIL;
 	/** What a failure means: skip it, give up this branch, finish the job, or stop right away. */
-	public static final int SKIP = 0, ABANDON = 1, END = 2, STOP = 3;
+	public static final int SKIP = com.seolwoni.assistcore.engine.Action.SKIP, ABANDON = com.seolwoni.assistcore.engine.Action.ABANDON,
+			END = com.seolwoni.assistcore.engine.Action.END, STOP = com.seolwoni.assistcore.engine.Action.STOP;
 
-	public interface Action {
-		int tick(Minecraft mc, LocalPlayer p);
-
-		default int failMode() {
-			return STOP;
-		}
-
-		default String failReason() {
-			return "";
-		}
+	/** Mining actions (a failure stops the job unless the action says otherwise). */
+	public interface Action extends com.seolwoni.assistcore.engine.Action {
 	}
 
 	static JobState job = new JobState();
 	static Geo geo;
 	static Loc here = Loc.origin();
-	private static final Deque<Action> queue = new ArrayDeque<>();
+	private static final ActionQueue queue = new ActionQueue(Miner::onFail);
 	private static String status = "꺼짐";
 	private static int nextPause;
 	private static boolean finishing;
@@ -80,15 +75,15 @@ public final class Miner {
 	}
 
 	static void pushFront(List<Action> list) {
-		for (int i = list.size() - 1; i >= 0; i--) queue.addFirst(list.get(i));
+		queue.pushFront(list);
 	}
 
 	static void pushFront(Action a) {
-		queue.addFirst(a);
+		queue.pushFront(a);
 	}
 
 	static void add(Action a) {
-		queue.addLast(a);
+		queue.add(a);
 	}
 
 	static void run(Runnable r) {
@@ -123,7 +118,7 @@ public final class Miner {
 			BlockPos o = new BlockPos(job.ox, job.oy, job.oz);
 			if (feet.distManhattan(o) > 1) {
 				Alerts.title("시작 지점이 아니에요", "이어서 파려면 " + o.getX() + ", " + o.getY() + ", " + o.getZ() + "에서 켜주세요", 0xFFFF5555);
-				Alerts.chat("이어서 파려면 시작 지점 " + o.toShortString() + "으로 가서 켜주세요. 새로 시작하려면 설정 → 기본 → 진행 초기화.");
+				Alerts.chat("Mine Assist", "이어서 파려면 시작 지점 " + o.toShortString() + "으로 가서 켜주세요. 새로 시작하려면 설정 → 기본 → 진행 초기화.");
 				Alerts.warning();
 				return false;
 			}
@@ -223,25 +218,15 @@ public final class Miner {
 		job.ticks++;
 		com.seolwoni.mineassist.hud.MineStats.tick();
 
-		Action a = queue.peekFirst();
-		if (a != null) {
-			int r = a.tick(mc, p);
-			if (r == DONE) {
-				if (queue.peekFirst() == a) queue.pollFirst();
-				else queue.remove(a);
-			} else if (r == FAIL) {
-				queue.remove(a);
-				onFail(a);
-			}
-			return;
-		}
+		Human.humanLike = cfg.humanDelay;
+		if (queue.tick(mc, p)) return;
 		plan(mc, p, cfg);
 	}
 
 	private static boolean safety(Minecraft mc, LocalPlayer p, MineConfig cfg) {
 		if (p.isDeadOrDying()) {
 			BlockPos b = p.blockPosition();
-			Alerts.chat("사망 위치: " + b.getX() + ", " + b.getY() + ", " + b.getZ());
+			Alerts.chat("Mine Assist", "사망 위치: " + b.getX() + ", " + b.getY() + ", " + b.getZ());
 			stop("죽었어요", "사망 위치를 채팅에 남겼어요", true);
 			return false;
 		}
@@ -265,7 +250,7 @@ public final class Miner {
 		return true;
 	}
 
-	private static void onFail(Action a) {
+	private static void onFail(com.seolwoni.assistcore.engine.Action a) {
 		switch (a.failMode()) {
 			case SKIP -> {
 			}

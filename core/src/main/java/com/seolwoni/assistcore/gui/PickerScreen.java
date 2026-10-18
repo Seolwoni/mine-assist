@@ -1,10 +1,8 @@
-package com.seolwoni.mineassist.gui;
+package com.seolwoni.assistcore.gui;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import com.seolwoni.mineassist.config.MineConfig;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -28,19 +26,22 @@ public class PickerScreen extends Screen {
 	private final boolean blocks;
 	private final List<String> presets;
 	private final String help;
+	private final Runnable save;
 	private String query = "";
 	private int page;
 	private boolean dirty;
 	private final List<Object[]> icons = new ArrayList<>();
 	private final List<Object[]> labels = new ArrayList<>();
 
-	public PickerScreen(Screen parent, String title, List<String> list, boolean blocks, List<String> presets, String help) {
+	/** {@code save} persists the edited list (called after every change). */
+	public PickerScreen(Screen parent, String title, List<String> list, boolean blocks, List<String> presets, String help, Runnable save) {
 		super(Component.literal(title));
 		this.parent = parent;
 		this.list = list;
 		this.blocks = blocks;
 		this.presets = presets;
 		this.help = help;
+		this.save = save;
 	}
 
 	private ItemStack icon(String id) {
@@ -101,7 +102,7 @@ public class PickerScreen extends Screen {
 		addRenderableWidget(box);
 		addRenderableWidget(Button.builder(Component.literal("모두 해제"), b -> {
 			list.clear();
-			MineConfig.save();
+			save.run();
 			rebuildWidgets();
 		}).bounds(left + 236, 24, 74, 20).build());
 		setInitialFocus(box);
@@ -121,7 +122,7 @@ public class PickerScreen extends Screen {
 			addRenderableWidget(Button.builder(text, b -> {
 				if (list.contains(id)) list.remove(id);
 				else list.add(id);
-				MineConfig.save();
+				save.run();
 				rebuildWidgets();
 			}).bounds(x, yy, 152, 20).build());
 			icons.add(new Object[] {icon(id), x + 3, yy + 2});
@@ -167,7 +168,7 @@ public class PickerScreen extends Screen {
 
 	@Override
 	public void onClose() {
-		MineConfig.save();
+		save.run();
 		this.minecraft.gui.setScreen(parent);
 	}
 }

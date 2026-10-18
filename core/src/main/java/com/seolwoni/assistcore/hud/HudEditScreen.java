@@ -1,7 +1,4 @@
-package com.seolwoni.mineassist.hud;
-
-import com.seolwoni.mineassist.config.MineConfig;
-import com.seolwoni.mineassist.hud.MineHud.Box;
+package com.seolwoni.assistcore.hud;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -9,11 +6,11 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
-/** Drag HUD boxes to move them; scroll over a box or drag its yellow corner to resize it. */
+/** Drag HUD boxes (of every Assist mod) to move them; scroll over a box or drag its yellow corner to resize it. */
 public class HudEditScreen extends Screen {
 	private static final int HANDLE = 6;
 	private final Screen parent;
-	private Box dragging, resizing;
+	private HudBox dragging, resizing;
 	private double grabDx, grabDy;
 
 	public HudEditScreen(Screen parent) {
@@ -35,31 +32,31 @@ public class HudEditScreen extends Screen {
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, int mx, int my, float delta) {
 		super.extractRenderState(g, mx, my, delta);
-		for (Box box : Box.values()) {
-			if (!MineHud.enabled(box)) continue;
-			MineHud.draw(g, box, true);
-			float[] b = MineHud.bounds(box);
+		for (HudBox box : AssistHud.boxes()) {
+			if (!box.enabled()) continue;
+			box.draw(g, true);
+			float[] b = box.bounds();
 			int hx = (int) (b[0] + b[2]) - HANDLE, hy = (int) (b[1] + b[3]) - HANDLE;
 			g.fill(hx, hy, hx + HANDLE, hy + HANDLE, 0xFFFFFF55);
-			g.text(this.font, Component.literal(Math.round(MineHud.scale(box) * 100) + "%").getVisualOrderText(),
+			g.text(this.font, Component.literal(Math.round(box.scale() * 100) + "%").getVisualOrderText(),
 					(int) b[0], (int) (b[1] + b[3]) + 2, 0xFFFFFF55, true);
 		}
 		g.centeredText(this.font, Component.literal("드래그로 이동 · 노란 칸을 끌거나 휠로 크기 조절"), this.width / 2, 8, 0xFFFFFFFF);
 	}
 
-	private static Box hit(double mx, double my) {
-		for (Box box : new Box[] {Box.STATUS, Box.STATS}) {
-			if (!MineHud.enabled(box)) continue;
-			float[] b = MineHud.bounds(box);
+	private static HudBox hit(double mx, double my) {
+		for (HudBox box : AssistHud.boxes()) {
+			if (!box.enabled()) continue;
+			float[] b = box.bounds();
 			if (mx >= b[0] && mx <= b[0] + b[2] && my >= b[1] && my <= b[1] + b[3]) return box;
 		}
 		return null;
 	}
 
-	private static Box handle(double mx, double my) {
-		for (Box box : Box.values()) {
-			if (!MineHud.enabled(box)) continue;
-			float[] b = MineHud.bounds(box);
+	private static HudBox handle(double mx, double my) {
+		for (HudBox box : AssistHud.boxes()) {
+			if (!box.enabled()) continue;
+			float[] b = box.bounds();
 			double hx = b[0] + b[2], hy = b[1] + b[3];
 			if (mx >= hx - HANDLE - 2 && mx <= hx + 2 && my >= hy - HANDLE - 2 && my <= hy + 2) return box;
 		}
@@ -69,14 +66,14 @@ public class HudEditScreen extends Screen {
 	@Override
 	public boolean mouseClicked(MouseButtonEvent e, boolean dbl) {
 		if (super.mouseClicked(e, dbl)) return true;
-		Box h = handle(e.x(), e.y());
+		HudBox h = handle(e.x(), e.y());
 		if (h != null) {
 			resizing = h;
 			return true;
 		}
-		Box b = hit(e.x(), e.y());
+		HudBox b = hit(e.x(), e.y());
 		if (b != null) {
-			float[] r = MineHud.bounds(b);
+			float[] r = b.bounds();
 			dragging = b;
 			grabDx = e.x() - r[0];
 			grabDy = e.y() - r[1];
@@ -88,13 +85,13 @@ public class HudEditScreen extends Screen {
 	@Override
 	public boolean mouseDragged(MouseButtonEvent e, double dx, double dy) {
 		if (resizing != null) {
-			float[] b = MineHud.bounds(resizing);
-			int base = MineHud.baseWidth(resizing);
-			if (base > 0) MineHud.setScale(resizing, (float) ((e.x() - b[0]) / base));
+			float[] b = resizing.bounds();
+			int base = resizing.baseWidth();
+			if (base > 0) resizing.setScale((float) ((e.x() - b[0]) / base));
 			return true;
 		}
 		if (dragging != null) {
-			MineHud.setPos(dragging,
+			dragging.setPos(
 					(float) Math.max(0, Math.min(1, (e.x() - grabDx) / this.width)),
 					(float) Math.max(0, Math.min(1, (e.y() - grabDy) / this.height)));
 			return true;
@@ -105,8 +102,8 @@ public class HudEditScreen extends Screen {
 	@Override
 	public boolean mouseReleased(MouseButtonEvent e) {
 		if (dragging != null || resizing != null) {
+			(dragging != null ? dragging : resizing).save();
 			dragging = resizing = null;
-			MineConfig.save();
 			return true;
 		}
 		return super.mouseReleased(e);
@@ -114,10 +111,10 @@ public class HudEditScreen extends Screen {
 
 	@Override
 	public boolean mouseScrolled(double mx, double my, double sx, double sy) {
-		Box b = hit(mx, my);
+		HudBox b = hit(mx, my);
 		if (b != null) {
-			MineHud.setScale(b, MineHud.scale(b) + (sy > 0 ? 0.1f : -0.1f));
-			MineConfig.save();
+			b.setScale(b.scale() + (sy > 0 ? 0.1f : -0.1f));
+			b.save();
 			return true;
 		}
 		return super.mouseScrolled(mx, my, sx, sy);
@@ -125,7 +122,7 @@ public class HudEditScreen extends Screen {
 
 	@Override
 	public void onClose() {
-		MineConfig.save();
+		for (HudBox b : AssistHud.boxes()) b.save();
 		this.minecraft.gui.setScreen(parent);
 	}
 }

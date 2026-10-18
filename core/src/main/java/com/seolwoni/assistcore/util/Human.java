@@ -1,12 +1,16 @@
-package com.seolwoni.mineassist.util;
+package com.seolwoni.assistcore.util;
 
 import java.util.Random;
-
-import com.seolwoni.mineassist.config.MineConfig;
 
 /** Human-looking randomness: clustered delays with an occasional slow reaction. */
 public final class Human {
 	public static final Random RANDOM = new Random();
+
+	/**
+	 * Whether delays use the human-like distribution. Each mod sets this from its own setting
+	 * at the start of its tick (all mods tick on the same thread, one after another).
+	 */
+	public static boolean humanLike = true;
 
 	private Human() {
 	}
@@ -18,7 +22,7 @@ public final class Human {
 
 	public static int delay(int min, int max) {
 		if (max <= min) return min;
-		if (!MineConfig.get().humanDelay) return rand(min, max);
+		if (!humanLike) return rand(min, max);
 		double span = max - min;
 		double v = RANDOM.nextDouble() < 0.08
 				? min + span * (0.6 + 0.4 * RANDOM.nextDouble())

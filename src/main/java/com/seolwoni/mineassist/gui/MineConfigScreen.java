@@ -1,5 +1,9 @@
 package com.seolwoni.mineassist.gui;
 
+import com.seolwoni.assistcore.gui.PickerScreen;
+
+import com.seolwoni.assistcore.gui.IntSlider;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -7,8 +11,8 @@ import java.util.function.Supplier;
 
 import com.seolwoni.mineassist.config.JobState;
 import com.seolwoni.mineassist.config.MineConfig;
-import com.seolwoni.mineassist.config.MineConfig.ChestEntry;
-import com.seolwoni.mineassist.hud.HudEditScreen;
+import com.seolwoni.assistcore.storage.ChestEntry;
+import com.seolwoni.assistcore.hud.HudEditScreen;
 import com.seolwoni.mineassist.mining.Miner;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -156,11 +160,11 @@ public class MineConfigScreen extends Screen {
 		MineConfig c = c();
 		addRenderableWidget(Button.builder(Component.literal("캘 광석 고르기 (" + c.ores.size() + "개)"),
 				b -> this.minecraft.gui.setScreen(new PickerScreen(this, "캘 광석", c.ores, true, MineConfig.DEFAULT_ORES,
-						"검색해서 다른 블록도 추가할 수 있어요 (예: 자수정, 점토)"))).bounds(left, y, 310, 20).build());
+						"검색해서 다른 블록도 추가할 수 있어요 (예: 자수정, 점토)", MineConfig::save))).bounds(left, y, 310, 20).build());
 		y += ROW;
 		addRenderableWidget(Button.builder(Component.literal("발견 알림 광석 고르기 (" + c.alertOres.size() + "개)"),
 				b -> this.minecraft.gui.setScreen(new PickerScreen(this, "발견 알림 광석", c.alertOres, true, MineConfig.DEFAULT_ORES,
-						"찾으면 타이틀과 소리로 알려줘요"))).bounds(left, y, 310, 20).build());
+						"찾으면 타이틀과 소리로 알려줘요", MineConfig::save))).bounds(left, y, 310, 20).build());
 		y += ROW;
 		toggle(left, y, 310, "바닥·천장 광석도 캐기", () -> c.mineFloorCeiling, v -> c.mineFloorCeiling = v);
 		y += ROW + 4;
@@ -219,7 +223,7 @@ public class MineConfigScreen extends Screen {
 		toggle(left, y, 310, "필요 없는 블록 버리기", () -> c.discardEnabled, v -> c.discardEnabled = v);
 		y += ROW;
 		addRenderableWidget(Button.builder(Component.literal("버릴 아이템 고르기 (" + c.discardItems.size() + "개)"),
-				b -> this.minecraft.gui.setScreen(new PickerScreen(this, "버릴 아이템", c.discardItems, false, ITEM_PRESETS, null)))
+				b -> this.minecraft.gui.setScreen(new PickerScreen(this, "버릴 아이템", c.discardItems, false, ITEM_PRESETS, null, MineConfig::save)))
 				.bounds(left, y, 310, 20).build());
 		y += ROW + 4;
 		note("조약돌·심층암 조약돌은 '남길 조약돌' 개수만큼 남기고 버려요 (용암·물 막기용).", y);
@@ -250,7 +254,7 @@ public class MineConfigScreen extends Screen {
 			int idx = i;
 			addRenderableWidget(Button.builder(Component.literal("담을 것: " + what), b ->
 					this.minecraft.gui.setScreen(new PickerScreen(this, (idx + 1) + "번 상자에 담을 아이템", e.items, false, ITEM_PRESETS,
-							"아무것도 고르지 않으면 나머지를 차례대로 담아요"))).bounds(cx() - 20, y, 120, 20).build());
+							"아무것도 고르지 않으면 나머지를 차례대로 담아요", MineConfig::save))).bounds(cx() - 20, y, 120, 20).build());
 			addRenderableWidget(Button.builder(Component.literal("삭제"), b -> {
 				c.chests.remove(e);
 				MineConfig.save();

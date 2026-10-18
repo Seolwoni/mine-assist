@@ -7,9 +7,9 @@ import java.util.function.Predicate;
 
 import com.seolwoni.mineassist.config.MineConfig;
 import com.seolwoni.mineassist.mining.Geo.Loc;
-import com.seolwoni.mineassist.util.Alerts;
-import com.seolwoni.mineassist.util.Body;
-import com.seolwoni.mineassist.util.Human;
+import com.seolwoni.assistcore.util.Alerts;
+import com.seolwoni.assistcore.util.Body;
+import com.seolwoni.assistcore.util.Human;
 import com.seolwoni.mineassist.util.Inv;
 
 import net.minecraft.client.Minecraft;

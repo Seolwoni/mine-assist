@@ -15,7 +15,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
 
@@ -46,7 +45,7 @@ public class MineAssistClient implements ClientModInitializer {
 			if (MineConfig.get().modEnabled) Miner.tick(client);
 		});
 
-		HudElementRegistry.addLast(id("hud"), (graphics, delta) -> MineHud.render(graphics));
+		MineHud.register();
 
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			if (MineConfig.get().running) Miner.stop(null, null, false);

@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.Set;
 
 import com.seolwoni.mineassist.config.MineConfig;
-import com.seolwoni.mineassist.config.MineConfig.ChestEntry;
-import com.seolwoni.mineassist.util.Alerts;
-import com.seolwoni.mineassist.util.Blocks2;
-import com.seolwoni.mineassist.util.Body;
-import com.seolwoni.mineassist.util.Human;
+import com.seolwoni.assistcore.storage.ChestEntry;
+import com.seolwoni.assistcore.storage.Chests;
+import com.seolwoni.assistcore.util.Alerts;
+import com.seolwoni.assistcore.util.Blocks2;
+import com.seolwoni.assistcore.util.Body;
+import com.seolwoni.assistcore.util.Human;
 import com.seolwoni.mineassist.util.Inv;
 
 import net.minecraft.client.Minecraft;
@@ -39,43 +40,11 @@ public final class Storage {
 
 	/** K key: add or remove the chest being looked at. */
 	public static void markLookedAt(Minecraft mc) {
-		MineConfig cfg = MineConfig.get();
-		HitResult hit = mc.hitResult;
-		if (!(hit instanceof BlockHitResult bhr) || hit.getType() != HitResult.Type.BLOCK || mc.level == null) {
-			Alerts.actionBar("상자를 바라보고 눌러주세요", 0xFFFF5555);
-			return;
-		}
-		BlockPos pos = bhr.getBlockPos();
-		if (!(mc.level.getBlockEntity(pos) instanceof Container)) {
-			Alerts.actionBar("상자나 통 같은 보관함이 아니에요", 0xFFFF5555);
-			return;
-		}
-		for (int i = 0; i < cfg.chests.size(); i++) {
-			ChestEntry e = cfg.chests.get(i);
-			if (e.x == pos.getX() && e.y == pos.getY() && e.z == pos.getZ()) {
-				cfg.chests.remove(i);
-				MineConfig.save();
-				Alerts.actionBar("보관 상자 " + (i + 1) + "번 지정 해제", 0xFFFFAA00);
-				Alerts.click();
-				return;
-			}
-		}
-		if (cfg.chests.size() >= 10) {
-			Alerts.actionBar("상자는 10개까지 지정할 수 있어요", 0xFFFF5555);
-			return;
-		}
-		ChestEntry e = new ChestEntry();
-		e.x = pos.getX();
-		e.y = pos.getY();
-		e.z = pos.getZ();
-		cfg.chests.add(e);
-		MineConfig.save();
-		Alerts.actionBar("보관 상자 " + cfg.chests.size() + "번 지정: " + pos.toShortString() + " (설정 → 보관에서 담을 아이템 지정)", 0xFF55FF55);
-		Alerts.click();
+		Chests.toggleLookedAt(mc, MineConfig.get().chests, MineConfig::save);
 	}
 
 	static BlockPos pos(ChestEntry e) {
-		return new BlockPos(e.x, e.y, e.z);
+		return e.pos();
 	}
 
 	// ------------------------------------------------------------------ what to keep
@@ -109,14 +78,7 @@ public final class Storage {
 
 	/** Which chest an item should go to (filtered chests first, then overflow chests), or -1. */
 	static int target(String id, boolean[] full) {
-		List<ChestEntry> chests = MineConfig.get().chests;
-		for (int i = 0; i < chests.size(); i++) {
-			if (!full[i] && chests.get(i).items.contains(id)) return i;
-		}
-		for (int i = 0; i < chests.size(); i++) {
-			if (!full[i] && chests.get(i).items.isEmpty()) return i;
-		}
-		return -1;
+		return Chests.target(MineConfig.get().chests, id, full);
 	}
 
 	// ------------------------------------------------------------------ trip
@@ -295,9 +257,7 @@ public final class Storage {
 		}
 
 		private static AbstractContainerScreen<?> open(Minecraft mc) {
-			Screen s = mc.gui.screen();
-			if (s instanceof AbstractContainerScreen<?> acs && !(s instanceof InventoryScreen)) return acs;
-			return null;
+			return Chests.openScreen(mc);
 		}
 
 		private boolean depositOne(Minecraft mc, LocalPlayer p, AbstractContainerMenu menu) {

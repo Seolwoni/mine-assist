@@ -1,4 +1,4 @@
-package com.seolwoni.mineassist.util;
+package com.seolwoni.assistcore.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** Block checks used by the miner. */
+/** Block checks shared by all Assist mods. */
 public final class Blocks2 {
 	private Blocks2() {
 	}

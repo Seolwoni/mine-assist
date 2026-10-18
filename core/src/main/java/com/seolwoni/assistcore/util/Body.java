@@ -1,4 +1,4 @@
-package com.seolwoni.mineassist.util;
+package com.seolwoni.assistcore.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
