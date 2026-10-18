@@ -22,7 +22,7 @@ public final class Alerts {
 
 	public static void chat(String text) {
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.player != null) mc.player.displayClientMessage(Component.literal("[Mine Assist] " + text), false);
+		if (mc.player != null) mc.player.sendSystemMessage(Component.literal("[Mine Assist] " + text));
 	}
 
 	public static void ding() {
