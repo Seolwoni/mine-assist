@@ -36,10 +36,10 @@ public class MineGameTest implements FabricClientGameTest {
 	@Override
 	public void runTest(ClientGameTestContext context) {
 		try (TestSingleplayerContext sp = context.worldBuilder().create()) {
-			sp.getClientLevel().waitForChunksRender();
+			sp.getConnection().waitForChunksRender();
 			buildWorld(sp);
 			context.waitTicks(40);
-			sp.getClientLevel().waitForChunksRender();
+			sp.getConnection().waitForChunksRender();
 
 			context.runOnClient(mc -> {
 				MineConfig c = MineConfig.get();

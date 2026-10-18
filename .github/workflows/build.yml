@@ -32,7 +32,7 @@ jobs:
         if: always()
         run: |
           mkdir -p /tmp/gt/shots
-          [ -f gametest.log ] && grep -E "ERROR|Exception|FAIL|Caused by|at com.seolwoni|AssertionError|What went wrong|^> " gametest.log | head -300 > /tmp/gt/gt-errors.txt || true
+          [ -f gametest.log ] && grep -E -A3 "error:|ERROR|Exception|FAIL|Caused by|at com.seolwoni|AssertionError|What went wrong|^> " gametest.log | head -300 > /tmp/gt/gt-errors.txt || true
           [ -f gametest.log ] && tail -200 gametest.log > /tmp/gt/gt-tail.txt || true
           find . -name "mineassist-test-result.txt" -not -path "./.git/*" -exec cp {} /tmp/gt/ \; 2>/dev/null || true
           find . -name "*.png" -path "*screenshots*" -not -path "./.git/*" -exec cp {} /tmp/gt/shots/ \; 2>/dev/null || true
