@@ -327,6 +327,7 @@ public final class Miner {
 			});
 			add(new OreScanAction(col));
 			add(new CollectAction());
+			enclose(col);
 			if (cfg.torches && i > 1 && (i - 1) % cfg.torchInterval == 0) {
 				add(new PlaceAction(geo.stair(i - 1).above(), PlaceAction.WALL_TORCH, SKIP));
 			}
@@ -361,6 +362,7 @@ public final class Miner {
 		});
 		add(new OreScanAction(col));
 		add(new CollectAction());
+		enclose(col);
 		if (cfg.torches && nk % cfg.torchInterval == 0) add(new PlaceAction(l, PlaceAction.TORCH, SKIP));
 	}
 
@@ -407,6 +409,7 @@ public final class Miner {
 		});
 		add(new OreScanAction(col));
 		add(new CollectAction());
+		enclose(col);
 		if (cfg.torches && nd % cfg.torchInterval == 0 && nd > 1) {
 			add(new PlaceAction(geo.branch(k, side, nd - 1), PlaceAction.TORCH, SKIP));
 		}
@@ -436,6 +439,38 @@ public final class Miner {
 			int stairNo = idx + 1;
 			if (cfg.torches && stairNo <= geo.stairs && stairNo > 1 && (stairNo - 1) % cfg.torchInterval == 0) {
 				add(new PlaceAction(geo.stair(stairNo - 1).above(), PlaceAction.WALL_TORCH, SKIP));
+			}
+		}
+	}
+
+	/** True for cells the miner walks through (stairs, main tunnel, branches): never fill these. */
+	static boolean tunnelSpace(BlockPos q) {
+		int dx = q.getX() - geo.origin.getX(), dz = q.getZ() - geo.origin.getZ();
+		int along = dx * geo.d.getStepX() + dz * geo.d.getStepZ();
+		int side = dx * geo.r.getStepX() + dz * geo.r.getStepZ();
+		int n = geo.stairs;
+		if (along >= 0 && along <= n) {
+			int up = q.getY() - (geo.origin.getY() - along);
+			return side == 0 && up >= 0 && up <= 2;
+		}
+		int up = q.getY() - (geo.origin.getY() - n);
+		if (up < 0 || up > 1) return false;
+		if (side == 0 || side == 1) return true;
+		int k = along - n;
+		return job.branchLength > 0 && job.branchSpacing > 0 && k % job.branchSpacing == 0;
+	}
+
+	/** Walls and roof around a freshly dug cross-section, so caves get closed off like a tunnel. */
+	static void enclose(List<BlockPos> cells) {
+		Set<BlockPos> seen = new HashSet<>();
+		for (BlockPos c : cells) {
+			for (Direction dir : Direction.values()) {
+				if (dir == Direction.DOWN) continue;
+				BlockPos q = c.relative(dir);
+				if (tunnelSpace(q) || !seen.add(q)) continue;
+				// Only where there really is a hole (a cave), and never in front of us: that is the next dig.
+				if (dir == geo.d) continue;
+				add(new PlaceAction(q, PlaceAction.WALL, SKIP));
 			}
 		}
 	}
@@ -681,7 +716,9 @@ public final class Miner {
 
 	/** Places a filler block (cobblestone) or a torch at a position. */
 	static final class PlaceAction implements Action {
-		static final int PLUG = 0, TORCH = 1, WALL_TORCH = 2;
+		static final int PLUG = 0, TORCH = 1, WALL_TORCH = 2, WALL = 3;
+		/** Walls are nice to have: keep this many blocks back for floors. */
+		static final int WALL_RESERVE = 16;
 		private final BlockPos pos;
 		private final int kind, failMode;
 		private int stage, wait, attempts, delay, slot;
@@ -690,6 +727,7 @@ public final class Miner {
 		private Vec3 hit;
 		private String reason = "";
 		private boolean wasFluid;
+		private int bridges;
 
 		PlaceAction(BlockPos pos, int kind, int failMode) {
 			this.pos = pos;
@@ -708,27 +746,89 @@ public final class Miner {
 		}
 
 		private boolean done() {
-			return kind == PLUG ? Blocks2.isSolid(pos) : Blocks2.isTorch(pos);
+			return block() ? Blocks2.isSolid(pos) : Blocks2.isTorch(pos);
 		}
 
+		private boolean block() {
+			return kind == PLUG || kind == WALL;
+		}
+
+		/** Torches and walls never stop the job when they cannot be placed. */
 		private boolean torchKind() {
 			return kind != PLUG;
 		}
 
+		/**
+		 * Nothing to place against (open cave): a short chain of filler cells, from one that touches solid
+		 * ground out to {@code pos}, that are all in reach and outside the tunnel.
+		 */
+		private List<BlockPos> bridgeChain(LocalPlayer p) {
+			Vec3 eye = p.getEyePosition();
+			java.util.Map<BlockPos, BlockPos> parent = new java.util.HashMap<>();
+			Deque<BlockPos> open = new ArrayDeque<>();
+			java.util.Map<BlockPos, Integer> depth = new java.util.HashMap<>();
+			open.add(pos);
+			depth.put(pos, 0);
+			Direction[] order = {Direction.DOWN, geo.d.getOpposite(), geo.r, geo.r.getOpposite(), geo.d};
+			while (!open.isEmpty()) {
+				BlockPos c = open.poll();
+				int dep = depth.get(c);
+				if (dep >= 4) continue;
+				for (Direction dir : order) {
+					BlockPos q = c.relative(dir);
+					if (depth.containsKey(q)) continue;
+					depth.put(q, dep + 1);
+					if (!(Blocks2.isOpen(q) || Blocks2.isFluid(q)) || tunnelSpace(q) || occupiedByPlayer(p, q)) continue;
+					if (eye.distanceTo(Vec3.atCenterOf(q)) > 4.2) continue;
+					parent.put(q, c);
+					boolean touches = false;
+					for (Direction t : Direction.values()) {
+						BlockPos s2 = q.relative(t);
+						if (Blocks2.isSolid(s2) && eye.distanceTo(Vec3.atCenterOf(s2)) <= 4.8) touches = true;
+					}
+					if (touches) {
+						List<BlockPos> chain = new ArrayList<>();
+						for (BlockPos x = q; x != null && !x.equals(pos); x = parent.get(x)) chain.add(x);
+						return chain;
+					}
+					open.add(q);
+				}
+			}
+			return List.of();
+		}
+
 		@Override
 		public int tick(Minecraft mc, LocalPlayer p) {
+			int r = step(mc, p);
+			if (r != RUN || stage == 0) mc.options.keyShift.setDown(false);
+			return r;
+		}
+
+		private int step(Minecraft mc, LocalPlayer p) {
 			switch (stage) {
 				case 0 -> {
 					if (done()) return DONE;
 					if (attempts == 0) wasFluid = Blocks2.isFluid(pos);
-					if (kind == PLUG && !Blocks2.isOpen(pos) && !Blocks2.isFluid(pos)) return DONE;
+					if (block() && !Blocks2.isOpen(pos) && !Blocks2.isFluid(pos)) return DONE;
+					if (kind == WALL && (Blocks2.isTorch(pos) || Inv.count(p, Inv::isPlug) <= WALL_RESERVE)) return DONE;
 					if (torchKind() && (!Blocks2.isOpen(pos) || Blocks2.isFluid(pos))) return DONE;
-					if (kind == PLUG && occupiedByPlayer(p, pos)) return DONE;
-					if (!findSupport(p)) {
+					if (block() && occupiedByPlayer(p, pos)) return DONE;
+					if (!findSupport(p) && kind == PLUG && bridges < 3 && Inv.count(p, Inv::isPlug) > 0) {
+						List<BlockPos> chain = bridgeChain(p);
+						if (!chain.isEmpty()) {
+							bridges++;
+							status("동굴 위에 다리 놓는 중");
+							List<Action> puts = new ArrayList<>();
+							for (BlockPos c : chain) puts.add(new PlaceAction(c, PLUG, failMode));
+							pushFront(puts);
+							return RUN;
+						}
+					}
+					if (support == null) {
 						reason = kind == PLUG ? "막을 자리를 찾지 못했어요 (큰 동굴이나 용암 호수)" : "";
 						return torchKind() ? DONE : FAIL;
 					}
-					slot = Inv.bringToHotbar(mc, p, kind == PLUG ? Inv::isPlug : Inv::isTorch);
+					slot = Inv.bringToHotbar(mc, p, block() ? Inv::isPlug : Inv::isTorch);
 					if (slot == -1) {
 						reason = kind == PLUG ? "막을 조약돌이 없어요" : "";
 						return torchKind() ? DONE : FAIL;
@@ -739,6 +839,8 @@ public final class Miner {
 					return RUN;
 				}
 				case 1 -> {
+					// Crouch at the edge while building out over a drop.
+					if (kind == PLUG) mc.options.keyShift.setDown(true);
 					if (delay-- > 0) return RUN;
 					Inv.select(p, slot);
 					stage = 2;
