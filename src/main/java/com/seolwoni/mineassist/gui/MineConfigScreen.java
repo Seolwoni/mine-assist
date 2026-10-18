@@ -29,6 +29,18 @@ public class MineConfigScreen extends Screen {
 			"minecraft:flint", "minecraft:tuff", "minecraft:granite", "minecraft:diorite", "minecraft:andesite",
 			"minecraft:calcite", "minecraft:netherrack", "minecraft:clay_ball");
 	private static final int ROW = 24;
+	/** name, best Y, note. The last entry is "current height" (Y taken from the player). */
+	private static final Object[][] Y_PRESETS = {
+			{"다이아", -58, " (레드스톤도 많이 나와요)"},
+			{"레드스톤", -58, ""},
+			{"금", -16, " (악지는 지상에도 많아요)"},
+			{"청금석", 0, ""},
+			{"철", 16, ""},
+			{"구리", 48, ""},
+			{"석탄", 96, " (산 지형)"},
+			{"에메랄드", 232, " (산 바이옴 전용)"},
+			{"고대 잔해", 15, " (네더에서)"},
+			{"지금 높이", 0, " (계단 없이 바로 파기)"}};
 
 	private static int tab = 0;
 	private final Screen parent;
@@ -99,28 +111,45 @@ public class MineConfigScreen extends Screen {
 		slider(left, y, 150, "목표 Y", "", -64, 320, c.targetY, v -> c.targetY = v);
 		slider(right, y, 150, "가운데 굴", "칸", 3, 500, c.mainLength, v -> c.mainLength = v);
 		y += ROW;
+		// Best Y per ore (ore distribution since 1.18). Two rows of five.
+		for (int i = 0; i < Y_PRESETS.length; i++) {
+			String name = (String) Y_PRESETS[i][0];
+			int value = i == Y_PRESETS.length - 1 && this.minecraft.player != null
+					? this.minecraft.player.blockPosition().getY() : (int) Y_PRESETS[i][1];
+			boolean on = c.targetY == value;
+			int bw = (310 - 4 * 2) / 5;
+			int bx = left + (i % 5) * (bw + 2), by = y + (i / 5) * 22;
+			Button pb = Button.builder(Component.literal(name).withColor(on ? 0xFF55FF55 : 0xFFFFFFFF), b -> {
+				c.targetY = Math.max(-64, Math.min(320, value));
+				MineConfig.save();
+				rebuildWidgets();
+			}).bounds(bx, by, bw, 20).build();
+			pb.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(name + ": Y " + value + (String) Y_PRESETS[i][2])));
+			addRenderableWidget(pb);
+		}
+		y += 44 + 2;
 		slider(left, y, 150, "가지굴 길이", "칸", 0, 1000, c.branchLength, v -> c.branchLength = v);
 		slider(right, y, 150, "가지 간격", "칸", 2, 16, c.branchSpacing, v -> c.branchSpacing = v);
 		y += ROW;
 		toggle(left, y, 150, "이어서 파기", () -> c.resume, v -> c.resume = v);
 		toggle(right, y, 150, "사람 같은 딜레이", () -> c.humanDelay, v -> c.humanDelay = v);
 		y += ROW;
-		addRenderableWidget(Button.builder(Component.literal("진행 초기화 (새로 시작)"), b -> {
+		addRenderableWidget(Button.builder(Component.literal(confirmReset ? "한 번 더 누르면 초기화" : "진행 초기화"), b -> {
 			if (!confirmReset) {
 				confirmReset = true;
-				b.setMessage(Component.literal("한 번 더 누르면 초기화").withColor(0xFFFF5555));
+				rebuildWidgets();
 				return;
 			}
 			confirmReset = false;
 			if (c.running) Miner.stop(null, null, false);
 			Miner.resetJob();
 			rebuildWidgets();
-		}).bounds(left, y, 310, 20).build());
-		y += ROW + 4;
+		}).bounds(left, y, 100, 20).build());
 		JobState j = Miner.job();
-		note(j.active ? "진행 중인 작업: 시작 " + j.ox + ", " + j.oy + ", " + j.oz + " · 가운데 " + j.mainK + "/" + j.mainLength
-				: "진행 중인 작업 없음 · 켜면 바라보는 방향으로 파요", y);
-		note("길이·Y 변경은 새로 시작할 때 적용돼요. 위쪽에서 켜면 목표 Y까지 계단으로 내려가요.", y + 12);
+		labels.add(new Object[] {j.active ? "진행 중: 시작 " + j.ox + ", " + j.oy + ", " + j.oz + " · 가운데 " + j.mainK + "/" + j.mainLength
+				: "진행 중인 작업 없음", left + 106, y + 6, 0xFFAAAAAA, false});
+		y += ROW;
+		note("Y·길이는 새로 시작할 때 적용 · 지금보다 아래 Y면 계단으로 내려가요", y);
 	}
 
 	private void ores(int left, int right, int y) {
