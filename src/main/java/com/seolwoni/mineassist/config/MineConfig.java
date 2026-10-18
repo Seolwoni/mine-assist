@@ -93,6 +93,12 @@ public class MineConfig {
 	public float hudY = 0.2f;
 	public float hudScale = 1.0f;
 	public int hudBgAlpha = 110;
+	public boolean statsHud = true;
+	public float statsX = 0.01f;
+	public float statsY = 0.45f;
+	public float statsScale = 1.0f;
+	/** false = this session, true = all-time totals. */
+	public boolean statsTotals = false;
 
 	public static class ChestEntry {
 		public int x, y, z;

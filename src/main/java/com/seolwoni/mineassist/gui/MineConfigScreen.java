@@ -45,7 +45,7 @@ public class MineConfigScreen extends Screen {
 	private static int tab = 0;
 	private final Screen parent;
 	private final List<Object[]> labels = new ArrayList<>();
-	private boolean confirmReset, confirmChests;
+	private boolean confirmReset, confirmChests, confirmStats;
 
 	public MineConfigScreen(Screen parent) {
 		super(Component.literal("Mine Assist 설정"));
@@ -262,12 +262,37 @@ public class MineConfigScreen extends Screen {
 
 	private void hud(int left, int right, int y) {
 		MineConfig c = c();
-		toggle(left, y, 150, "상태 HUD", () -> c.statusHud, v -> c.statusHud = v);
 		addRenderableWidget(Button.builder(Component.literal("HUD 위치 편집"),
-				b -> this.minecraft.gui.setScreen(new HudEditScreen(this))).bounds(right, y, 150, 20).build());
+				b -> this.minecraft.gui.setScreen(new HudEditScreen(this))).bounds(left, y, 310, 20).build());
 		y += ROW;
-		slider(left, y, 150, "크기", "%", 50, 300, Math.round(c.hudScale * 100), v -> c.hudScale = v / 100f);
-		slider(right, y, 150, "배경 투명도", "", 0, 255, c.hudBgAlpha, v -> c.hudBgAlpha = v);
+		toggle(left, y, 150, "상태 HUD", () -> c.statusHud, v -> c.statusHud = v);
+		toggle(right, y, 150, "통계 HUD", () -> c.statsHud, v -> c.statsHud = v);
+		y += ROW;
+		slider(left, y, 150, "상태 크기", "%", 50, 300, Math.round(c.hudScale * 100), v -> c.hudScale = v / 100f);
+		slider(right, y, 150, "통계 크기", "%", 50, 300, Math.round(c.statsScale * 100), v -> c.statsScale = v / 100f);
+		y += ROW;
+		slider(left, y, 150, "배경 투명도", "", 0, 255, c.hudBgAlpha, v -> c.hudBgAlpha = v);
+		addRenderableWidget(Button.builder(Component.literal("통계 표시: " + (c.statsTotals ? "누적" : "이번 세션")), b -> {
+			c.statsTotals = !c.statsTotals;
+			MineConfig.save();
+			rebuildWidgets();
+		}).bounds(right, y, 150, 20).build());
+		y += ROW;
+		addRenderableWidget(Button.builder(Component.literal("세션 통계 초기화"), b -> {
+			com.seolwoni.mineassist.hud.MineStats.session.reset();
+			rebuildWidgets();
+		}).bounds(left, y, 150, 20).build());
+		addRenderableWidget(Button.builder(Component.literal(confirmStats ? "한 번 더 누르면 초기화" : "누적 통계 초기화"), b -> {
+			if (!confirmStats) {
+				confirmStats = true;
+				rebuildWidgets();
+				return;
+			}
+			confirmStats = false;
+			com.seolwoni.mineassist.hud.MineStats.total.reset();
+			com.seolwoni.mineassist.hud.MineStats.saveTotal();
+			rebuildWidgets();
+		}).bounds(right, y, 150, 20).build());
 	}
 
 	// ------------------------------------------------------------------ helpers

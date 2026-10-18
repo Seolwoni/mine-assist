@@ -33,6 +33,7 @@ public class MineAssistClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		MineConfig.load();
 		Miner.loadJob();
+		com.seolwoni.mineassist.hud.MineStats.loadTotal();
 
 		KeyMapping.Category category = KeyMapping.Category.register(id("main"));
 		markChestKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
@@ -53,6 +54,7 @@ public class MineAssistClient implements ClientModInitializer {
 		ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
 			if (MineConfig.get().running) Miner.stop(null, null, false);
 			MineConfig.save();
+			com.seolwoni.mineassist.hud.MineStats.saveTotal();
 		});
 
 		LOGGER.info("Mine Assist loaded - made by seolwoni");

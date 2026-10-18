@@ -215,6 +215,7 @@ public final class Miner {
 		if (mc.isPaused()) return;
 		if (!safety(mc, p, cfg)) return;
 		job.ticks++;
+		com.seolwoni.mineassist.hud.MineStats.tick();
 
 		Action a = queue.peekFirst();
 		if (a != null) {
@@ -512,6 +513,7 @@ public final class Miner {
 		private Vec3 aim;
 		private Direction face;
 		private String reason = "";
+		private String oreId = "";
 		boolean ore;
 
 		MineAction(BlockPos pos, int failMode) {
@@ -569,6 +571,7 @@ public final class Miner {
 						stop("곡괭이가 없어요", "쓸 수 있는 곡괭이가 없어요", true);
 						return RUN;
 					}
+					oreId = Blocks2.id(pos);
 					face = faceToward(p.getEyePosition(), pos);
 					aim = facePoint(pos, face, 0.28);
 					Body.newTurn();
@@ -591,7 +594,11 @@ public final class Miner {
 					ticks++;
 					if (Blocks2.isOpen(pos)) {
 						job.blocksMined++;
-						if (ore) job.oresMined++;
+						com.seolwoni.mineassist.hud.MineStats.block();
+						if (ore || MineConfig.get().ores.contains(oreId)) {
+							job.oresMined++;
+							com.seolwoni.mineassist.hud.MineStats.ore(oreId);
+						}
 						settle = Human.rand(3, 6);
 						stage = 3;
 					} else if (ticks > 400) {
@@ -627,6 +634,7 @@ public final class Miner {
 		private Direction face;
 		private Vec3 hit;
 		private String reason = "";
+		private boolean wasFluid;
 
 		PlaceAction(BlockPos pos, int kind, int failMode) {
 			this.pos = pos;
@@ -653,6 +661,7 @@ public final class Miner {
 			switch (stage) {
 				case 0 -> {
 					if (done()) return DONE;
+					if (attempts == 0) wasFluid = Blocks2.isFluid(pos);
 					if (kind == PLUG && !Blocks2.isOpen(pos) && !Blocks2.isFluid(pos)) return DONE;
 					if (kind == TORCH && (!Blocks2.isOpen(pos) || Blocks2.isFluid(pos))) return DONE;
 					if (kind == PLUG && occupiedByPlayer(p, pos)) return DONE;
@@ -686,7 +695,10 @@ public final class Miner {
 				}
 				default -> {
 					if (wait-- > 0) return RUN;
-					if (done()) return DONE;
+					if (done()) {
+						if (kind == PLUG && wasFluid) com.seolwoni.mineassist.hud.MineStats.plug();
+						return DONE;
+					}
 					if (++attempts >= 3) {
 						reason = kind == PLUG ? "블록을 놓지 못했어요" : "";
 						return kind == TORCH ? DONE : FAIL;

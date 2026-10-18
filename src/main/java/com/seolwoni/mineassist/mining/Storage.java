@@ -288,6 +288,7 @@ public final class Storage {
 						return Miner.RUN;
 					}
 					Alerts.actionBar("보관 완료 (" + moved + "칸)", 0xFF55FF55);
+					com.seolwoni.mineassist.hud.MineStats.trip();
 					return Miner.DONE;
 				}
 			}
