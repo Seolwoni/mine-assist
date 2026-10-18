@@ -128,6 +128,8 @@ public final class Miner {
 				return false;
 			}
 			geo = new Geo(job);
+			// Jobs saved by 1.2.3 and older started with mainK = 1 and would skip main step 1.
+			if (job.stairsDone < geo.stairs && job.mainK == 1) job.mainK = 0;
 			here = Loc.origin();
 			Loc frontier = frontier();
 			status("이어서 파러 가는 중");

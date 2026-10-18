@@ -24,8 +24,8 @@ public class JobState {
 	public int dir;
 	public int targetY;
 	public int mainLength, branchLength, branchSpacing;
-	/** Next main tunnel step to dig (1-based), and branch progress at the current branch point. */
-	public int mainK = 1;
+	/** Main tunnel steps dug so far (0 = none yet), and branch progress at the current branch point. */
+	public int mainK = 0;
 	/** 0 = left branch pending, 1 = right branch pending, 2 = both done. */
 	public int branchSide = 0;
 	public int branchD = 0;
