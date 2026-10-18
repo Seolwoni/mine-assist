@@ -20,9 +20,26 @@ jobs:
         run: |
           set -o pipefail
           ./gradlew build --stacktrace 2>&1 | tee build.log
+      - name: game test
+        id: gametest
+        continue-on-error: true
+        timeout-minutes: 30
+        run: |
+          sudo apt-get update -q > /dev/null && sudo apt-get install -y -q xvfb libgl1-mesa-dri mesa-utils > /dev/null
+          set -o pipefail
+          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest --stacktrace 2>&1 | tee gametest.log
       - name: save log
         if: always()
         run: |
+          mkdir -p /tmp/gt/shots
+          [ -f gametest.log ] && grep -E "ERROR|Exception|FAIL|Caused by|at com.seolwoni|AssertionError|What went wrong|^> " gametest.log | head -300 > /tmp/gt/gt-errors.txt || true
+          [ -f gametest.log ] && tail -200 gametest.log > /tmp/gt/gt-tail.txt || true
+          find . -name "mineassist-test-result.txt" -not -path "./.git/*" -exec cp {} /tmp/gt/ \; 2>/dev/null || true
+          find . -name "*.png" -path "*screenshots*" -not -path "./.git/*" -exec cp {} /tmp/gt/shots/ \; 2>/dev/null || true
+          LOG=$(find . -name "latest.log" -path "*run*" -not -path "./.git/*" | head -1); [ -n "$LOG" ] && tail -400 "$LOG" > /tmp/gt/gt-latest.txt || true
+          GT=$(find ~/.gradle -name "fabric-client-gametest-api-v1-*.jar" | grep -v sources | head -1)
+          echo "gt jar: $GT" > /tmp/gt/gt-sigs.txt
+          if [ -n "$GT" ]; then for c in $(unzip -Z1 "$GT" | grep "api/.*\.class$" | sed 's/\.class$//;s#/#.#g'); do javap -cp "$GT" "$c" >> /tmp/gt/gt-sigs.txt 2>&1; done; fi
           git config user.name "ci"
           git config user.email "ci@users.noreply.github.com"
           grep -E "error:|warning:|\.java:[0-9]+|What went wrong|^> |Caused by|Exception" build.log | head -400 > /tmp/errors.txt || true
@@ -37,7 +54,9 @@ jobs:
           git checkout --orphan ci-log
           git rm -rf --cached . > /dev/null
           cp /tmp/errors.txt /tmp/compile.txt /tmp/tail.txt /tmp/sigs.txt .
-          git add errors.txt tail.txt compile.txt sigs.txt
+          cp -r /tmp/gt gt
+          echo "${{ steps.gametest.outcome }}" > gt/outcome.txt
+          git add errors.txt tail.txt compile.txt sigs.txt gt
           git commit -m "build log ${{ github.run_number }}"
           git push -f origin ci-log
       - uses: actions/upload-artifact@v4

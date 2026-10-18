@@ -162,7 +162,11 @@ public final class Miner {
 		return true;
 	}
 
+	/** Why the miner last stopped (title / subtitle), for the debug log and automated tests. */
+	public static String lastStop = "";
+
 	public static void stop(String title, String sub, boolean alert) {
+		lastStop = (title == null ? "" : title) + (sub == null ? "" : " / " + sub);
 		Minecraft mc = Minecraft.getInstance();
 		MineConfig cfg = MineConfig.get();
 		cfg.running = false;

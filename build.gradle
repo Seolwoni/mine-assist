@@ -38,3 +38,14 @@ jar {
 	// Mod Menu API stubs are only for compiling; the real classes come from Mod Menu itself.
 	exclude 'com/terraformersmc/**'
 }
+
+// Automated in-game tests: ./gradlew runClientGameTest starts a real client, builds test worlds and runs the miner.
+fabricApi {
+	configureTests {
+		createSourceSet = true
+		modId = "mineassist-gametest"
+		enableGameTests = false
+		enableClientGameTests = true
+		eula = true
+	}
+}
