@@ -97,6 +97,7 @@ public class MineGameTest implements FabricClientGameTest {
 
 			String stop = context.computeOnClient(mc -> Miner.lastStop);
 			log.add("stopped after " + ticks + " ticks: " + stop);
+			log.add(com.seolwoni.assistpath.AssistPath.Stats.summary());
 			if (running) {
 				failures.add("did not finish within " + limit + " ticks");
 				context.runOnClient(mc -> Miner.stop(null, null, false));
