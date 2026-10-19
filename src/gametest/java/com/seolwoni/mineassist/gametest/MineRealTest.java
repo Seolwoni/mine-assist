@@ -29,6 +29,7 @@ public class MineRealTest implements FabricClientGameTest {
 	private final List<String> log = new ArrayList<>();
 	private final List<String> failures = new ArrayList<>();
 	private final RealWorld.Timing timing = new RealWorld.Timing();
+	private final java.util.Set<Integer> staleSeen = new java.util.HashSet<>();
 
 	@Override
 	public void runTest(ClientGameTestContext context) {
@@ -111,8 +112,22 @@ public class MineRealTest implements FabricClientGameTest {
 				log.add(context.computeOnClient(mc -> "t=" + t + " pos=" + mc.player.blockPosition().toShortString() + " hp=" + (int) mc.player.getHealth()
 						+ " status=" + Miner.status()));
 				minHealth = Math.min(minHealth, context.computeOnClient(mc -> mc.player.getHealth()));
+				// Drops lying near us for more than 15 s were left behind (items vanish after 5 minutes, so note them now).
+				List<String> stale = sp.getServer().computeOnServer(server -> {
+					List<String> out = new ArrayList<>();
+					var pl = server.getPlayerList().getPlayers().get(0);
+					for (var ie : server.overworld().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, pl.getBoundingBox().inflate(8))) {
+						if (ie.getAge() < 300 || !staleSeen.add(ie.getId())) continue;
+						var at = ie.blockPosition();
+						out.add(ie.getItem().getItem() + " x" + ie.getItem().getCount() + " at " + at.toShortString()
+								+ (server.overworld().getBlockState(at).isAir() ? "" : " inside " + server.overworld().getBlockState(at).getBlock())
+								+ ", player at " + pl.blockPosition().toShortString());
+					}
+					return out;
+				});
+				for (String st : stale) log.add("    left behind: " + st);
 				running = context.computeOnClient(mc -> MineConfig.get().running);
-				if (ticks % 1200 == 0) context.takeScreenshot(String.format("%s-%02d-min%d", suite, shots++, ticks / 1200));
+				if (ticks % 600 == 0) context.takeScreenshot(String.format("%s-%03d-s%d", suite, shots++, ticks / 20));
 			}
 			context.takeScreenshot(suite + "-99-end");
 			String stop = context.computeOnClient(mc -> Miner.lastStop);
@@ -168,6 +183,17 @@ public class MineRealTest implements FabricClientGameTest {
 				return sb.toString();
 			});
 			log.add("chest: " + inChest);
+			// Drops that never got picked up: where are they (stuck in an ore hole, dumped, fallen into a cave)?
+			log.add("items left lying around the job: " + sp.getServer().computeOnServer(server -> {
+				StringBuilder sb = new StringBuilder();
+				int n = 0;
+				for (var ie : server.overworld().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+						new net.minecraft.world.phys.AABB(x - 40, startY - 80, z - 10, x + 40, startY + 5, z + 60))) {
+					if (n++ < 30) sb.append(ie.getItem().getItem()).append(" x").append(ie.getItem().getCount()).append(" at ")
+							.append(ie.blockPosition().toShortString()).append(server.overworld().getBlockState(ie.blockPosition()).isAir() ? "" : " (inside " + server.overworld().getBlockState(ie.blockPosition()).getBlock() + ")").append("; ");
+				}
+				return n + " — " + sb;
+			}));
 			log.add("inventory: " + context.computeOnClient(mc -> {
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < 36; i++) {
