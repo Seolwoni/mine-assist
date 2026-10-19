@@ -124,6 +124,7 @@ public class MineGameTest implements FabricClientGameTest {
 				return n;
 			});
 			log.add("raw iron in inventory: " + iron + ", in chest: " + stored);
+			for (String n : context.computeOnClient(mc -> new java.util.ArrayList<>(com.seolwoni.mineassist.mining.Miner.pocketLog))) log.add("  pocket: " + n);
 			if (iron + stored < 3) failures.add("picked up only " + (iron + stored) + " of 3 raw iron");
 			if (stored < 3 && !running) failures.add("finished without putting the raw iron in the chest");
 

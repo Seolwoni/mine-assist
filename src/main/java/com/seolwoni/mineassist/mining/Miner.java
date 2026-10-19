@@ -1135,11 +1135,15 @@ public final class Miner {
 				if (!(e instanceof net.minecraft.world.entity.item.ItemEntity ie) || !ie.isAlive() || Chores.isJunk(p, ie.getItem())) continue;
 				BlockPos at = ie.blockPosition();
 				if (tunnelSpace(at) || tunnelSpace(at.below())) continue;
+				// Close enough to just pick up: no need to move it.
+				if (p.getBoundingBox().inflate(1.0, 0.5, 1.0).intersects(ie.getBoundingBox())) continue;
 				stuck.add(at);
 			}
 			if (stuck.isEmpty() || rounds++ >= 2) return DONE;
 			// From each drop, find the open way back to the tunnel; fill that way from the far end inwards.
 			java.util.Map<BlockPos, Integer> depth = new java.util.HashMap<>();
+			// A filled cell pushes its items sideways or up, never down; where the way out goes down, gravity does it.
+			Set<BlockPos> drains = new HashSet<>();
 			for (BlockPos start : stuck) {
 				java.util.Map<BlockPos, BlockPos> parent = new java.util.HashMap<>();
 				Deque<BlockPos> q = new ArrayDeque<>();
@@ -1153,6 +1157,7 @@ public final class Miner {
 						if (parent.containsKey(n)) continue;
 						if (tunnelSpace(n)) {
 							exit = c;
+							if (d == Direction.DOWN) drains.add(c);
 							break;
 						}
 						if (!open(n)) continue;
@@ -1162,18 +1167,21 @@ public final class Miner {
 				}
 				if (exit == null) continue;
 				int k = 0;
+				BlockPos prev = null;
 				for (BlockPos c = exit; ; c = parent.get(c)) {
 					depth.merge(c, k++, Math::max);
+					if (prev != null && prev.equals(c.below())) drains.add(c);
+					prev = c;
 					if (c.equals(start)) break;
 				}
 			}
 			Vec3 eye = p.getEyePosition();
 			List<BlockPos> order = new ArrayList<>(depth.keySet());
-			order.removeIf(c -> !open(c) || tunnelSpace(c) || occupiedByPlayer(p, c) || eye.distanceTo(Vec3.atCenterOf(c)) > 4.4);
+			order.removeIf(c -> drains.contains(c) || !open(c) || tunnelSpace(c) || occupiedByPlayer(p, c) || eye.distanceTo(Vec3.atCenterOf(c)) > 4.4);
 			// Farthest from the tunnel first: each filled cell pushes the drops one cell further out.
 			order.sort((a, b) -> Integer.compare(depth.get(b), depth.get(a)));
 			pocketNote("round " + rounds + ": " + stuck.size() + " drops off the tunnel at " + stuck + ", way out found for " + depth.size()
-					+ " cells, " + order.size() + " to fill, filler " + Inv.count(p, Inv::isPlug));
+					+ " cells (" + drains.size() + " drop down by themselves), " + order.size() + " to fill, filler " + Inv.count(p, Inv::isPlug));
 			if (order.isEmpty() || Inv.count(p, Inv::isPlug) < order.size()) return DONE;
 			List<Action> todo = new ArrayList<>();
 			for (BlockPos c : order) {
@@ -1246,6 +1254,8 @@ public final class Miner {
 			}
 			// Drops that land in the ore pockets beside the tunnel are out of reach: fill the pockets from the far
 			// end inwards, which pushes the items out towards us, then pick them up.
+			// Pick up what is in reach first; only what is left after that gets pushed out by filling.
+			todo.add(new CollectAction());
 			todo.add(new PocketFillAction(new ArrayList<>(found)));
 			status("광석 캐는 중");
 			pushFront(todo);
