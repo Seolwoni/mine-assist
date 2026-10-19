@@ -166,6 +166,8 @@ public final class Miner {
 		nextPause = Human.rand(1500, 4000);
 		cfg.running = true;
 		MineConfig.save();
+		com.seolwoni.assistcore.log.UsageLog.start("mine", "목표 Y " + job.targetY + ", 가운데 굴 " + job.mainLength + "칸, 가지굴 " + job.branchLength + "칸/" + job.branchSpacing + "칸 간격, 작업 속도 " + cfg.pace
+				+ (job.mainK > 0 || job.stairsDone > 0 ? " (이어서: 계단 " + job.stairsDone + ", 가운데 " + job.mainK + ")" : ""));
 		return true;
 	}
 
@@ -174,6 +176,9 @@ public final class Miner {
 
 	public static void stop(String title, String sub, boolean alert) {
 		lastStop = (title == null ? "" : title) + (sub == null ? "" : " / " + sub);
+		com.seolwoni.mineassist.hud.MineStats ms = com.seolwoni.mineassist.hud.MineStats.session;
+		com.seolwoni.assistcore.log.UsageLog.end("mine", lastStop.isEmpty() ? "직접 껐어요" : lastStop, "캔 블록 " + ms.blocks + ", 광석 " + job.oresMined + ", 막은 용암·물 " + ms.plugs + ", 상자 왕복 " + ms.trips
+				+ "번, 계단 " + job.stairsDone + ", 가운데 " + job.mainK + " | " + com.seolwoni.assistpath.AssistPath.Stats.summary());
 		Minecraft mc = Minecraft.getInstance();
 		MineConfig cfg = MineConfig.get();
 		cfg.running = false;
@@ -1078,6 +1083,13 @@ public final class Miner {
 	 * fill the pockets with filler blocks from the farthest cell to the nearest. An item inside a block is pushed
 	 * to the nearest free space, so cell by cell the drops are moved out into the tunnel, where we pick them up.
 	 */
+	/** What the pocket filling did (for the tests and the usage log). */
+	public static final List<String> pocketLog = new ArrayList<>();
+
+	static void pocketNote(String s) {
+		if (pocketLog.size() < 40) pocketLog.add(s);
+	}
+
 	static final class PocketFillAction implements Action {
 		private final List<BlockPos> cells;
 		private int wait = -1, rounds;
@@ -1142,6 +1154,8 @@ public final class Miner {
 			order.removeIf(c -> !open(c) || tunnelSpace(c) || occupiedByPlayer(p, c) || eye.distanceTo(Vec3.atCenterOf(c)) > 4.4);
 			// Farthest from the tunnel first: each filled cell pushes the drops one cell further out.
 			order.sort((a, b) -> Integer.compare(depth.get(b), depth.get(a)));
+			pocketNote("round " + rounds + ": " + stuck.size() + " drops off the tunnel at " + stuck + ", way out found for " + depth.size()
+					+ " cells, " + order.size() + " to fill, filler " + Inv.count(p, Inv::isPlug));
 			if (order.isEmpty() || Inv.count(p, Inv::isPlug) < order.size()) return DONE;
 			List<Action> todo = new ArrayList<>();
 			for (BlockPos c : order) {

@@ -146,6 +146,7 @@ public class MineRealTest implements FabricClientGameTest {
 			log.add(com.seolwoni.assistpath.AssistPath.Stats.summary());
 			log.add("lowest health " + minHealth);
 			log.add("valuable drops left behind: " + valuableLeft);
+			for (String n : context.computeOnClient(mc -> new ArrayList<>(Miner.pocketLog))) log.add("  pocket: " + n);
 			if (valuableLeft > 0) failures.add(valuableLeft + " ore drops were left lying where they could not be picked up");
 			if (running) {
 				failures.add("did not finish within " + limit + " ticks");
