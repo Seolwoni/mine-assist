@@ -1110,7 +1110,45 @@ public final class Miner {
 
 	static final class PocketFillAction implements Action {
 		private final List<BlockPos> cells;
-		private int wait = -1, rounds;
+		private int wait = -1, rounds, fetches;
+
+		/** Cells to walk (at our feet height, L-shaped) to stand on the drop's column, or null if not safe or too far. */
+		private static List<BlockPos> walkway(BlockPos home, BlockPos drop) {
+			int dy = drop.getY() - home.getY();
+			if (dy < 0 || dy > 2) return null;
+			int dx = drop.getX() - home.getX(), dz = drop.getZ() - home.getZ();
+			if (Math.abs(dx) + Math.abs(dz) > 5 || (dx == 0 && dz == 0)) return null;
+			List<BlockPos> best = null;
+			int bestDig = Integer.MAX_VALUE;
+			for (int order = 0; order < 2; order++) {
+				List<BlockPos> way = new ArrayList<>();
+				BlockPos c = home;
+				int dig = 0;
+				boolean ok = true;
+				for (int leg = 0; leg < 2 && ok; leg++) {
+					boolean alongX = (leg == 0) == (order == 0);
+					int n = alongX ? dx : dz;
+					for (int i = 0; i < Math.abs(n) && ok; i++) {
+						c = alongX ? c.offset(Integer.signum(n), 0, 0) : c.offset(0, 0, Integer.signum(n));
+						way.add(c);
+						for (BlockPos q : List.of(c, c.above())) {
+							if (tunnelSpace(q)) continue;
+							if (!Blocks2.isOpen(q)) dig++;
+							// Never open up next to lava or water.
+							for (Direction d : Direction.values()) if (Blocks2.isFluid(q.relative(d))) ok = false;
+							if (Blocks2.isFluid(q)) ok = false;
+						}
+						BlockPos floor = c.below();
+						if (Blocks2.isFluid(floor) || (!Blocks2.isSolid(floor) && !Blocks2.isOpen(floor))) ok = false;
+					}
+				}
+				if (ok && dig < bestDig) {
+					bestDig = dig;
+					best = way;
+				}
+			}
+			return best;
+		}
 
 		PocketFillAction(List<BlockPos> cells) {
 			this.cells = cells;
@@ -1140,6 +1178,29 @@ public final class Miner {
 				stuck.add(at);
 			}
 			if (stuck.isEmpty() || rounds++ >= 2) return DONE;
+			// First choice: a drop lying at our height (or on top of a block at head height) a few steps away is
+			// fetched by digging a short walkway to it and back, like a player would. Filling is for the rest.
+			BlockPos home = p.blockPosition();
+			for (BlockPos s : fetches < 6 ? stuck : List.<BlockPos>of()) {
+				List<BlockPos> way = walkway(home, s);
+				if (way == null) continue;
+				List<Action> todo = new ArrayList<>();
+				for (BlockPos c : way) {
+					if (!Blocks2.isSolid(c.below()) && !tunnelSpace(c.below())) todo.add(new PlaceAction(c.below(), PlaceAction.PLUG, SKIP));
+					todo.add(new WalkAction(c, true));
+				}
+				todo.add(new CollectAction(1));
+				for (int i = way.size() - 2; i >= 0; i--) todo.add(new WalkAction(way.get(i), true));
+				todo.add(new WalkAction(home, true));
+				todo.add(this);
+				pocketNote("round " + rounds + ": dig a walkway of " + way.size() + " to the drop at " + s.toShortString());
+				status("광석 구멍에서 아이템 꺼내는 중");
+				wait = 0;
+				rounds--; // fetching does not count as a filling round
+				fetches++;
+				pushFront(todo);
+				return DONE;
+			}
 			// From each drop, find the open way back to the tunnel; fill that way from the far end inwards.
 			java.util.Map<BlockPos, Integer> depth = new java.util.HashMap<>();
 			// A filled cell pushes its items sideways or up, never down; where the way out goes down, gravity does it.
