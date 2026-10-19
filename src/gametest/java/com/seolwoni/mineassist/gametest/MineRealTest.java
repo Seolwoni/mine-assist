@@ -53,7 +53,10 @@ public class MineRealTest implements FabricClientGameTest {
 				failures.add("biome not found: " + biome);
 				throw new AssertionError("biome not found: " + biome);
 			}
-			int x = b.getX(), z = b.getZ();
+			RealWorld.goTo(context, sp, b.getX(), b.getZ(), 48);
+			// Like a player: start on dry land (a lake or river can be inside a plains biome too).
+			int[] dry = RealWorld.dryLand(sp, b.getX(), b.getZ(), 40);
+			int x = dry[0], z = dry[1];
 			int g = RealWorld.goTo(context, sp, x, z, 64);
 			log.add("start in " + biome + " at " + x + ", " + g + ", " + z);
 			// A clear spot to start from (trees or tall grass would only be in the way of the first steps).
@@ -104,7 +107,7 @@ public class MineRealTest implements FabricClientGameTest {
 			context.takeScreenshot(suite + "-00-start");
 
 			int ticks = 0, shots = 1;
-			final int limit = 20 * 60 * (deep ? 48 : 30);
+			final int limit = 20 * 60 * (deep ? 40 : 25);
 			boolean running = true;
 			float minHealth = 20f;
 			while (running && ticks < limit) {

@@ -113,6 +113,12 @@ public final class Miner {
 		finishing = false;
 		torchFetchTried = false;
 		BlockPos feet = p.blockPosition();
+		if (p.isInWater() || Blocks2.isFluid(feet) || Blocks2.isFluid(feet.below())) {
+			// Stairs dug from under water fill up at once (and the way home is a swim): start on dry ground.
+			Alerts.title("물에서는 시작할 수 없어요", "마른 땅 위에 서서 켜주세요", 0xFFFF5555);
+			Alerts.warning();
+			return false;
+		}
 
 		if (cfg.resume && job.active && job.world.equals(worldKey(mc))) {
 			BlockPos o = new BlockPos(job.ox, job.oy, job.oz);
@@ -1074,7 +1080,7 @@ public final class Miner {
 	 */
 	static final class PocketFillAction implements Action {
 		private final List<BlockPos> cells;
-		private int wait = -1;
+		private int wait = -1, rounds;
 
 		PocketFillAction(List<BlockPos> cells) {
 			this.cells = cells;
@@ -1085,31 +1091,67 @@ public final class Miner {
 			return SKIP;
 		}
 
+		private static boolean open(BlockPos c) {
+			return Blocks2.isOpen(c) && !Blocks2.isFluid(c);
+		}
+
 		@Override
 		public int tick(Minecraft mc, LocalPlayer p) {
 			if (wait < 0) wait = Human.delay(8, 14); // let the drops settle first
 			if (wait-- > 0) return RUN;
-			java.util.Set<BlockPos> pocket = new java.util.HashSet<>();
-			for (BlockPos c : cells) if (!tunnelSpace(c) && (Blocks2.isOpen(c) && !Blocks2.isFluid(c))) pocket.add(c);
-			if (pocket.isEmpty()) return DONE;
-			boolean dropsInside = false;
+			// Drops lying off the tunnel (in the dug-out pockets or a crack next to them).
+			List<BlockPos> stuck = new ArrayList<>();
 			for (Entity e : mc.level.getEntities(p, p.getBoundingBox().inflate(6))) {
-				if (e instanceof net.minecraft.world.entity.item.ItemEntity ie && ie.isAlive() && !Chores.isJunk(p, ie.getItem())
-						&& pocket.contains(ie.blockPosition())) dropsInside = true;
+				if (!(e instanceof net.minecraft.world.entity.item.ItemEntity ie) || !ie.isAlive() || Chores.isJunk(p, ie.getItem())) continue;
+				BlockPos at = ie.blockPosition();
+				if (tunnelSpace(at) || tunnelSpace(at.below())) continue;
+				stuck.add(at);
 			}
-			if (!dropsInside) return DONE;
+			if (stuck.isEmpty() || rounds++ >= 2) return DONE;
+			// From each drop, find the open way back to the tunnel; fill that way from the far end inwards.
+			java.util.Map<BlockPos, Integer> depth = new java.util.HashMap<>();
+			for (BlockPos start : stuck) {
+				java.util.Map<BlockPos, BlockPos> parent = new java.util.HashMap<>();
+				Deque<BlockPos> q = new ArrayDeque<>();
+				q.add(start);
+				parent.put(start, start);
+				BlockPos exit = null;
+				while (!q.isEmpty() && parent.size() < 60 && exit == null) {
+					BlockPos c = q.poll();
+					for (Direction d : Direction.values()) {
+						BlockPos n = c.relative(d);
+						if (parent.containsKey(n)) continue;
+						if (tunnelSpace(n)) {
+							exit = c;
+							break;
+						}
+						if (!open(n)) continue;
+						parent.put(n, c);
+						q.add(n);
+					}
+				}
+				if (exit == null) continue;
+				int k = 0;
+				for (BlockPos c = exit; ; c = parent.get(c)) {
+					depth.merge(c, k++, Math::max);
+					if (c.equals(start)) break;
+				}
+			}
 			Vec3 eye = p.getEyePosition();
-			List<BlockPos> order = new ArrayList<>(pocket);
-			order.removeIf(c -> occupiedByPlayer(p, c) || eye.distanceTo(Vec3.atCenterOf(c)) > 4.4);
-			order.sort((a, b) -> Double.compare(eye.distanceToSqr(Vec3.atCenterOf(b)), eye.distanceToSqr(Vec3.atCenterOf(a))));
+			List<BlockPos> order = new ArrayList<>(depth.keySet());
+			order.removeIf(c -> !open(c) || tunnelSpace(c) || occupiedByPlayer(p, c) || eye.distanceTo(Vec3.atCenterOf(c)) > 4.4);
+			// Farthest from the tunnel first: each filled cell pushes the drops one cell further out.
+			order.sort((a, b) -> Integer.compare(depth.get(b), depth.get(a)));
 			if (order.isEmpty() || Inv.count(p, Inv::isPlug) < order.size()) return DONE;
 			List<Action> todo = new ArrayList<>();
 			for (BlockPos c : order) {
 				todo.add(new PlaceAction(c, PlaceAction.PLUG, SKIP));
-				todo.add(new WaitAction(2));
+				todo.add(new WaitAction(3));
 			}
-			todo.add(new WaitAction(Human.delay(4, 8)));
+			todo.add(new WaitAction(Human.delay(16, 24))); // pushed-out items drift slowly
 			todo.add(new CollectAction());
+			todo.add(this); // look once more (a drop may need a second push)
+			wait = 0;
 			status("광석 구멍 메우며 아이템 꺼내는 중");
 			pushFront(todo);
 			return DONE;

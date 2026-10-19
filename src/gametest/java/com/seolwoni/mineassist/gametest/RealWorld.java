@@ -80,6 +80,25 @@ final class RealWorld {
 		return y;
 	}
 
+	/** The nearest column (spiralling out from x/z) whose ground is dry land, not water or lava: {x, z}. */
+	static int[] dryLand(TestSingleplayerContext sp, int x, int z, int radius) {
+		return sp.getServer().computeOnServer(server -> {
+			var level = server.overworld();
+			for (int r = 0; r <= radius; r += 2) {
+				for (int dx = -r; dx <= r; dx += 2) {
+					for (int dz = -r; dz <= r; dz += 2) {
+						if (Math.max(Math.abs(dx), Math.abs(dz)) != r) continue;
+						int cx = x + dx, cz = z + dz;
+						int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, cx, cz);
+						BlockPos top = new BlockPos(cx, y - 1, cz);
+						if (level.getFluidState(top).isEmpty() && level.getFluidState(top.above()).isEmpty()) return new int[] {cx, cz};
+					}
+				}
+			}
+			return new int[] {x, z};
+		});
+	}
+
 	/** Height of the first free block above the ground (ignoring leaves). */
 	static int surface(TestSingleplayerContext sp, int x, int z) {
 		return sp.getServer().computeOnServer(server -> server.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z));
