@@ -599,7 +599,8 @@ public final class Miner {
 		private final BlockPos target;
 		private final boolean skippable;
 		private boolean started;
-		private int pre, post = -1, clears, fallWait;
+		private int pre, post = -1, clears, fallWait, stall;
+		private Vec3 lastPos;
 
 		WalkAction(BlockPos target) {
 			this(target, false);
@@ -656,6 +657,35 @@ public final class Miner {
 			if (Body.walkTo(p, target)) {
 				post = Human.delay(0, 3);
 				return RUN;
+			}
+			// Pressing on without getting anywhere: a block is in the way (one that came back or was never dug).
+			// Do not keep running into it for seconds: look at the way right away and dig what blocks it.
+			Vec3 now = p.position();
+			if (lastPos != null && now.distanceToSqr(lastPos) < 0.0004 && p.onGround()) stall++;
+			else stall = 0;
+			lastPos = now;
+			if (stall >= 10 && clears < 20) {
+				stall = 0;
+				List<BlockPos> blocked = blockers(p);
+				// The cell right in front of us on the way, too (feet and head).
+				double dx = target.getX() + 0.5 - now.x, dz = target.getZ() + 0.5 - now.z;
+				double len = Math.sqrt(dx * dx + dz * dz);
+				if (len > 0.3) {
+					BlockPos ahead = BlockPos.containing(now.x + dx / len * 0.8, now.y + 0.1, now.z + dz / len * 0.8);
+					for (BlockPos b : List.of(ahead, ahead.above())) {
+						// Only cells at the target's own height or above: never the step we are about to climb, never a floor.
+						if (b.getY() < target.getY() || b.getY() > target.getY() + 1) continue;
+						if (!blocked.contains(b) && !Blocks2.isTorch(b) && !Blocks2.isOpen(b) && !Blocks2.isFluid(b) && !b.equals(p.blockPosition().below())) blocked.add(b);
+					}
+				}
+				if (!blocked.isEmpty()) {
+					Body.release(mc);
+					clears++;
+					List<Action> digs = new ArrayList<>();
+					for (BlockPos b : blocked) digs.add(new MineAction(b, skippable ? SKIP : END));
+					pushFront(digs);
+					return RUN;
+				}
 			}
 			if (Body.walkTicks() > 200) {
 				Body.release(mc);
@@ -1057,6 +1087,14 @@ public final class Miner {
 				if (Chores.isJunk(p, ie.getItem())) continue;
 				if (reach.intersects(e.getBoundingBox())) continue;
 				BlockPos at = e.blockPosition();
+				// A drop in a small hole below our floor (a dug-out floor ore): stepping in means running at the edge
+				// and climbing out again. Filling the hole pushes the drop up to us instead, and leaves the floor whole.
+				if (!tunnelSpace(at) && at.getY() < home.getY() && Blocks2.isSolid(at.below()) && Blocks2.isOpen(at.above())
+						&& !Blocks2.isFluid(at) && !occupiedByPlayer(p, at) && at.distManhattan(home) <= 3) {
+					walks.add(new PlaceAction(at, PlaceAction.PLUG, SKIP));
+					walks.add(new WaitAction(Human.delay(6, 10)));
+					continue;
+				}
 				BlockPos best = null;
 				double bestD = Double.MAX_VALUE;
 				for (int dx = -1; dx <= 1; dx++) {
