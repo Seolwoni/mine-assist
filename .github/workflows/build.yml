@@ -37,6 +37,8 @@ jobs:
           ASSIST_GT: ${{ matrix.suite }}
         run: |
           sudo apt-get update -q > /dev/null && sudo apt-get install -y -q xvfb libgl1-mesa-dri mesa-utils > /dev/null
+          # Game assets come from Mojang's servers: retry a failed download before the test.
+          ./gradlew downloadAssets > /dev/null 2>&1 || (sleep 15; ./gradlew downloadAssets > /dev/null 2>&1) || (sleep 30; ./gradlew downloadAssets) || true
           set -o pipefail
           xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest --stacktrace 2>&1 | tee gametest.log
       - name: collect

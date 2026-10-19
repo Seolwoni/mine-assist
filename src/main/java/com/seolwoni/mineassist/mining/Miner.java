@@ -578,7 +578,7 @@ public final class Miner {
 		private final BlockPos target;
 		private final boolean skippable;
 		private boolean started;
-		private int pre, post = -1, clears;
+		private int pre, post = -1, clears, fallWait;
 
 		WalkAction(BlockPos target) {
 			this(target, false);
@@ -614,7 +614,7 @@ public final class Miner {
 				Body.resetWalk();
 				Body.newTurn();
 				List<BlockPos> blocked = blockers(p);
-				if (!blocked.isEmpty() && clears++ < 6) {
+				if (!blocked.isEmpty() && clears++ < 20) {
 					started = false;
 					List<Action> digs = new ArrayList<>();
 					for (BlockPos b : blocked) digs.add(new MineAction(b, skippable ? SKIP : END));
@@ -624,6 +624,14 @@ public final class Miner {
 			}
 			if (pre-- > 0) return RUN;
 			if (post >= 0) return post-- <= 0 ? DONE : RUN;
+			// Gravel or sand still falling nearby: wait for it to land, then look at the way again.
+			if (fallWait < 60 && !mc.level.getEntitiesOfClass(net.minecraft.world.entity.item.FallingBlockEntity.class,
+					new net.minecraft.world.phys.AABB(target).inflate(1.5, 4, 1.5)).isEmpty()) {
+				fallWait++;
+				Body.release(mc);
+				if (fallWait % 10 == 0) started = false; // re-check (and clear) the way once it has landed
+				return RUN;
+			}
 			if (Body.walkTo(p, target)) {
 				post = Human.delay(0, 3);
 				return RUN;
@@ -631,7 +639,7 @@ public final class Miner {
 			if (Body.walkTicks() > 200) {
 				Body.release(mc);
 				// Something may have fallen in while walking: look again before giving up.
-				if (!blockers(p).isEmpty() && clears < 6) {
+				if (!blockers(p).isEmpty() && clears < 20) {
 					started = false;
 					return RUN;
 				}
