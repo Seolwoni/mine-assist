@@ -31,10 +31,110 @@ public class MineRealTest implements FabricClientGameTest {
 	private final RealWorld.Timing timing = new RealWorld.Timing();
 	private final java.util.Set<Integer> staleSeen = new java.util.HashSet<>();
 	private int valuableLeft;
+	private final DropTracker drops = new DropTracker();
+
+	/**
+	 * Diagnosis only (changes nothing in the game): follows every ore drop from the moment it appears until it is
+	 * picked up or the test ends, and notes what the miner was doing whenever something happened to it.
+	 */
+	static final class DropTracker {
+		static final java.util.regex.Pattern VALUABLE = java.util.regex.Pattern.compile("(raw_\\w+|coal|diamond|emerald|lapis_lazuli|redstone|quartz|gold_nugget|amethyst_shard)");
+
+		static final class Drop {
+			int id, count, born, gone = -1;
+			String item, end = "";
+			BlockPos cell;
+			final List<String> story = new ArrayList<>();
+			boolean trapped;
+		}
+
+		final Map<Integer, Drop> all = new java.util.LinkedHashMap<>();
+
+		void scan(ClientGameTestContext context, TestSingleplayerContext sp, int tick) {
+			String status = context.computeOnClient(mc -> Miner.status());
+			sp.getServer().runOnServer(server -> {
+				var level = server.overworld();
+				var pl = server.getPlayerList().getPlayers().get(0);
+				java.util.Set<Integer> alive = new java.util.HashSet<>();
+				for (var ie : level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, pl.getBoundingBox().inflate(12))) {
+					String item = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(ie.getItem().getItem()).getPath();
+					if (!VALUABLE.matcher(item).matches()) continue;
+					alive.add(ie.getId());
+					BlockPos at = ie.blockPosition();
+					String block = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(level.getBlockState(at).getBlock()).getPath();
+					boolean inside = !level.getBlockState(at).getCollisionShape(level, at).isEmpty();
+					Drop d = all.get(ie.getId());
+					if (d == null) {
+						d = new Drop();
+						d.id = ie.getId();
+						d.item = item;
+						d.count = ie.getItem().getCount();
+						d.born = tick;
+						d.cell = at;
+						d.story.add("t" + tick + " appeared at " + at.toShortString() + (inside ? " INSIDE " + block : "") + " | player " + pl.blockPosition().toShortString() + " | " + status);
+						all.put(d.id, d);
+						continue;
+					}
+					d.count = ie.getItem().getCount();
+					if (!at.equals(d.cell)) {
+						d.story.add("t" + tick + " moved " + d.cell.toShortString() + " -> " + at.toShortString() + (inside ? " INSIDE " + block : "") + " | " + status);
+						d.cell = at;
+					}
+					if (inside && !d.trapped) {
+						d.story.add("t" + tick + " now INSIDE " + block + " at " + at.toShortString() + " | player " + pl.blockPosition().toShortString() + " | " + status);
+					}
+					d.trapped = inside;
+				}
+				for (Drop d : all.values()) {
+					if (d.gone >= 0 || alive.contains(d.id)) continue;
+					var e = level.getEntity(d.id);
+					if (e != null && e.isAlive()) continue; // just out of the scanned box
+					d.gone = tick;
+					double dist = pl.position().distanceTo(net.minecraft.world.phys.Vec3.atCenterOf(d.cell));
+					d.end = dist < 3.0 ? "picked up" : "gone " + String.format("%.1f", dist) + " blocks away";
+					d.story.add("t" + tick + " " + d.end + " | " + status);
+				}
+			});
+		}
+
+		void report(TestSingleplayerContext sp, List<String> log) {
+			// Whatever is still alive at the end was really lost.
+			sp.getServer().runOnServer(server -> {
+				for (Drop d : all.values()) {
+					if (d.gone >= 0) continue;
+					var e = server.overworld().getEntity(d.id);
+					if (e == null || !e.isAlive()) d.end = "gone (not seen)";
+					else d.end = "LOST";
+				}
+			});
+			int total = 0, lost = 0, late = 0;
+			Map<String, int[]> byFirst = new java.util.TreeMap<>();
+			for (Drop d : all.values()) {
+				total += d.count;
+				if (d.end.equals("picked up") && d.gone - d.born > 300) late += d.count;
+				if (!d.end.equals("LOST")) continue;
+				lost += d.count;
+				String born = d.story.get(0);
+				String what = born.substring(born.lastIndexOf('|') + 2);
+				String how = d.trapped ? "trapped inside a block" : "lying free";
+				byFirst.computeIfAbsent(how + " / appeared while: " + what, k -> new int[1])[0] += d.count;
+			}
+			log.add("DROPS: " + total + " ore items seen, " + lost + " lost (" + (total > 0 ? String.format("%.1f", 100.0 * lost / total) : "0") + "%), "
+					+ late + " picked up only after more than 15 s (counted as left behind by the old check)");
+			for (var e : byFirst.entrySet()) log.add("  lost " + e.getValue()[0] + ": " + e.getKey());
+			for (Drop d : all.values()) {
+				if (!d.end.equals("LOST")) continue;
+				log.add("  LOST " + d.item + " x" + d.count + ":");
+				for (String st : d.story) log.add("      " + st);
+			}
+		}
+	}
 
 	@Override
 	public void runTest(ClientGameTestContext context) {
-		String suite = RealWorld.suite();
+		String run = RealWorld.suite();
+		// "-2" runs the same place a second time (to see how much the result varies between runs).
+		String suite = run.replaceAll("-2$", "");
 		ResourceKey<Biome> biome = switch (suite) {
 			case "real-plains", "real-deep" -> Biomes.PLAINS;
 			case "real-forest" -> Biomes.FOREST;
@@ -104,7 +204,7 @@ public class MineRealTest implements FabricClientGameTest {
 				if (!Miner.start(mc)) failures.add("Miner.start returned false");
 			});
 			log.add("target y " + (deep ? -54 : startY - 30) + ", main 16, branches 5 every 3");
-			context.takeScreenshot(suite + "-00-start");
+			context.takeScreenshot(run + "-00-start");
 
 			int ticks = 0, shots = 1;
 			final int limit = 20 * 60 * (deep ? 40 : 25);
@@ -112,7 +212,10 @@ public class MineRealTest implements FabricClientGameTest {
 			float minHealth = 20f;
 			while (running && ticks < limit) {
 				long t0 = System.nanoTime();
-				context.waitTicks(40);
+				for (int k = 0; k < 8; k++) {
+					context.waitTicks(5);
+					drops.scan(context, sp, ticks + 5 * (k + 1));
+				}
 				timing.add(System.nanoTime() - t0);
 				ticks += 40;
 				final int t = ticks;
@@ -137,15 +240,16 @@ public class MineRealTest implements FabricClientGameTest {
 					if (st.matches("minecraft:(raw_\\w+|coal|diamond|emerald|lapis_lazuli|redstone|quartz|gold_nugget|amethyst_shard).*")) valuableLeft++;
 				}
 				running = context.computeOnClient(mc -> MineConfig.get().running);
-				if (ticks % 600 == 0) context.takeScreenshot(String.format("%s-%03d-s%d", suite, shots++, ticks / 20));
+				if (ticks % 600 == 0) context.takeScreenshot(String.format("%s-%03d-s%d", run, shots++, ticks / 20));
 			}
-			context.takeScreenshot(suite + "-99-end");
+			context.takeScreenshot(run + "-99-end");
 			String stop = context.computeOnClient(mc -> Miner.lastStop);
 			log.add("stopped after " + ticks + " ticks (" + ticks / 20 + " s): " + stop);
 			log.add(timing.summary() + ", server tick " + String.format("%.1f", RealWorld.mspt(sp)) + " ms");
 			log.add(com.seolwoni.assistpath.AssistPath.Stats.summary());
 			log.add("lowest health " + minHealth);
 			log.add("valuable drops left behind: " + valuableLeft);
+			drops.report(sp, log);
 			for (String n : context.computeOnClient(mc -> new ArrayList<>(Miner.pocketLog))) log.add("  pocket: " + n);
 			if (valuableLeft > 2) failures.add(valuableLeft + " ore drops were left lying where they could not be picked up");
 			if (running) {
