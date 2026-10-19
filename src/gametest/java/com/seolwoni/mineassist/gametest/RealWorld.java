@@ -65,8 +65,7 @@ final class RealWorld {
 	/** Loads the chunks around a place and puts the player on the ground there. Returns the ground (feet) height. */
 	static int goTo(ClientGameTestContext context, TestSingleplayerContext sp, int x, int z, int radius) {
 		cmd(sp, "forceload add " + (x - radius) + " " + (z - radius) + " " + (x + radius) + " " + (z + radius));
-		cmd(sp, "tp @a " + (x + 0.5) + " 320 " + (z + 0.5));
-		context.waitTicks(40);
+		// The height is read on the server (that generates the chunk), so the player is put straight on the ground.
 		int y = surface(sp, x, z);
 		cmd(sp, "tp @a " + (x + 0.5) + " " + y + " " + (z + 0.5));
 		context.waitTicks(40);
