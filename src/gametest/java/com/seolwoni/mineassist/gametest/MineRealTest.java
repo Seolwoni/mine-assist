@@ -47,7 +47,7 @@ public class MineRealTest implements FabricClientGameTest {
 			BlockPos b = RealWorld.findBiome(sp, biome, from);
 			if (b == null) {
 				failures.add("biome not found: " + biome);
-				return;
+				throw new AssertionError("biome not found: " + biome);
 			}
 			int x = b.getX(), z = b.getZ();
 			int g = RealWorld.goTo(context, sp, x, z, 64);
@@ -168,6 +168,14 @@ public class MineRealTest implements FabricClientGameTest {
 				return sb.toString();
 			});
 			log.add("chest: " + inChest);
+			log.add("inventory: " + context.computeOnClient(mc -> {
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < 36; i++) {
+					ItemStack st = mc.player.getInventory().getItem(i);
+					if (!st.isEmpty()) sb.append(st.getItem()).append(" x").append(st.getCount()).append(", ");
+				}
+				return sb.toString();
+			}));
 		} catch (Throwable t) {
 			failures.add("exception: " + t);
 			throw t;
