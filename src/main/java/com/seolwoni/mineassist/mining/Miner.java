@@ -48,6 +48,8 @@ public final class Miner {
 
 	static JobState job = new JobState();
 	static Geo geo;
+	/** Ore blocks we dug out: their holes are not caves, so they are never walled or roofed over (drops lie there). */
+	static final Set<BlockPos> minedOre = new HashSet<>();
 	static Loc here = Loc.origin();
 	private static final ActionQueue queue = new ActionQueue(Miner::onFail);
 	private static String status = "꺼짐";
@@ -129,6 +131,7 @@ public final class Miner {
 				return false;
 			}
 			geo = new Geo(job);
+			minedOre.clear();
 			// Jobs saved by 1.2.3 and older started with mainK = 1 and would skip main step 1.
 			if (job.stairsDone < geo.stairs && job.mainK == 1) job.mainK = 0;
 			here = Loc.origin();
@@ -156,6 +159,7 @@ public final class Miner {
 			job.branchSpacing = cfg.branchSpacing;
 			job.save();
 			geo = new Geo(job);
+			minedOre.clear();
 			here = Loc.origin();
 			Alerts.actionBar("채광 시작: " + geo.d.getName() + " 방향, Y " + job.targetY, 0xFF55FF55);
 		}
@@ -489,6 +493,8 @@ public final class Miner {
 				if (tunnelSpace(q) || !seen.add(q)) continue;
 				// Only where there really is a hole (a cave), and never in front of us: that is the next dig.
 				if (dir == geo.d) continue;
+				// A hole we dug for ore may still hold its drops: closing it would seal them in.
+				if (minedOre.contains(q)) continue;
 				add(new PlaceAction(q, PlaceAction.WALL, SKIP));
 			}
 		}
@@ -881,6 +887,9 @@ public final class Miner {
 					if (attempts == 0) wasFluid = Blocks2.isFluid(pos);
 					if (block() && !Blocks2.isOpen(pos) && !Blocks2.isFluid(pos)) return DONE;
 					if (kind == WALL && (Blocks2.isTorch(pos) || Inv.count(p, Inv::isPlug) <= WALL_RESERVE)) return DONE;
+					// Never wall a drop in (an ore that dropped into a cave, a pocket we have not emptied yet).
+					if (kind == WALL && !mc.level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new AABB(pos),
+							ie -> !Chores.isJunk(p, ie.getItem())).isEmpty()) return DONE;
 					if (torchKind() && (!Blocks2.isOpen(pos) || Blocks2.isFluid(pos))) return DONE;
 					if (block() && occupiedByPlayer(p, pos)) return DONE;
 					if (!findSupport(p) && (kind == PLUG || kind == WALL) && bridges < 3 && Inv.count(p, Inv::isPlug) > 0) {
@@ -1309,6 +1318,7 @@ public final class Miner {
 				}
 				MineAction m = new MineAction(o, SKIP);
 				m.ore = true;
+				minedOre.add(o.immutable());
 				todo.add(m);
 				// Ore dug out of the floor leaves a hole: put a block back so we never step into it.
 				if (o.getY() < feetY) todo.add(new PlaceAction(o, PlaceAction.PLUG, SKIP));
