@@ -97,6 +97,10 @@ public class MineRealTest implements FabricClientGameTest {
 			});
 		}
 
+		int total, lost;
+		final List<String> lostValuable = new ArrayList<>();
+		static final java.util.regex.Pattern PRECIOUS = java.util.regex.Pattern.compile("(raw_iron|raw_gold|diamond|emerald|lapis_lazuli|redstone|gold_nugget|quartz)");
+
 		void report(TestSingleplayerContext sp, List<String> log) {
 			// Whatever is still alive at the end was really lost.
 			sp.getServer().runOnServer(server -> {
@@ -107,13 +111,16 @@ public class MineRealTest implements FabricClientGameTest {
 					else d.end = "LOST";
 				}
 			});
-			int total = 0, lost = 0, late = 0;
+			int late = 0;
+			total = 0;
+			lost = 0;
 			Map<String, int[]> byFirst = new java.util.TreeMap<>();
 			for (Drop d : all.values()) {
 				total += d.count;
 				if (d.end.equals("picked up") && d.gone - d.born > 300) late += d.count;
 				if (!d.end.equals("LOST")) continue;
 				lost += d.count;
+				if (PRECIOUS.matcher(d.item).matches()) lostValuable.add(d.item + " x" + d.count);
 				String born = d.story.get(0);
 				String what = born.substring(born.lastIndexOf('|') + 2);
 				String how = d.trapped ? "trapped inside a block" : "lying free";
@@ -248,10 +255,13 @@ public class MineRealTest implements FabricClientGameTest {
 			log.add(timing.summary() + ", server tick " + String.format("%.1f", RealWorld.mspt(sp)) + " ms");
 			log.add(com.seolwoni.assistpath.AssistPath.Stats.summary());
 			log.add("lowest health " + minHealth);
-			log.add("valuable drops left behind: " + valuableLeft);
 			drops.report(sp, log);
 			for (String n : context.computeOnClient(mc -> new ArrayList<>(Miner.pocketLog))) log.add("  pocket: " + n);
-			if (valuableLeft > 2) failures.add(valuableLeft + " ore drops were left lying where they could not be picked up");
+			// Lost = never picked up by the end (followed one by one). Coal and copper may lose a little; the rest nothing.
+			log.add("(old check, drops lying 15 s or more, many picked up later: " + valuableLeft + ")");
+			if (drops.total > 0 && drops.lost * 100 > drops.total * 5) failures.add(drops.lost + " of " + drops.total + " ore items lost (more than 5%)");
+			if (!drops.lostValuable.isEmpty()) failures.add("valuable drops lost: " + drops.lostValuable);
+			for (String n : context.computeOnClient(mc -> Miner.leftOverVoid.stream().map(BlockPos::toShortString).toList())) log.add("  ore left in place (open below): " + n);
 			if (running) {
 				failures.add("did not finish within " + limit + " ticks");
 				context.runOnClient(mc -> Miner.stop(null, null, false));

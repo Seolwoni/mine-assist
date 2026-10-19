@@ -50,6 +50,8 @@ public final class Miner {
 	static Geo geo;
 	/** Ore blocks we dug out: their holes are not caves, so they are never walled or roofed over (drops lie there). */
 	static final Set<BlockPos> minedOre = new HashSet<>();
+	/** Ores left in place because their drops would fall into a cave or lava below (shown to the player). */
+	public static final Set<BlockPos> leftOverVoid = new java.util.LinkedHashSet<>();
 	static Loc here = Loc.origin();
 	private static final ActionQueue queue = new ActionQueue(Miner::onFail);
 	private static String status = "꺼짐";
@@ -132,6 +134,7 @@ public final class Miner {
 			}
 			geo = new Geo(job);
 			minedOre.clear();
+			leftOverVoid.clear();
 			// Jobs saved by 1.2.3 and older started with mainK = 1 and would skip main step 1.
 			if (job.stairsDone < geo.stairs && job.mainK == 1) job.mainK = 0;
 			here = Loc.origin();
@@ -160,6 +163,7 @@ public final class Miner {
 			job.save();
 			geo = new Geo(job);
 			minedOre.clear();
+			leftOverVoid.clear();
 			here = Loc.origin();
 			Alerts.actionBar("채광 시작: " + geo.d.getName() + " 방향, Y " + job.targetY, 0xFF55FF55);
 		}
@@ -181,7 +185,7 @@ public final class Miner {
 	public static void stop(String title, String sub, boolean alert) {
 		lastStop = (title == null ? "" : title) + (sub == null ? "" : " / " + sub);
 		com.seolwoni.mineassist.hud.MineStats ms = com.seolwoni.mineassist.hud.MineStats.session;
-		com.seolwoni.assistcore.log.UsageLog.end("mine", lastStop.isEmpty() ? "직접 껐어요" : lastStop, "캔 블록 " + ms.blocks + ", 광석 " + job.oresMined + ", 막은 용암·물 " + ms.plugs + ", 상자 왕복 " + ms.trips
+		com.seolwoni.assistcore.log.UsageLog.end("mine", lastStop.isEmpty() ? "직접 껐어요" : lastStop, "캔 블록 " + ms.blocks + ", 광석 " + job.oresMined + ", 막은 용암·물 " + ms.plugs + ", 상자 왕복 " + ms.trips + (leftOverVoid.isEmpty() ? "" : ", 아래가 비어 남겨둔 광석 " + leftOverVoid.size() + "개")
 				+ "번, 계단 " + job.stairsDone + ", 가운데 " + job.mainK + " | " + com.seolwoni.assistpath.AssistPath.Stats.summary());
 		Minecraft mc = Minecraft.getInstance();
 		MineConfig cfg = MineConfig.get();
@@ -1318,6 +1322,18 @@ public final class Miner {
 				String id = Blocks2.id(o);
 				// Never dig the floor out from under our own feet (we would drop into the hole and get stuck there).
 				if (o.getY() < feetY && body.maxX > o.getX() && body.minX < o.getX() + 1 && body.maxZ > o.getZ() && body.minZ < o.getZ() + 1) continue;
+				// Nothing under the ore (a cave, a drop, lava): its drops would fall where we cannot follow safely.
+				// Leave it in place and say where it is, so the player can take it by hand.
+				BlockPos under = o.below();
+				if (!tunnelSpace(under) && !found.contains(under) && (Blocks2.isOpen(under) || Blocks2.isFluid(under))) {
+					if (leftOverVoid.add(o.immutable())) {
+						String where = o.getX() + ", " + o.getY() + ", " + o.getZ();
+						pocketNote("left " + Blocks2.id(o) + " at " + where + ": open below");
+						Alerts.actionBar("아래가 비어 있어 남겨둔 광석: " + where, 0xFFFFAA55);
+						com.seolwoni.assistcore.log.UsageLog.event("mine", "아래가 비어 있어 남겨둔 광석 " + Blocks2.id(o) + " (" + where + ")");
+					}
+					continue;
+				}
 				if (!alerted && cfg.alertOres.contains(id)) {
 					alerted = true;
 					String name = Blocks2.state(o).getBlock().getName().getString();
