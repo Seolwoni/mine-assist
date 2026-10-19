@@ -135,6 +135,28 @@ public class MineRealTest implements FabricClientGameTest {
 				for (Map.Entry<String, MineStats.Entry> e : st.ores.entrySet()) log.add("  ore " + e.getKey() + ": " + e.getValue().count);
 				log.add("job: stairs " + Miner.job().stairsDone + ", main step " + Miner.job().mainK + ", ores " + Miner.job().oresMined);
 			});
+			if (!stop.startsWith("채광 완료")) {
+				// What it was looking at when it gave up: the blocks around the player (x across, y down to up).
+				BlockPos me = context.computeOnClient(mc -> mc.player.blockPosition());
+				log.add("blocks around " + me.toShortString() + " (rows: z-1, z, z+1; each row x-3..x+3; levels y-3..y+2):");
+				List<String> dump = sp.getServer().computeOnServer(server -> {
+					List<String> out = new ArrayList<>();
+					for (int dy = 2; dy >= -3; dy--) {
+						StringBuilder sb = new StringBuilder("  y" + (me.getY() + dy) + ": ");
+						for (int dz = -1; dz <= 1; dz++) {
+							for (int dx = -3; dx <= 3; dx++) {
+								var st = server.overworld().getBlockState(me.offset(dx, dy, dz));
+								String id = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(st.getBlock()).getPath();
+								sb.append(id.equals("air") ? "." : id.equals("cave_air") ? ":" : id.substring(0, Math.min(4, id.length()))).append(' ');
+							}
+							sb.append("| ");
+						}
+						out.add(sb.toString());
+					}
+					return out;
+				});
+				log.addAll(dump);
+			}
 			String inChest = sp.getServer().computeOnServer(server -> {
 				StringBuilder sb = new StringBuilder();
 				if (server.overworld().getBlockEntity(chest) instanceof Container ct) {
