@@ -35,9 +35,16 @@ final class RealWorld {
 		return s == null || s.isBlank() ? "flat" : s.trim();
 	}
 
+	/** Other fixed seeds, so one lucky world does not hide a problem. */
+	static final String SEED2 = "seolwoni-deep", SEED3 = "seolwoni-sea";
+
 	static TestSingleplayerContext create(ClientGameTestContext context) {
+		return create(context, SEED);
+	}
+
+	static TestSingleplayerContext create(ClientGameTestContext context, String seed) {
 		return context.worldBuilder().setUseConsistentSettings(false).adjustSettings(c -> {
-			c.setSeed(SEED);
+			c.setSeed(seed);
 			c.setGenerateStructures(true);
 			c.setDifficulty(Difficulty.PEACEFUL);
 			c.getGameRules().set(GameRules.ADVANCE_TIME, false, null);

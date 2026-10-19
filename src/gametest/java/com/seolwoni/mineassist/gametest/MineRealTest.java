@@ -30,21 +30,24 @@ public class MineRealTest implements FabricClientGameTest {
 	private final List<String> failures = new ArrayList<>();
 	private final RealWorld.Timing timing = new RealWorld.Timing();
 	private final java.util.Set<Integer> staleSeen = new java.util.HashSet<>();
+	private int valuableLeft;
 
 	@Override
 	public void runTest(ClientGameTestContext context) {
 		String suite = RealWorld.suite();
 		ResourceKey<Biome> biome = switch (suite) {
-			case "real-plains" -> Biomes.PLAINS;
+			case "real-plains", "real-deep" -> Biomes.PLAINS;
 			case "real-forest" -> Biomes.FOREST;
 			default -> null;
 		};
 		if (biome == null) return;
-		try (TestSingleplayerContext sp = RealWorld.create(context)) {
+		// real-deep: another world, all the way down to diamond level (deepslate, lava lakes, big caves).
+		boolean deep = suite.equals("real-deep");
+		try (TestSingleplayerContext sp = RealWorld.create(context, deep ? RealWorld.SEED2 : RealWorld.SEED)) {
 			sp.getConnection().waitForChunksRender();
 			RealWorld.setup(sp);
 			// Start a little away from spawn so the two suites are different places.
-			BlockPos from = suite.equals("real-plains") ? new BlockPos(300, 64, 0) : new BlockPos(-300, 64, 300);
+			BlockPos from = deep ? BlockPos.ZERO : suite.equals("real-plains") ? new BlockPos(300, 64, 0) : new BlockPos(-300, 64, 300);
 			BlockPos b = RealWorld.findBiome(sp, biome, from);
 			if (b == null) {
 				failures.add("biome not found: " + biome);
@@ -60,6 +63,7 @@ public class MineRealTest implements FabricClientGameTest {
 			RealWorld.cmd(sp, "give @a minecraft:diamond_pickaxe");
 			RealWorld.cmd(sp, "give @a minecraft:diamond_pickaxe");
 			RealWorld.cmd(sp, "give @a minecraft:torch 64");
+			if (deep) RealWorld.cmd(sp, "give @a minecraft:torch 64");
 			RealWorld.cmd(sp, "give @a minecraft:cobblestone 128");
 			RealWorld.cmd(sp, "effect give @a minecraft:night_vision infinite 0 true");
 			RealWorld.cmd(sp, "effect give @a minecraft:saturation infinite 0 true");
@@ -73,7 +77,7 @@ public class MineRealTest implements FabricClientGameTest {
 				MineConfig c = MineConfig.get();
 				c.modEnabled = true;
 				c.resume = false;
-				c.targetY = startY - 30;
+				c.targetY = deep ? -54 : startY - 30;
 				c.mainLength = 16;
 				c.branchLength = 5;
 				c.branchSpacing = 3;
@@ -96,11 +100,11 @@ public class MineRealTest implements FabricClientGameTest {
 				mc.player.setXRot(10f);
 				if (!Miner.start(mc)) failures.add("Miner.start returned false");
 			});
-			log.add("target y " + (startY - 30) + ", main 16, branches 5 every 3");
+			log.add("target y " + (deep ? -54 : startY - 30) + ", main 16, branches 5 every 3");
 			context.takeScreenshot(suite + "-00-start");
 
 			int ticks = 0, shots = 1;
-			final int limit = 20 * 60 * 40;
+			final int limit = 20 * 60 * (deep ? 48 : 30);
 			boolean running = true;
 			float minHealth = 20f;
 			while (running && ticks < limit) {
@@ -125,7 +129,10 @@ public class MineRealTest implements FabricClientGameTest {
 					}
 					return out;
 				});
-				for (String st : stale) log.add("    left behind: " + st);
+				for (String st : stale) {
+					log.add("    left behind: " + st);
+					if (st.matches("minecraft:(raw_\\w+|coal|diamond|emerald|lapis_lazuli|redstone|quartz|gold_nugget|amethyst_shard).*")) valuableLeft++;
+				}
 				running = context.computeOnClient(mc -> MineConfig.get().running);
 				if (ticks % 600 == 0) context.takeScreenshot(String.format("%s-%03d-s%d", suite, shots++, ticks / 20));
 			}
@@ -135,6 +142,8 @@ public class MineRealTest implements FabricClientGameTest {
 			log.add(timing.summary() + ", server tick " + String.format("%.1f", RealWorld.mspt(sp)) + " ms");
 			log.add(com.seolwoni.assistpath.AssistPath.Stats.summary());
 			log.add("lowest health " + minHealth);
+			log.add("valuable drops left behind: " + valuableLeft);
+			if (valuableLeft > 0) failures.add(valuableLeft + " ore drops were left lying where they could not be picked up");
 			if (running) {
 				failures.add("did not finish within " + limit + " ticks");
 				context.runOnClient(mc -> Miner.stop(null, null, false));

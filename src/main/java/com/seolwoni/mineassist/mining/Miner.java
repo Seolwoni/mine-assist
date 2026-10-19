@@ -1067,6 +1067,55 @@ public final class Miner {
 	}
 
 	/** After stepping into a new column, mines the target ores showing in its walls, floor and ceiling. */
+	/**
+	 * After digging out an ore vein: if drops are lying in the dug-out pockets (out of reach from the tunnel),
+	 * fill the pockets with filler blocks from the farthest cell to the nearest. An item inside a block is pushed
+	 * to the nearest free space, so cell by cell the drops are moved out into the tunnel, where we pick them up.
+	 */
+	static final class PocketFillAction implements Action {
+		private final List<BlockPos> cells;
+		private int wait = -1;
+
+		PocketFillAction(List<BlockPos> cells) {
+			this.cells = cells;
+		}
+
+		@Override
+		public int failMode() {
+			return SKIP;
+		}
+
+		@Override
+		public int tick(Minecraft mc, LocalPlayer p) {
+			if (wait < 0) wait = Human.delay(8, 14); // let the drops settle first
+			if (wait-- > 0) return RUN;
+			java.util.Set<BlockPos> pocket = new java.util.HashSet<>();
+			for (BlockPos c : cells) if (!tunnelSpace(c) && (Blocks2.isOpen(c) && !Blocks2.isFluid(c))) pocket.add(c);
+			if (pocket.isEmpty()) return DONE;
+			boolean dropsInside = false;
+			for (Entity e : mc.level.getEntities(p, p.getBoundingBox().inflate(6))) {
+				if (e instanceof net.minecraft.world.entity.item.ItemEntity ie && ie.isAlive() && !Chores.isJunk(p, ie.getItem())
+						&& pocket.contains(ie.blockPosition())) dropsInside = true;
+			}
+			if (!dropsInside) return DONE;
+			Vec3 eye = p.getEyePosition();
+			List<BlockPos> order = new ArrayList<>(pocket);
+			order.removeIf(c -> occupiedByPlayer(p, c) || eye.distanceTo(Vec3.atCenterOf(c)) > 4.4);
+			order.sort((a, b) -> Double.compare(eye.distanceToSqr(Vec3.atCenterOf(b)), eye.distanceToSqr(Vec3.atCenterOf(a))));
+			if (order.isEmpty() || Inv.count(p, Inv::isPlug) < order.size()) return DONE;
+			List<Action> todo = new ArrayList<>();
+			for (BlockPos c : order) {
+				todo.add(new PlaceAction(c, PlaceAction.PLUG, SKIP));
+				todo.add(new WaitAction(2));
+			}
+			todo.add(new WaitAction(Human.delay(4, 8)));
+			todo.add(new CollectAction());
+			status("광석 구멍 메우며 아이템 꺼내는 중");
+			pushFront(todo);
+			return DONE;
+		}
+	}
+
 	static final class OreScanAction implements Action {
 		private final List<BlockPos> column;
 		private boolean scanned;
@@ -1120,6 +1169,9 @@ public final class Miner {
 				// Ore dug out of the floor leaves a hole: put a block back so we never step into it.
 				if (o.getY() < feetY) todo.add(new PlaceAction(o, PlaceAction.PLUG, SKIP));
 			}
+			// Drops that land in the ore pockets beside the tunnel are out of reach: fill the pockets from the far
+			// end inwards, which pushes the items out towards us, then pick them up.
+			todo.add(new PocketFillAction(new ArrayList<>(found)));
 			status("광석 캐는 중");
 			pushFront(todo);
 			return RUN;
