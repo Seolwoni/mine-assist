@@ -1090,6 +1090,24 @@ public final class Miner {
 		if (pocketLog.size() < 40) pocketLog.add(s);
 	}
 
+	/** Waits until no drop is inside the given (just filled) cell any more, at most a second and a half. */
+	static final class ItemsOutAction implements Action {
+		private final BlockPos cell;
+		private int t;
+
+		ItemsOutAction(BlockPos cell) {
+			this.cell = cell;
+		}
+
+		@Override
+		public int tick(Minecraft mc, LocalPlayer p) {
+			if (++t < 4) return RUN;
+			AABB box = new AABB(cell);
+			boolean inside = !mc.level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, box).isEmpty();
+			return inside && t < 30 ? RUN : DONE;
+		}
+	}
+
 	static final class PocketFillAction implements Action {
 		private final List<BlockPos> cells;
 		private int wait = -1, rounds;
@@ -1160,7 +1178,8 @@ public final class Miner {
 			List<Action> todo = new ArrayList<>();
 			for (BlockPos c : order) {
 				todo.add(new PlaceAction(c, PlaceAction.PLUG, SKIP));
-				todo.add(new WaitAction(3));
+				// Give the pushed item time to drift into the next cell before that one is filled too.
+				todo.add(new ItemsOutAction(c));
 			}
 			todo.add(new WaitAction(Human.delay(16, 24))); // pushed-out items drift slowly
 			todo.add(new CollectAction());
