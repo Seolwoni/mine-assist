@@ -85,8 +85,12 @@ public class MineGameTest implements FabricClientGameTest {
 			int ticks = 0;
 			final int limit = 20 * 60 * 12;
 			boolean running = true;
+			MineRealTest.DropTracker drops = new MineRealTest.DropTracker();
 			while (running && ticks < limit) {
-				context.waitTicks(40);
+				for (int k = 0; k < 8; k++) {
+					context.waitTicks(5);
+					drops.scan(context, sp, ticks + 5 * (k + 1));
+				}
 				ticks += 40;
 				String line = context.computeOnClient(mc -> String.format("t=%5d pos=%s status=%s",
 						0, mc.player.blockPosition().toShortString(), Miner.status()));
@@ -124,6 +128,7 @@ public class MineGameTest implements FabricClientGameTest {
 				return n;
 			});
 			log.add("raw iron in inventory: " + iron + ", in chest: " + stored);
+			drops.report(sp, log);
 			for (String n : context.computeOnClient(mc -> new java.util.ArrayList<>(com.seolwoni.mineassist.mining.Miner.pocketLog))) log.add("  pocket: " + n);
 			if (iron + stored < 3) failures.add("picked up only " + (iron + stored) + " of 3 raw iron");
 			if (stored < 3 && !running) failures.add("finished without putting the raw iron in the chest");

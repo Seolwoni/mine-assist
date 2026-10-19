@@ -185,7 +185,7 @@ public final class Miner {
 	public static void stop(String title, String sub, boolean alert) {
 		lastStop = (title == null ? "" : title) + (sub == null ? "" : " / " + sub);
 		com.seolwoni.mineassist.hud.MineStats ms = com.seolwoni.mineassist.hud.MineStats.session;
-		com.seolwoni.assistcore.log.UsageLog.end("mine", lastStop.isEmpty() ? "직접 껐어요" : lastStop, "캔 블록 " + ms.blocks + ", 광석 " + job.oresMined + ", 막은 용암·물 " + ms.plugs + ", 상자 왕복 " + ms.trips + (leftOverVoid.isEmpty() ? "" : ", 아래가 비어 남겨둔 광석 " + leftOverVoid.size() + "개")
+		com.seolwoni.assistcore.log.UsageLog.end("mine", lastStop.isEmpty() ? "직접 껐어요" : lastStop, "캔 블록 " + ms.blocks + ", 광석 " + job.oresMined + ", 막은 용암·물 " + ms.plugs + ", 상자 왕복 " + ms.trips + (leftOverVoid.isEmpty() ? "" : ", 옆·아래가 비어 남겨둔 광석 " + leftOverVoid.size() + "개")
 				+ "번, 계단 " + job.stairsDone + ", 가운데 " + job.mainK + " | " + com.seolwoni.assistpath.AssistPath.Stats.summary());
 		Minecraft mc = Minecraft.getInstance();
 		MineConfig cfg = MineConfig.get();
@@ -1324,13 +1324,19 @@ public final class Miner {
 				if (o.getY() < feetY && body.maxX > o.getX() && body.minX < o.getX() + 1 && body.maxZ > o.getZ() && body.minZ < o.getZ() + 1) continue;
 				// Nothing under the ore (a cave, a drop, lava): its drops would fall where we cannot follow safely.
 				// Leave it in place and say where it is, so the player can take it by hand.
-				BlockPos under = o.below();
-				if (!tunnelSpace(under) && !found.contains(under) && (Blocks2.isOpen(under) || Blocks2.isFluid(under))) {
+				// A floor ore is plugged right after digging, and the plug pushes its drops to the nearest open side:
+				// with a cave beside it, that is into the cave. So for floor ores the sides count as well.
+				boolean escape = false;
+				for (Direction dir : o.getY() < feetY ? new Direction[] {Direction.DOWN, Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST} : new Direction[] {Direction.DOWN}) {
+					BlockPos n = o.relative(dir);
+					if (!tunnelSpace(n) && !found.contains(n) && (Blocks2.isOpen(n) || Blocks2.isFluid(n))) escape = true;
+				}
+				if (escape) {
 					if (leftOverVoid.add(o.immutable())) {
 						String where = o.getX() + ", " + o.getY() + ", " + o.getZ();
-						pocketNote("left " + Blocks2.id(o) + " at " + where + ": open below");
-						Alerts.actionBar("아래가 비어 있어 남겨둔 광석: " + where, 0xFFFFAA55);
-						com.seolwoni.assistcore.log.UsageLog.event("mine", "아래가 비어 있어 남겨둔 광석 " + Blocks2.id(o) + " (" + where + ")");
+						pocketNote("left " + Blocks2.id(o) + " at " + where + ": open below or beside");
+						Alerts.actionBar("옆·아래가 비어 있어 남겨둔 광석: " + where, 0xFFFFAA55);
+						com.seolwoni.assistcore.log.UsageLog.event("mine", "옆·아래가 비어 있어 남겨둔 광석 " + Blocks2.id(o) + " (" + where + ")");
 					}
 					continue;
 				}
