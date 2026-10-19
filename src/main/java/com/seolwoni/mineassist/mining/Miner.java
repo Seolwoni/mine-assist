@@ -110,6 +110,12 @@ public final class Miner {
 
 	/** Called when the player turns the miner on in the settings. Returns false if it could not start. */
 	public static boolean start(Minecraft mc) {
+		{
+			var dc = com.seolwoni.mineassist.config.MineConfig.get();
+			com.seolwoni.assistpath.defense.Defense.config.enabled = dc.mobMode <= 1;
+			com.seolwoni.assistpath.defense.Defense.config.attack = dc.mobMode == 1;
+			com.seolwoni.assistpath.defense.Defense.reset(mc);
+		}
 		LocalPlayer p = mc.player;
 		MineConfig cfg = MineConfig.get();
 		if (p == null || mc.level == null) return false;
@@ -238,6 +244,15 @@ public final class Miner {
 		}
 		if (mc.isPaused()) return;
 		if (!safety(mc, p, cfg)) return;
+		// Defense (Assist Path): while a creeper, an arrow or a mob needs dealing with, it has the controls.
+		if (cfg.mobMode <= 1 && com.seolwoni.assistpath.defense.Defense.guard(mc, p)) {
+			String why = com.seolwoni.assistpath.defense.Defense.giveUp();
+			if (why != null) {
+				com.seolwoni.assistpath.defense.Defense.reset(mc);
+				stop(why, "싸우기를 켜거나 안전한 곳에서 다시 켜주세요", true);
+			}
+			return;
+		}
 		job.ticks++;
 		com.seolwoni.mineassist.hud.MineStats.tick();
 
@@ -262,7 +277,7 @@ public final class Miner {
 			stop("체력이 낮아요", "채광을 멈췄어요", true);
 			return false;
 		}
-		if (cfg.stopOnMob && job.ticks % 10 == 0) {
+		if (cfg.mobMode == 2 && job.ticks % 10 == 0) {
 			AABB box = p.getBoundingBox().inflate(cfg.mobRange);
 			for (Entity e : mc.level.getEntities(p, box)) {
 				if (e instanceof Enemy && e.isAlive()) {

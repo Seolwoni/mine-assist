@@ -254,6 +254,7 @@ public class MineRealTest implements FabricClientGameTest {
 			log.add("stopped after " + ticks + " ticks (" + ticks / 20 + " s): " + stop);
 			log.add(timing.summary() + ", server tick " + String.format("%.1f", RealWorld.mspt(sp)) + " ms");
 			log.add(com.seolwoni.assistpath.AssistPath.Stats.summary());
+			log.add(context.computeOnClient(mc -> com.seolwoni.assistpath.defense.Defense.Stats.summary() + " giveUp=" + com.seolwoni.assistpath.defense.Defense.giveUp() + " night=" + RealWorld.night()));
 			log.add("lowest health " + minHealth);
 			drops.report(sp, log);
 			for (String n : context.computeOnClient(mc -> new ArrayList<>(Miner.pocketLog))) log.add("  pocket: " + n);

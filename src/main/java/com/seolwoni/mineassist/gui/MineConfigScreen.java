@@ -213,7 +213,12 @@ public class MineConfigScreen extends Screen {
 
 	private void safety(int left, int right, int y) {
 		MineConfig c = c();
-		toggle(left, y, 150, "몹 오면 정지", () -> c.stopOnMob, v -> c.stopOnMob = v);
+		addRenderableWidget(net.minecraft.client.gui.components.Button.builder(net.minecraft.network.chat.Component.literal("몹: " + new String[] {"피하기", "피하고 싸우기", "멈추기", "무시"}[Math.max(0, Math.min(3, c.mobMode))]), b -> {
+			c.mobMode = (c.mobMode + 1) % 4;
+			c.stopOnMob = c.mobMode == 2;
+			com.seolwoni.mineassist.config.MineConfig.save();
+			rebuildWidgets();
+		}).bounds(left, y, 150, 20).build());
 		slider(right, y, 150, "감지 거리", "칸", 3, 24, c.mobRange, v -> c.mobRange = v);
 		y += ROW;
 		slider(left, y, 150, "체력 이하면 정지", "", 1, 19, c.minHealth, v -> c.minHealth = v);

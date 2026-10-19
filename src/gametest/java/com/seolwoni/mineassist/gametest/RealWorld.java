@@ -33,7 +33,7 @@ final class RealWorld {
 	static String suite() {
 		String s = System.getenv("ASSIST_GT");
 		// "...-nopath" runs the same suite with Assist Path switched off (ASSIST_NO_PATH), for comparison.
-		return s == null || s.isBlank() ? "flat" : s.trim().replace("-nopath", "");
+		return s == null || s.isBlank() ? "flat" : s.trim().replace("-nopath", "").replace("-night", "");
 	}
 
 	/** Other fixed seeds, so one lucky world does not hide a problem. */
@@ -110,9 +110,15 @@ final class RealWorld {
 		return sp.getServer().computeOnServer(server -> server.getAverageTickTimeNanos() / 1_000_000.0);
 	}
 
+	/** "...-night" runs the same suite at night on difficulty normal: mobs come, Defense deals with them. */
+	static boolean night() {
+		String s = System.getenv("ASSIST_GT");
+		return s != null && s.contains("-night");
+	}
+
 	static void setup(TestSingleplayerContext sp) {
-		cmd(sp, "difficulty peaceful");
-		cmd(sp, "time set noon");
+		cmd(sp, night() ? "difficulty normal" : "difficulty peaceful");
+		cmd(sp, night() ? "time set midnight" : "time set noon");
 		cmd(sp, "weather clear");
 		cmd(sp, "gamemode survival @a");
 		cmd(sp, "clear @a");
