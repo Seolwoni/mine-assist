@@ -19,3 +19,5 @@ net.minecraft.world.level.material.FluidState
 net.minecraft.world.phys.BlockHitResult
 net.minecraft.world.entity.monster.Enemy
 net.minecraft.world.level.Level
+net.minecraft.server.level.ServerLevel
+net.minecraft.client.gui.screens.worldselection.WorldCreationUiState
