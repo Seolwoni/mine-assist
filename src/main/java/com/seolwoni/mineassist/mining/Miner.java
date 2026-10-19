@@ -1119,7 +1119,7 @@ public final class Miner {
 
 	static final class PocketFillAction implements Action {
 		private final List<BlockPos> cells;
-		private int wait = -1, rounds, fetches;
+		private int wait = -1, rounds, fetches, nearWait;
 
 		/** Cells to walk (at our feet height, L-shaped) to stand on the drop's column, or null if not safe or too far. */
 		private static List<BlockPos> walkway(BlockPos home, BlockPos drop) {
@@ -1178,14 +1178,20 @@ public final class Miner {
 			if (wait-- > 0) return RUN;
 			// Drops lying off the tunnel (in the dug-out pockets or a crack next to them).
 			List<BlockPos> stuck = new ArrayList<>();
+			boolean near = false;
 			for (Entity e : mc.level.getEntities(p, p.getBoundingBox().inflate(6))) {
 				if (!(e instanceof net.minecraft.world.entity.item.ItemEntity ie) || !ie.isAlive() || Chores.isJunk(p, ie.getItem())) continue;
 				BlockPos at = ie.blockPosition();
 				if (tunnelSpace(at) || tunnelSpace(at.below())) continue;
-				// Close enough to just pick up: no need to move it.
-				if (p.getBoundingBox().inflate(1.0, 0.5, 1.0).intersects(ie.getBoundingBox())) continue;
+				// Close enough to just pick up: no need to move it, but stay until it is really picked up
+				// (fresh drops cannot be picked up for a moment, and walking on would leave them behind).
+				if (nearWait < 40 && p.getBoundingBox().inflate(1.0, 0.5, 1.0).intersects(ie.getBoundingBox())) {
+					near = true;
+					continue;
+				}
 				stuck.add(at);
 			}
+			if (stuck.isEmpty() && near && nearWait++ < 40) return RUN;
 			if (stuck.isEmpty() || rounds++ >= 2) return DONE;
 			// First choice: a drop lying at our height (or on top of a block at head height) a few steps away is
 			// fetched by digging a short walkway to it and back, like a player would. Filling is for the rest.
@@ -1201,6 +1207,8 @@ public final class Miner {
 				todo.add(new CollectAction(1));
 				for (int i = way.size() - 2; i >= 0; i--) todo.add(new WalkAction(way.get(i), true));
 				todo.add(new WalkAction(home, true));
+				// Ore dug on the way leaves drops of its own: look around once more before re-checking.
+				todo.add(new CollectAction());
 				todo.add(this);
 				pocketNote("round " + rounds + ": dig a walkway of " + way.size() + " to the drop at " + s.toShortString());
 				status("광석 구멍에서 아이템 꺼내는 중");
