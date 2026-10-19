@@ -1095,8 +1095,11 @@ public final class Miner {
 			boolean alerted = false;
 			List<Action> todo = new ArrayList<>();
 			int feetY = p.blockPosition().getY();
+			net.minecraft.world.phys.AABB body = p.getBoundingBox();
 			for (BlockPos o : sorted) {
 				String id = Blocks2.id(o);
+				// Never dig the floor out from under our own feet (we would drop into the hole and get stuck there).
+				if (o.getY() < feetY && body.maxX > o.getX() && body.minX < o.getX() + 1 && body.maxZ > o.getZ() && body.minZ < o.getZ() + 1) continue;
 				if (!alerted && cfg.alertOres.contains(id)) {
 					alerted = true;
 					String name = Blocks2.state(o).getBlock().getName().getString();
