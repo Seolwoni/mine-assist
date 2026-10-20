@@ -96,6 +96,18 @@ public class MineGameTest implements FabricClientGameTest {
 						0, mc.player.blockPosition().toShortString(), Miner.status()));
 				log.add(line.replace("t=    0", "t=" + ticks));
 				running = context.computeOnClient(mc -> MineConfig.get().running);
+				if (running && ticks == 2400) {
+					// Stopped half way (like a player sorting something out down in the mine) and switched on again right
+					// there, not at the start: it should carry on from where the job got to.
+					String at = context.computeOnClient(mc -> {
+						Miner.stop(null, null, false);
+						return mc.player.blockPosition().toShortString();
+					});
+					context.waitTicks(40);
+					boolean again = context.computeOnClient(mc -> Miner.start(mc));
+					log.add("stopped at " + at + " and switched on again there: " + (again ? "carrying on" : "refused: " + Miner.lastStop));
+					if (!again) failures.add("would not carry on from where it was stopped (" + at + ")");
+				}
 				if (ticks % 600 == 0 && shots < 25) context.takeScreenshot(String.format("mine-%02d-t%d", shots++, ticks));
 			}
 			context.takeScreenshot("mine-99-end");

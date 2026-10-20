@@ -129,6 +129,7 @@ public final class Miner {
 		queue.clear();
 		finishing = false;
 		torchFetchTried = false;
+		Chores.dumpBlockedUntil = 0;
 		BlockPos feet = p.blockPosition();
 		if (p.isInWater() || Blocks2.isFluid(feet) || Blocks2.isFluid(feet.below())) {
 			// Stairs dug from under water fill up at once (and the way home is a swim): start on dry ground.
@@ -139,7 +140,8 @@ public final class Miner {
 
 		if (cfg.resume && job.active && job.world.equals(worldKey(mc))) {
 			BlockPos o = new BlockPos(job.ox, job.oy, job.oz);
-			if (feet.distManhattan(o) > 1) {
+			boolean away = feet.distManhattan(o) > 1;
+			if (away && Math.sqrt(feet.distSqr(o)) > 96) {
 				Alerts.title("시작 지점이 아니에요", "이어서 파려면 " + o.getX() + ", " + o.getY() + ", " + o.getZ() + "에서 켜주세요", 0xFFFF5555);
 				Alerts.chat("Mine Assist", "이어서 파려면 시작 지점 " + o.toShortString() + "으로 가서 켜주세요. 새로 시작하려면 설정 → 기본 → 진행 초기화.");
 				Alerts.warning();
@@ -153,7 +155,15 @@ public final class Miner {
 			here = Loc.origin();
 			Loc frontier = frontier();
 			status("이어서 파러 가는 중");
-			addRouteOut(frontier);
+			if (away) {
+				// Stopped somewhere down in the mine (or near it) and switched on again right there: no need to climb
+				// back to the start first. Walk straight to where the job had got to (digging a step if needed).
+				queue.add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(geo.pos(frontier)),
+						com.seolwoni.assistpath.PathOptions.FULL, STOP));
+				com.seolwoni.assistcore.log.UsageLog.event("mine", "시작 지점이 아닌 " + feet.toShortString() + "에서 이어서 시작");
+			} else {
+				addRouteOut(frontier);
+			}
 			run(() -> here = frontier);
 			Alerts.actionBar("이어서 파기 시작", 0xFF55FF55);
 		} else {
@@ -175,7 +185,7 @@ public final class Miner {
 				Direction want = Direction.fromYRot(p.getYRot());
 				int best = fluidNearStairs(feet, want);
 				Direction pick = want;
-				if (best > 0) {
+				if (best >= 2) {
 					for (Direction d : new Direction[] { want.getClockWise(), want.getCounterClockWise(), want.getOpposite() }) {
 						int n = fluidNearStairs(feet, d);
 						if (n < best) {
@@ -214,17 +224,15 @@ public final class Miner {
 		return true;
 	}
 
-	/** Water and lava cells around the first 8 stairs in direction {@code d} (the cells dug and their walls). */
+	/**
+	 * Water and lava in the cells the first 8 stairs will dig (not their walls: water beside the stairs gets
+	 * plugged as usual). Only stairs that would run right into a lake count.
+	 */
 	static int fluidNearStairs(BlockPos origin, Direction d) {
 		int n = 0;
-		Direction r = d.getClockWise();
-		for (int i = 0; i <= 8; i++) {
+		for (int i = 1; i <= 8; i++) {
 			BlockPos s = origin.relative(d, i).below(i);
-			for (int side = -1; side <= 1; side++) {
-				for (int up = -1; up <= 3; up++) {
-					if (Blocks2.isFluid(s.relative(r, side).above(up))) n++;
-				}
-			}
+			for (int up = 0; up <= 2; up++) if (Blocks2.isFluid(s.above(up))) n++;
 		}
 		return n;
 	}
@@ -429,6 +437,8 @@ public final class Miner {
 			enclose(col);
 			if (cfg.torches && i > 1 && (i - 1) % cfg.torchInterval == 0) {
 				add(new PlaceAction(geo.stair(i - 1).above(), PlaceAction.WALL_TORCH, SKIP));
+			} else if (cfg.torches && i > 2) {
+				torchIfDark(geo.stair(i - 1).above(), geo.stair(i - 1), PlaceAction.WALL_TORCH);
 			}
 			return;
 		}
@@ -464,6 +474,7 @@ public final class Miner {
 		add(new CollectAction());
 		enclose(col);
 		if (cfg.torches && nk % cfg.torchInterval == 0) add(new PlaceAction(l, PlaceAction.TORCH, SKIP));
+		else if (cfg.torches) torchIfDark(l, l, PlaceAction.TORCH);
 	}
 
 	/**
@@ -542,7 +553,24 @@ public final class Miner {
 		enclose(col);
 		if (cfg.torches && nd % cfg.torchInterval == 0 && nd > 1) {
 			add(new PlaceAction(geo.branch(k, side, nd - 1), PlaceAction.TORCH, SKIP));
+		} else if (cfg.torches && nd > 1) {
+			torchIfDark(geo.branch(k, side, nd - 1), geo.branch(k, side, nd - 1), PlaceAction.TORCH);
 		}
+	}
+
+	/** Light (block or sky) below which a freshly dug cell gets a torch, like a player keeping the tunnel lit. */
+	static final int DARK = 8;
+
+	/**
+	 * Once the step is dug: if it is dark there ({@code check} under light {@link #DARK}), put a torch at {@code at}.
+	 * The interval setting is the most steps between torches; this fills the dark gaps in between (light falls off
+	 * one level per block, so a torch every 10 left the middle of each stretch nearly black).
+	 */
+	static void torchIfDark(BlockPos at, BlockPos check, int kind) {
+		add((mc, p) -> {
+			if (mc.level != null && mc.level.getRawBrightness(check, 0) < DARK) pushFront(new PlaceAction(at, kind, SKIP));
+			return DONE;
+		});
 	}
 
 	/** Leave for the chests and come back to where we were. */

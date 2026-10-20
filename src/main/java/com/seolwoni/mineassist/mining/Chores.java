@@ -77,7 +77,7 @@ final class Chores {
 
 		// Junk: only when space is getting short, thrown back the way we came.
 		int free = Inv.freeSlots(p);
-		if (cfg.discardEnabled && free <= 3 && !junkSlots(p).isEmpty() && Inv.canClick(mc, p)) {
+		if (cfg.discardEnabled && free <= 3 && !junkSlots(p).isEmpty() && Inv.canClick(mc, p) && Miner.job.ticks >= dumpBlockedUntil) {
 			Miner.add(new DumpAction());
 			return true;
 		}
@@ -145,6 +145,27 @@ final class Chores {
 		return !Inv.isPlug(s) || Inv.count(p, Inv::isPlug) >= cfg.plugKeep;
 	}
 
+	/** Ticks (job time) before the next throw-away, after one where the junk came straight back. */
+	static long dumpBlockedUntil;
+
+	static int junkCount(LocalPlayer p) {
+		int n = 0;
+		for (int i : junkSlots(p)) n += p.getInventory().getItem(i).getCount();
+		return n;
+	}
+
+	/** After throwing: if most of it is back in the inventory, stop throwing for a minute (store it instead). */
+	private static Miner.Action checkDump(int before) {
+		return (mc, p) -> {
+			int after = junkCount(p);
+			if (before > 0 && after > before / 2) {
+				dumpBlockedUntil = Miner.job.ticks + 1200;
+				com.seolwoni.assistcore.log.UsageLog.event("mine", "버린 블록이 다시 주워졌어요 (" + after + "/" + before + "): 1분 동안 버리지 않아요");
+			}
+			return Miner.DONE;
+		};
+	}
+
 	/**
 	 * Throws junk into a small pit dug in the side wall, one block below the floor: items lying there are
 	 * out of pickup reach when walking past, so they are not picked back up on the way out.
@@ -163,13 +184,20 @@ final class Chores {
 			Direction[] sides = h.kind() == Loc.BRANCH ? new Direction[] {g.d, g.d.getOpposite()} : new Direction[] {g.r, g.r.getOpposite()};
 			net.minecraft.core.BlockPos feet = p.blockPosition();
 			for (Direction side : sides) {
-				net.minecraft.core.BlockPos a = feet.relative(side), b = a.below();
+				// The pit: the cell beside our feet, the one under it, and the one beside our head (a stack thrown from
+				// eye height flies through that one: with it left in place the stack bounced back onto our feet and was
+				// picked up again, over and over).
+				net.minecraft.core.BlockPos a = feet.relative(side), b = a.below(), top = a.above();
 				if (Miner.tunnelSpace(a) || Miner.tunnelSpace(b)) continue;
-				if (com.seolwoni.assistcore.util.Blocks2.isFluid(a) || com.seolwoni.assistcore.util.Blocks2.isFluid(b)) continue;
-				if (com.seolwoni.assistcore.util.Blocks2.unbreakable(a) || com.seolwoni.assistcore.util.Blocks2.unbreakable(b)) continue;
+				boolean bad = false;
+				for (net.minecraft.core.BlockPos q : new net.minecraft.core.BlockPos[] {a, b, top, top.above()}) {
+					if (com.seolwoni.assistcore.util.Blocks2.isFluid(q) || com.seolwoni.assistcore.util.Blocks2.unbreakable(q)) bad = true;
+				}
+				if (bad || com.seolwoni.assistcore.util.Blocks2.isFalling(top.above())) continue;
 				Miner.status("필요 없는 블록 버리는 중");
-				Miner.pushFront(List.of(new Miner.MineAction(a, Miner.SKIP), new Miner.MineAction(b, Miner.SKIP),
-						new DiscardAction(side, 45f)));
+				int before = junkCount(p);
+				Miner.pushFront(List.of(new Miner.MineAction(top, Miner.SKIP), new Miner.MineAction(a, Miner.SKIP), new Miner.MineAction(b, Miner.SKIP),
+						new DiscardAction(side, 40f), new Miner.WaitAction(30), checkDump(before)));
 				return Miner.DONE;
 			}
 			Miner.pushFront(new DiscardAction(backwards(), false));
