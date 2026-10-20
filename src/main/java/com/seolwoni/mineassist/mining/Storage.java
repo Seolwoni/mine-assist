@@ -66,7 +66,7 @@ public final class Storage {
 					|| s.is(net.minecraft.world.item.Items.BOW) || s.is(net.minecraft.world.item.Items.CROSSBOW)) {
 				keep.add(i); // weapons stay with us (Defense fights with them)
 			} else if (Inv.isPick(s) || Inv.isTorch(s) || Inv.isLog(s) || Inv.isPlank(s)
-					|| Inv.isStick(s) || Inv.isFood(s) || (cfg.discardEnabled && cfg.discardItems.contains(Inv.id(s)))) {
+					|| Inv.isStick(s) || Inv.isFood(s) || s.is(net.minecraft.world.item.Items.GOLDEN_CARROT) || s.is(net.minecraft.world.item.Items.GOLDEN_APPLE) || s.is(net.minecraft.world.item.Items.ENCHANTED_GOLDEN_APPLE) || (cfg.discardEnabled && cfg.discardItems.contains(Inv.id(s)))) {
 				keep.add(i);
 			} else if (Inv.isCoal(s)) {
 				coal.add(i);
