@@ -55,6 +55,10 @@ public final class Storage {
 		Inventory inv = p.getInventory();
 		Set<Integer> keep = new HashSet<>();
 		keep.add(inv.getSelectedSlot());
+		// Shulker boxes and ender chests we carry to store into stay with us (never put into the chest).
+		if (MineConfig.get().storeMode != com.seolwoni.assistcore.storage.PortableStorage.CHEST) {
+			for (int i = 0; i < 36; i++) if (com.seolwoni.assistcore.storage.PortableStorage.isPortable(inv.getItem(i))) keep.add(i);
+		}
 		List<Integer> coal = new ArrayList<>();
 		List<Integer> plugs = new ArrayList<>();
 		for (int i = 0; i < 36; i++) {

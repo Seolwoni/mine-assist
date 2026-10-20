@@ -182,7 +182,6 @@ public class MineRealTest implements FabricClientGameTest {
 			RealWorld.cmd(sp, "give @a minecraft:cobblestone 128");
 			if (shulker) {
 				RealWorld.cmd(sp, "give @a minecraft:shulker_box 2");
-				RealWorld.cmd(sp, "give @a minecraft:brick 1280"); // 20 stacks of something to store: the inventory fills early
 			}
 			RealWorld.cmd(sp, "effect give @a minecraft:night_vision infinite 0 true");
 			RealWorld.cmd(sp, "effect give @a minecraft:saturation infinite 0 true");
@@ -238,6 +237,9 @@ public class MineRealTest implements FabricClientGameTest {
 				}
 				timing.add(System.nanoTime() - t0);
 				ticks += 40;
+				// Once it is down in the mine (the first chest visit, for food, is over): 20 stacks of something to store,
+				// so the inventory fills early and has to go into the shulker boxes.
+				if (shulker && ticks == 2400) RealWorld.cmd(sp, "give @a minecraft:brick 1280");
 				final int t = ticks;
 				log.add(context.computeOnClient(mc -> "t=" + t + " pos=" + mc.player.blockPosition().toShortString() + " hp=" + (int) mc.player.getHealth()
 						+ " status=" + Miner.status()));
