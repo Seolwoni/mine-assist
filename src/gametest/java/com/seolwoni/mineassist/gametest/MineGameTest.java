@@ -84,7 +84,7 @@ public class MineGameTest implements FabricClientGameTest {
 			int shots = 1;
 			int ticks = 0;
 			final int limit = 20 * 60 * 12;
-			boolean running = true;
+			boolean running = true, returned = false;
 			MineRealTest.DropTracker drops = new MineRealTest.DropTracker();
 			while (running && ticks < limit) {
 				for (int k = 0; k < 8; k++) {
@@ -96,17 +96,28 @@ public class MineGameTest implements FabricClientGameTest {
 						0, mc.player.blockPosition().toShortString(), Miner.status()));
 				log.add(line.replace("t=    0", "t=" + ticks));
 				running = context.computeOnClient(mc -> MineConfig.get().running);
-				if (running && ticks == 2400) {
-					// Stopped half way (like a player sorting something out down in the mine) and switched on again right
-					// there, not at the start: it should carry on from where the job got to.
+				if (running && ticks == 2400 && !returned) {
+					// The "돌아가기" button half way: back to the start along the tunnels, stop there, then switched on again
+					// at the start it should carry on from where it was.
+					returned = true;
 					String at = context.computeOnClient(mc -> {
-						Miner.stop(null, null, false);
+						Miner.returnHome(mc);
 						return mc.player.blockPosition().toShortString();
 					});
-					context.waitTicks(40);
+					int w = 0;
+					while (w < 20 * 120 && context.computeOnClient(mc -> MineConfig.get().running)) {
+						context.waitTicks(20);
+						w += 20;
+					}
+					String stopped = context.computeOnClient(mc -> Miner.lastStop);
+					double d = context.computeOnClient(mc -> mc.player.position().distanceTo(new net.minecraft.world.phys.Vec3(0.5, 100, 0.5)));
+					log.add(String.format("return button at %s: %s after %d ticks, %.1f blocks from the start", at, stopped, w, d));
+					if (!stopped.startsWith("시작 지점으로 돌아왔어요")) failures.add("return button: did not come back (" + stopped + ")");
+					else if (d > 2.0) failures.add("return button: stopped " + String.format("%.1f", d) + " blocks from the start");
+					context.waitTicks(20);
 					boolean again = context.computeOnClient(mc -> Miner.start(mc));
-					log.add("stopped at " + at + " and switched on again there: " + (again ? "carrying on" : "refused: " + Miner.lastStop));
-					if (!again) failures.add("would not carry on from where it was stopped (" + at + ")");
+					if (!again) failures.add("would not carry on from the start after going back (" + Miner.lastStop + ")");
+					ticks += w;
 				}
 				if (ticks % 600 == 0 && shots < 25) context.takeScreenshot(String.format("mine-%02d-t%d", shots++, ticks));
 			}

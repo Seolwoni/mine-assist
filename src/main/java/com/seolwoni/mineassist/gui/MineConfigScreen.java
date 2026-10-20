@@ -71,16 +71,23 @@ public class MineConfigScreen extends Screen {
 			MineConfig.save();
 			rebuildWidgets();
 		}).bounds(left, 22, 100, 20).build());
-		Button run = Button.builder(Component.literal(c().running ? "채광 정지" : "채광 시작").withColor(c().running ? 0xFFFF7777 : 0xFF77FF77), b -> {
-			if (c().running) {
+		if (c().running) {
+			// Running: stop right here, or go back to the start first (store the loot, carry on later from there).
+			addRenderableWidget(Button.builder(Component.literal("정지").withColor(0xFFFF7777), b -> {
 				Miner.stop("채광을 멈췄어요", null, false);
 				rebuildWidgets();
-			} else if (Miner.start(this.minecraft)) {
+			}).bounds(left + 105, 22, 48, 20).build());
+			addRenderableWidget(Button.builder(Component.literal("돌아가기").withColor(0xFFFFDD77), b -> {
+				Miner.returnHome(this.minecraft);
 				this.minecraft.gui.setScreen(null);
-			}
-		}).bounds(left + 105, 22, 100, 20).build();
-		run.active = c().modEnabled && this.minecraft.player != null;
-		addRenderableWidget(run);
+			}).bounds(left + 157, 22, 48, 20).build());
+		} else {
+			Button run = Button.builder(Component.literal("채광 시작").withColor(0xFF77FF77), b -> {
+				if (Miner.start(this.minecraft)) this.minecraft.gui.setScreen(null);
+			}).bounds(left + 105, 22, 100, 20).build();
+			run.active = c().modEnabled && this.minecraft.player != null;
+			addRenderableWidget(run);
+		}
 
 		for (int i = 0; i < TABS.length; i++) {
 			final int idx = i;

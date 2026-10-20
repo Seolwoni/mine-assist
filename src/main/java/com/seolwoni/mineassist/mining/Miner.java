@@ -48,8 +48,6 @@ public final class Miner {
 
 	static JobState job = new JobState();
 	static Geo geo;
-	/** This start was a resume away from the start point (down in the mine). */
-	private static boolean startedAway;
 	/** Where we were when Defense took over (we walk back there afterwards). */
 	private static BlockPos defenseFrom;
 	/** Ore blocks we dug out: their holes are not caves, so they are never walled or roofed over (drops lie there). */
@@ -129,7 +127,6 @@ public final class Miner {
 		MineConfig cfg = MineConfig.get();
 		if (p == null || mc.level == null) return false;
 		queue.clear();
-		startedAway = false;
 		finishing = false;
 		torchFetchTried = false;
 		Chores.dumpBlockedUntil = 0;
@@ -143,9 +140,7 @@ public final class Miner {
 
 		if (cfg.resume && job.active && job.world.equals(worldKey(mc))) {
 			BlockPos o = new BlockPos(job.ox, job.oy, job.oz);
-			boolean away = feet.distManhattan(o) > 1;
-			startedAway = away;
-			if (away && Math.sqrt(feet.distSqr(o)) > 96) {
+			if (feet.distManhattan(o) > 1) {
 				Alerts.title("시작 지점이 아니에요", "이어서 파려면 " + o.getX() + ", " + o.getY() + ", " + o.getZ() + "에서 켜주세요", 0xFFFF5555);
 				Alerts.chat("Mine Assist", "이어서 파려면 시작 지점 " + o.toShortString() + "으로 가서 켜주세요. 새로 시작하려면 설정 → 기본 → 진행 초기화.");
 				Alerts.warning();
@@ -161,15 +156,7 @@ public final class Miner {
 			here = Loc.origin();
 			Loc frontier = frontier();
 			status("이어서 파러 가는 중");
-			if (away) {
-				// Stopped somewhere down in the mine (or near it) and switched on again right there: no need to climb
-				// back to the start first. Walk straight to where the job had got to (digging a step if needed).
-				queue.add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(geo.pos(frontier)),
-						com.seolwoni.assistpath.PathOptions.FULL, STOP));
-				com.seolwoni.assistcore.log.UsageLog.event("mine", "시작 지점이 아닌 " + feet.toShortString() + "에서 이어서 시작");
-			} else {
-				addRouteOut(frontier);
-			}
+			addRouteOut(frontier);
 			run(() -> here = frontier);
 			Alerts.actionBar("이어서 파기 시작", 0xFF55FF55);
 		} else {
@@ -200,8 +187,7 @@ public final class Miner {
 			Alerts.actionBar("채광 시작: " + geo.d.getName() + " 방향, Y " + job.targetY, 0xFF55FF55);
 		}
 		// Gear up at the chests before setting off (food, torches, a spare pickaxe).
-		// (Switched on again down in the mine: no trip up to the chests first. Supplies are fetched later, when short.)
-		if (cfg.storeEnabled && !cfg.chests.isEmpty() && Storage.needsSupplies(p) && !startedAway) {
+		if (cfg.storeEnabled && !cfg.chests.isEmpty() && Storage.needsSupplies(p)) {
 			pushFront(new Storage.TripAction(geo.origin, geo.d));
 		}
 		nextPause = Human.rand(1500, 4000);
@@ -373,6 +359,34 @@ public final class Miner {
 	}
 
 	/** Leave the tunnel: walk back to the origin and end the job. */
+	/**
+	 * The "돌아가기" button (or its key): stop digging, pick up what lies close by, walk back to the start along
+	 * the tunnels, store the loot and stop there. The job stays open: switching on again at the start carries on.
+	 */
+	public static void returnHome(Minecraft mc) {
+		MineConfig cfg = MineConfig.get();
+		if (!cfg.running || geo == null || finishing) return;
+		queue.clear();
+		Body.release(mc);
+		if (mc.gameMode != null) mc.gameMode.stopDestroyBlock();
+		defenseFrom = null;
+		finishing = true;
+		com.seolwoni.assistcore.log.UsageLog.event("mine", "돌아가기 버튼: " + (mc.player == null ? "" : mc.player.blockPosition().toShortString()) + "에서 시작 지점으로");
+		Alerts.actionBar("하던 것을 멈추고 시작 지점으로 돌아가요", 0xFFFFAA00);
+		add(new CollectAction());
+		// Off the known route (fled into a cave, inside a pocket): first back onto where the job had got to.
+		add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(geo.pos(here)),
+				com.seolwoni.assistpath.PathOptions.FULL, SKIP));
+		run(() -> status("시작 지점으로 돌아가는 중"));
+		add(new RouteAction(geo.routeToOrigin(here)));
+		run(() -> here = Loc.origin());
+		if (cfg.storeEnabled && !cfg.chests.isEmpty()) add(new Storage.TripAction(geo.origin, geo.d, true));
+		run(() -> {
+			job.save();
+			stop("시작 지점으로 돌아왔어요", "다시 켜면 하던 곳부터 이어서 파요", true);
+		});
+	}
+
 	static void goHomeAndFinish() {
 		finishing = true;
 		status("시작 지점으로 돌아가는 중");

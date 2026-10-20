@@ -23,6 +23,8 @@ public class MineAssistClient implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Mine Assist");
 
 	public static KeyMapping markChestKey;
+	/** Go back to the start (no key by default: set one in Controls). */
+	public static KeyMapping returnKey;
 
 	public static Identifier id(String path) {
 		return Identifier.fromNamespaceAndPath(MOD_ID, path);
@@ -37,10 +39,15 @@ public class MineAssistClient implements ClientModInitializer {
 		KeyMapping.Category category = KeyMapping.Category.register(id("main"));
 		markChestKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
 				"key.mineassist.mark_chest", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, category));
+		returnKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+				"key.mineassist.return_home", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, category));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (markChestKey.consumeClick()) {
 				if (MineConfig.get().modEnabled) Storage.markLookedAt(client);
+			}
+			while (returnKey.consumeClick()) {
+				if (MineConfig.get().running) Miner.returnHome(client);
 			}
 			if (MineConfig.get().modEnabled) Miner.tick(client);
 		});
