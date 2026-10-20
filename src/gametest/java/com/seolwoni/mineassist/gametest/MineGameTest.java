@@ -159,6 +159,15 @@ public class MineGameTest implements FabricClientGameTest {
 		cmd(sp, "fill -2 85 4 2 97 9 minecraft:air");
 		// A cave across the main tunnel, steps 4..7.
 		cmd(sp, "fill -4 84 16 3 90 19 minecraft:air");
+		// Lush cave bits in that cave, right where the tunnel walls go (main step 5): glow berry vines hanging from the
+		// roof on both sides, and a moss carpet on a ledge. They are no wall: mobs walk through them.
+		for (int x : new int[] { 1, -2 }) {
+			cmd(sp, "setblock " + x + " 90 17 minecraft:cave_vines_plant");
+			cmd(sp, "setblock " + x + " 89 17 minecraft:cave_vines_plant");
+			cmd(sp, "setblock " + x + " 88 17 minecraft:cave_vines[berries=true]");
+		}
+		cmd(sp, "setblock 1 87 18 minecraft:moss_block");
+		cmd(sp, "setblock 1 88 18 minecraft:moss_carpet");
 		// Gravel above stair 2 and above stair 10: it falls into the path while digging.
 		cmd(sp, "setblock 0 100 2 minecraft:gravel");
 		cmd(sp, "setblock 0 101 2 minecraft:gravel");
@@ -224,8 +233,9 @@ public class MineGameTest implements FabricClientGameTest {
 			for (int k = 4; k <= 7; k++) {
 				BlockPos wallL = new BlockPos(1, 88, 12 + k), wallR = new BlockPos(-2, 88, 12 + k);
 				if (k % SPACING == 0) continue;
-				if (level.getBlockState(wallL).isAir()) out.add("cave wall missing left of main " + k);
-				if (level.getBlockState(wallR).isAir()) out.add("cave wall missing right of main " + k);
+				// A real wall: vines or a carpet left hanging there do not count.
+				if (!level.getBlockState(wallL).isCollisionShapeFullBlock(level, wallL)) out.add("cave wall missing left of main " + k + " (" + level.getBlockState(wallL).getBlock() + ")");
+				if (!level.getBlockState(wallR).isCollisionShapeFullBlock(level, wallR)) out.add("cave wall missing right of main " + k + " (" + level.getBlockState(wallR).getBlock() + ")");
 			}
 			return out;
 		});

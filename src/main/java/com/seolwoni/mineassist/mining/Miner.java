@@ -935,6 +935,8 @@ public final class Miner {
 
 	/** Places a filler block (cobblestone) or a torch at a position. */
 	static final class PlaceAction implements Action {
+		/** Vines or carpets cleared out of the spot first (lush caves). */
+		private int softClears;
 		static final int PLUG = 0, TORCH = 1, WALL_TORCH = 2, WALL = 3;
 		/** Walls are nice to have: keep this many blocks back for floors. */
 		static final int WALL_RESERVE = 16;
@@ -1028,6 +1030,11 @@ public final class Miner {
 				case 0 -> {
 					if (done()) return DONE;
 					if (attempts == 0) wasFluid = Blocks2.isFluid(pos);
+					if (block() && Blocks2.isSoftCover(pos) && !occupiedByPlayer(p, pos) && softClears++ < 3) {
+						// Vines, a moss carpet, roots in the way: not a wall. Clear it, then put the block there.
+						pushFront(new MineAction(pos, SKIP));
+						return RUN;
+					}
 					if (block() && !Blocks2.isOpen(pos) && !Blocks2.isFluid(pos)) return DONE;
 					if (kind == WALL && (Blocks2.isTorch(pos) || Inv.count(p, Inv::isPlug) <= WALL_RESERVE)) return DONE;
 					// Never wall a drop in (an ore that dropped into a cave, a pocket we have not emptied yet).
