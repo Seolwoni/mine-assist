@@ -77,6 +77,9 @@ public class MineConfig {
 	public boolean stopOnMob = true;
 	/** Mobs: 0 = avoid them (Defense), 1 = avoid and fight back (default for mining), 2 = stop the job, 3 = ignore. */
 	public int mobMode = 1;
+	/** How the side tunnels are dug: 0 = branches (walk in), 1 = poke holes (1x1 at eye level, depth pokeDepth, from the main tunnel). */
+	public int digPattern = 0;
+	public int pokeDepth = 4;
 	public int mobRange = 8;
 	public int minHealth = 8;
 	public int plugKeep = 128;

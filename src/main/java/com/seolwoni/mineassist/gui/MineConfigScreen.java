@@ -70,7 +70,7 @@ public class MineConfigScreen extends Screen {
 			if (!c().modEnabled && c().running) Miner.stop("모드를 껐어요", null, false);
 			MineConfig.save();
 			rebuildWidgets();
-		}).bounds(left, 22, 150, 20).build());
+		}).bounds(left, 22, 100, 20).build());
 		Button run = Button.builder(Component.literal(c().running ? "채광 정지" : "채광 시작").withColor(c().running ? 0xFFFF7777 : 0xFF77FF77), b -> {
 			if (c().running) {
 				Miner.stop("채광을 멈췄어요", null, false);
@@ -78,7 +78,7 @@ public class MineConfigScreen extends Screen {
 			} else if (Miner.start(this.minecraft)) {
 				this.minecraft.gui.setScreen(null);
 			}
-		}).bounds(right, 22, 150, 20).build();
+		}).bounds(left + 105, 22, 100, 20).build();
 		run.active = c().modEnabled && this.minecraft.player != null;
 		addRenderableWidget(run);
 
@@ -104,8 +104,9 @@ public class MineConfigScreen extends Screen {
 			case 6 -> storage(left, right, y);
 			default -> hud(left, right, y);
 		}
+		// Up here with the other main buttons: at the bottom it covered the last rows on small screens (phones).
 		addRenderableWidget(Button.builder(Component.literal("완료"), b -> onClose())
-				.bounds(cx - 75, this.height - 26, 150, 20).build());
+				.bounds(left + 210, 22, 100, 20).build());
 	}
 
 	// ------------------------------------------------------------------ tabs
@@ -132,8 +133,20 @@ public class MineConfigScreen extends Screen {
 			addRenderableWidget(pb);
 		}
 		y += 44 + 2;
-		slider(left, y, 150, "가지굴 길이", "칸", 0, 1000, c.branchLength, v -> c.branchLength = v);
-		slider(right, y, 150, "가지 간격", "칸", 2, 16, c.branchSpacing, v -> c.branchSpacing = v);
+		addRenderableWidget(Button.builder(Component.literal("굴 방식: " + (c.digPattern == 1 ? "구멍 뚫기" : "가지굴")), b -> {
+			c.digPattern = c.digPattern == 1 ? 0 : 1;
+			MineConfig.save();
+			rebuildWidgets();
+		}).bounds(left, y, 150, 20).build());
+		labels.add(new Object[] {c.digPattern == 1 ? "벽에 눈높이 1칸 구멍: 같은 시간에 2~3배 더 봐요" : "걸어 들어가는 2칸 높이 가지굴", right, y + 6, 0xFFAAAAAA, false});
+		y += ROW;
+		if (c.digPattern == 1) {
+			slider(left, y, 150, "구멍 깊이", "칸", 1, 5, c.pokeDepth, v -> c.pokeDepth = v);
+			slider(right, y, 150, "구멍 간격", "칸", 2, 16, c.branchSpacing, v -> c.branchSpacing = v);
+		} else {
+			slider(left, y, 150, "가지굴 길이", "칸", 0, 1000, c.branchLength, v -> c.branchLength = v);
+			slider(right, y, 150, "가지 간격", "칸", 2, 16, c.branchSpacing, v -> c.branchSpacing = v);
+		}
 		y += ROW;
 		toggle(left, y, 150, "이어서 파기", () -> c.resume, v -> c.resume = v);
 		toggle(right, y, 150, "사람 같은 딜레이", () -> c.humanDelay, v -> c.humanDelay = v);

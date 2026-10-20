@@ -141,7 +141,9 @@ public class MineRealTest implements FabricClientGameTest {
 	public void runTest(ClientGameTestContext context) {
 		String run = RealWorld.suite();
 		// "-2" runs the same place a second time (to see how much the result varies between runs).
-		String suite = run.replaceAll("-2$", "");
+		// "-poke" digs poke holes instead of branches (to compare how much is found per block dug).
+		boolean poke = run.endsWith("-poke");
+		String suite = run.replace("-poke", "").replaceAll("-2$", "");
 		ResourceKey<Biome> biome = switch (suite) {
 			case "real-plains", "real-deep" -> Biomes.PLAINS;
 			case "real-forest" -> Biomes.FOREST;
@@ -192,6 +194,8 @@ public class MineRealTest implements FabricClientGameTest {
 				c.mainLength = 16;
 				c.branchLength = 5;
 				c.branchSpacing = 3;
+				c.digPattern = poke ? 1 : 0;
+				c.pokeDepth = 4;
 				c.torches = true;
 				c.torchInterval = 6;
 				c.craftTorches = false;

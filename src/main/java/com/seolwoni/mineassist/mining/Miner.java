@@ -168,6 +168,7 @@ public final class Miner {
 			job.mainLength = cfg.mainLength;
 			job.branchLength = cfg.branchLength;
 			job.branchSpacing = cfg.branchSpacing;
+			job.pattern = cfg.digPattern;
 			job.save();
 			geo = new Geo(job);
 			minedOre.clear();
@@ -385,8 +386,9 @@ public final class Miner {
 
 		int k = job.mainK;
 		// 2) branches at this main step
-		if (k > 0 && job.branchLength > 0 && k % job.branchSpacing == 0 && job.branchSide < 2) {
-			planBranch(k);
+		if (k > 0 && (job.pattern == 1 || job.branchLength > 0) && k % job.branchSpacing == 0 && job.branchSide < 2) {
+			if (job.pattern == 1) planPoke(k, cfg);
+			else planBranch(k);
 			return;
 		}
 		// 3) next main step, or done
@@ -413,6 +415,34 @@ public final class Miner {
 		add(new CollectAction());
 		enclose(col);
 		if (cfg.torches && nk % cfg.torchInterval == 0) add(new PlaceAction(l, PlaceAction.TORCH, SKIP));
+	}
+
+	/**
+	 * Poke holes: from the main tunnel, dig a 1x1 hole at eye level straight into the wall, a few blocks deep, on
+	 * each side. Each hole shows the blocks above, below and on both sides of it, so far more stone is seen per
+	 * block dug than with walk-in branches, and we never step into it. Ores showing in the holes are dug as usual.
+	 */
+	private static void planPoke(int k, MineConfig cfg) {
+		int side = job.branchSide;
+		String sideName = side == 0 ? "왼쪽" : "오른쪽";
+		// Right side: stand in lane 1 (next to that wall).
+		if (side == 1 && !(here.kind() == Loc.MAIN && here.b() == 1)) {
+			add(new WalkAction(geo.lane1(k)));
+			run(() -> here = Loc.main(k, 1));
+			return;
+		}
+		status(sideName + " 벽에 구멍 뚫는 중 (" + (k / job.branchSpacing) + "번)");
+		int depth = Math.max(1, Math.min(5, cfg.pokeDepth));
+		List<BlockPos> hole = new ArrayList<>();
+		for (int j = 1; j <= depth; j++) hole.add(geo.branch(k, side, j).above());
+		for (BlockPos x : hole) add(new MineAction(x, SKIP));
+		add(new OreScanAction(hole, true));
+		add(new CollectAction());
+		run(() -> {
+			job.branchSide = side + 1;
+			job.branchD = 0;
+			job.save();
+		});
 	}
 
 	private static void planBranch(int k) {
@@ -514,7 +544,7 @@ public final class Miner {
 		if (up < 0 || up > 1) return false;
 		if (side == 0 || side == 1) return true;
 		int k = along - n;
-		return job.branchLength > 0 && job.branchSpacing > 0 && k % job.branchSpacing == 0;
+		return job.pattern == 0 && job.branchLength > 0 && job.branchSpacing > 0 && k % job.branchSpacing == 0;
 	}
 
 	/** Walls and roof around a freshly dug cross-section, so caves get closed off like a tunnel. */
@@ -1351,10 +1381,17 @@ public final class Miner {
 
 	static final class OreScanAction implements Action {
 		private final List<BlockPos> column;
+		private final boolean allSides;
 		private boolean scanned;
 
 		OreScanAction(List<BlockPos> column) {
+			this(column, false);
+		}
+
+		/** allSides: also above and below the cells (poke holes: that is the point of them). */
+		OreScanAction(List<BlockPos> column, boolean allSides) {
 			this.column = column;
+			this.allSides = allSides;
 		}
 
 		@Override
@@ -1374,7 +1411,7 @@ public final class Miner {
 				for (Direction dir : Direction.values()) {
 					BlockPos n = b.relative(dir);
 					if (tunnel.contains(n) || found.contains(n)) continue;
-					if (!cfg.mineFloorCeiling && (n.getY() > top || n.getY() < bottom)) continue;
+					if (!allSides && !cfg.mineFloorCeiling && (n.getY() > top || n.getY() < bottom)) continue;
 					if (cfg.ores.contains(Blocks2.id(n))) vein(n, found, p);
 				}
 			}
