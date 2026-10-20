@@ -261,8 +261,9 @@ public final class Miner {
 			BlockPos back = defenseFrom;
 			defenseFrom = null;
 			if (com.seolwoni.assistpath.walk.PathWalker.feet(p).distManhattan(back) > 1) {
+				// May dig or build a step on the way: after a fall into a cave the way back is up.
 				queue.pushFront(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(back),
-						com.seolwoni.assistpath.PathOptions.WALK, com.seolwoni.assistcore.engine.Action.SKIP));
+						com.seolwoni.assistpath.PathOptions.FULL, com.seolwoni.assistcore.engine.Action.SKIP));
 				status("하던 곳으로 돌아가는 중");
 				return;
 			}
