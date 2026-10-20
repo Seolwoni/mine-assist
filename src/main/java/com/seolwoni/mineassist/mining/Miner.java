@@ -48,6 +48,8 @@ public final class Miner {
 
 	static JobState job = new JobState();
 	static Geo geo;
+	/** This start was a resume away from the start point (down in the mine). */
+	private static boolean startedAway;
 	/** Where we were when Defense took over (we walk back there afterwards). */
 	private static BlockPos defenseFrom;
 	/** Ore blocks we dug out: their holes are not caves, so they are never walled or roofed over (drops lie there). */
@@ -127,6 +129,7 @@ public final class Miner {
 		MineConfig cfg = MineConfig.get();
 		if (p == null || mc.level == null) return false;
 		queue.clear();
+		startedAway = false;
 		finishing = false;
 		torchFetchTried = false;
 		Chores.dumpBlockedUntil = 0;
@@ -141,6 +144,7 @@ public final class Miner {
 		if (cfg.resume && job.active && job.world.equals(worldKey(mc))) {
 			BlockPos o = new BlockPos(job.ox, job.oy, job.oz);
 			boolean away = feet.distManhattan(o) > 1;
+			startedAway = away;
 			if (away && Math.sqrt(feet.distSqr(o)) > 96) {
 				Alerts.title("시작 지점이 아니에요", "이어서 파려면 " + o.getX() + ", " + o.getY() + ", " + o.getZ() + "에서 켜주세요", 0xFFFF5555);
 				Alerts.chat("Mine Assist", "이어서 파려면 시작 지점 " + o.toShortString() + "으로 가서 켜주세요. 새로 시작하려면 설정 → 기본 → 진행 초기화.");
@@ -196,7 +200,8 @@ public final class Miner {
 			Alerts.actionBar("채광 시작: " + geo.d.getName() + " 방향, Y " + job.targetY, 0xFF55FF55);
 		}
 		// Gear up at the chests before setting off (food, torches, a spare pickaxe).
-		if (cfg.storeEnabled && !cfg.chests.isEmpty() && Storage.needsSupplies(p)) {
+		// (Switched on again down in the mine: no trip up to the chests first. Supplies are fetched later, when short.)
+		if (cfg.storeEnabled && !cfg.chests.isEmpty() && Storage.needsSupplies(p) && !startedAway) {
 			pushFront(new Storage.TripAction(geo.origin, geo.d));
 		}
 		nextPause = Human.rand(1500, 4000);
@@ -405,8 +410,7 @@ public final class Miner {
 			add(new OreScanAction(col));
 			add(new CollectAction());
 			enclose(col);
-			maybeGlance();
-			if (cfg.torches && i > 1 && (i - 1) % cfg.torchInterval == 0) {
+				if (cfg.torches && i > 1 && (i - 1) % cfg.torchInterval == 0) {
 				add(new PlaceAction(geo.stair(i - 1).above(), PlaceAction.WALL_TORCH, SKIP));
 			} else if (cfg.torches && i > 2) {
 				torchIfDark(geo.stair(i - 1).above(), geo.stair(i - 1), PlaceAction.WALL_TORCH);
@@ -444,7 +448,6 @@ public final class Miner {
 		add(new OreScanAction(col));
 		add(new CollectAction());
 		enclose(col);
-		maybeGlance();
 		if (cfg.torches && nk % cfg.torchInterval == 0) add(new PlaceAction(l, PlaceAction.TORCH, SKIP));
 		else if (cfg.torches) torchIfDark(l, l, PlaceAction.TORCH);
 	}
@@ -470,7 +473,6 @@ public final class Miner {
 		for (BlockPos x : hole) add(new MineAction(x, SKIP));
 		add(new OreScanAction(hole, true));
 		add(new CollectAction());
-		maybeGlance();
 		run(() -> {
 			job.branchSide = side + 1;
 			job.branchD = 0;
@@ -524,7 +526,6 @@ public final class Miner {
 		add(new OreScanAction(col));
 		add(new CollectAction());
 		enclose(col);
-		maybeGlance();
 		if (cfg.torches && nd % cfg.torchInterval == 0 && nd > 1) {
 			add(new PlaceAction(geo.branch(k, side, nd - 1), PlaceAction.TORCH, SKIP));
 		} else if (cfg.torches && nd > 1) {
@@ -926,8 +927,7 @@ public final class Miner {
 					}
 					oreId = Blocks2.id(pos);
 					face = faceToward(p.getEyePosition(), pos);
-					// Not the dead centre of the face every time: a hand on a mouse lands a little off each time.
-					aim = facePoint(pos, face, 0.22);
+					aim = facePoint(pos, face, 0.1);
 					Body.newTurn();
 					delay = Human.delay(0, 4);
 					stage = 1;
