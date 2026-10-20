@@ -48,6 +48,8 @@ public final class Miner {
 
 	static JobState job = new JobState();
 	static Geo geo;
+	/** Where we were when Defense took over (we walk back there afterwards). */
+	private static BlockPos defenseFrom;
 	/** Ore blocks we dug out: their holes are not caves, so they are never walled or roofed over (drops lie there). */
 	static final Set<BlockPos> minedOre = new HashSet<>();
 	/** Ores left in place because their drops would fall into a cave or lava below (shown to the player). */
@@ -246,12 +248,24 @@ public final class Miner {
 		if (!safety(mc, p, cfg)) return;
 		// Defense (Assist Path): while a creeper, an arrow or a mob needs dealing with, it has the controls.
 		if (cfg.mobMode <= 1 && com.seolwoni.assistpath.defense.Defense.guard(mc, p)) {
+			if (defenseFrom == null) defenseFrom = p.blockPosition().immutable();
 			String why = com.seolwoni.assistpath.defense.Defense.giveUp();
 			if (why != null) {
 				com.seolwoni.assistpath.defense.Defense.reset(mc);
 				stop(why, "싸우기를 켜거나 안전한 곳에서 다시 켜주세요", true);
 			}
 			return;
+		}
+		if (defenseFrom != null) {
+			// Defense moved us (ran away, stepped aside, fought): go back to where the work was before carrying on.
+			BlockPos back = defenseFrom;
+			defenseFrom = null;
+			if (com.seolwoni.assistpath.walk.PathWalker.feet(p).distManhattan(back) > 1) {
+				queue.pushFront(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(back),
+						com.seolwoni.assistpath.PathOptions.WALK, com.seolwoni.assistcore.engine.Action.SKIP));
+				status("하던 곳으로 돌아가는 중");
+				return;
+			}
 		}
 		job.ticks++;
 		com.seolwoni.mineassist.hud.MineStats.tick();

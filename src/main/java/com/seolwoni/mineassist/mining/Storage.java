@@ -62,6 +62,9 @@ public final class Storage {
 			if (s.isEmpty()) continue;
 			if (Inv.isPlug(s)) {
 				plugs.add(i);
+			} else if (s.is(net.minecraft.tags.ItemTags.SWORDS) || s.is(net.minecraft.tags.ItemTags.AXES) || s.is(net.minecraft.world.item.Items.SHIELD)
+					|| s.is(net.minecraft.world.item.Items.BOW) || s.is(net.minecraft.world.item.Items.CROSSBOW)) {
+				keep.add(i); // weapons stay with us (Defense fights with them)
 			} else if (Inv.isPick(s) || Inv.isTorch(s) || Inv.isLog(s) || Inv.isPlank(s)
 					|| Inv.isStick(s) || Inv.isFood(s) || (cfg.discardEnabled && cfg.discardItems.contains(Inv.id(s)))) {
 				keep.add(i);
