@@ -258,16 +258,19 @@ public final class Miner {
 			return;
 		}
 		if (defenseFrom != null) {
-			// Defense moved us (ran away, stepped aside, fought): go back to where the work was before carrying on.
-			BlockPos back = defenseFrom;
+			// Defense moved us (ran away, stepped aside, fought). The step we were in the middle of assumed we stood
+			// where we were: drop it, walk back to the last place the job reached, and plan from the job state again.
 			defenseFrom = null;
-			if (com.seolwoni.assistpath.walk.PathWalker.feet(p).distManhattan(back) > 1) {
+			queue.clear();
+			BlockPos back = geo.pos(here);
+			if (com.seolwoni.assistpath.walk.PathWalker.feet(p).distManhattan(back) > 0) {
 				// May dig or build a step on the way: after a fall into a cave the way back is up.
-				queue.pushFront(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(back),
+				queue.add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(back),
 						com.seolwoni.assistpath.PathOptions.FULL, com.seolwoni.assistcore.engine.Action.SKIP));
 				status("하던 곳으로 돌아가는 중");
-				return;
 			}
+			return;
+		}
 		}
 		job.ticks++;
 		com.seolwoni.mineassist.hud.MineStats.tick();
