@@ -75,8 +75,8 @@ public class MineConfig {
 
 	// ---- Safety ----
 	public boolean stopOnMob = true;
-	/** Mobs: 0 = avoid them (Defense), 1 = avoid and fight back, 2 = stop the job, 3 = ignore. */
-	public int mobMode = 0;
+	/** Mobs: 0 = avoid them (Defense), 1 = avoid and fight back (default for mining), 2 = stop the job, 3 = ignore. */
+	public int mobMode = 1;
 	public int mobRange = 8;
 	public int minHealth = 8;
 	public int plugKeep = 128;

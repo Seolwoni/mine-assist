@@ -173,6 +173,7 @@ public class MineRealTest implements FabricClientGameTest {
 			RealWorld.cmd(sp, "give @a minecraft:diamond_pickaxe");
 			RealWorld.cmd(sp, "give @a minecraft:diamond_pickaxe");
 			RealWorld.cmd(sp, "give @a minecraft:torch 64");
+			if (RealWorld.night()) RealWorld.cmd(sp, "give @a minecraft:iron_sword"); // like a player going down at night
 			if (deep) RealWorld.cmd(sp, "give @a minecraft:torch 64");
 			RealWorld.cmd(sp, "give @a minecraft:cobblestone 128");
 			RealWorld.cmd(sp, "effect give @a minecraft:night_vision infinite 0 true");
