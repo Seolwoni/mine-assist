@@ -150,6 +150,8 @@ public final class Miner {
 			geo = new Geo(job);
 			minedOre.clear();
 			leftOverVoid.clear();
+			collectTries.clear();
+			leftDrops.clear();
 			// Jobs saved by 1.2.3 and older started with mainK = 1 and would skip main step 1.
 			if (job.stairsDone < geo.stairs && job.mainK == 1) job.mainK = 0;
 			here = Loc.origin();
@@ -188,6 +190,8 @@ public final class Miner {
 			geo = new Geo(job);
 			minedOre.clear();
 			leftOverVoid.clear();
+			collectTries.clear();
+			leftDrops.clear();
 			here = Loc.origin();
 			Alerts.actionBar("채광 시작: " + geo.d.getName() + " 방향, Y " + job.targetY, 0xFF55FF55);
 		}
@@ -401,6 +405,7 @@ public final class Miner {
 			add(new OreScanAction(col));
 			add(new CollectAction());
 			enclose(col);
+			maybeGlance();
 			if (cfg.torches && i > 1 && (i - 1) % cfg.torchInterval == 0) {
 				add(new PlaceAction(geo.stair(i - 1).above(), PlaceAction.WALL_TORCH, SKIP));
 			} else if (cfg.torches && i > 2) {
@@ -439,6 +444,7 @@ public final class Miner {
 		add(new OreScanAction(col));
 		add(new CollectAction());
 		enclose(col);
+		maybeGlance();
 		if (cfg.torches && nk % cfg.torchInterval == 0) add(new PlaceAction(l, PlaceAction.TORCH, SKIP));
 		else if (cfg.torches) torchIfDark(l, l, PlaceAction.TORCH);
 	}
@@ -464,6 +470,7 @@ public final class Miner {
 		for (BlockPos x : hole) add(new MineAction(x, SKIP));
 		add(new OreScanAction(hole, true));
 		add(new CollectAction());
+		maybeGlance();
 		run(() -> {
 			job.branchSide = side + 1;
 			job.branchD = 0;
@@ -517,10 +524,53 @@ public final class Miner {
 		add(new OreScanAction(col));
 		add(new CollectAction());
 		enclose(col);
+		maybeGlance();
 		if (cfg.torches && nd % cfg.torchInterval == 0 && nd > 1) {
 			add(new PlaceAction(geo.branch(k, side, nd - 1), PlaceAction.TORCH, SKIP));
 		} else if (cfg.torches && nd > 1) {
 			torchIfDark(geo.branch(k, side, nd - 1), geo.branch(k, side, nd - 1), PlaceAction.TORCH);
+		}
+	}
+
+	/**
+	 * Now and then, between two steps, look around for a moment (back up the tunnel, at the wall, up at the
+	 * roof) like a person digging does, instead of facing the rock face all the time.
+	 */
+	static void maybeGlance() {
+		if (Human.RANDOM.nextDouble() < 0.07 * Human.liveliness()) add(new GlanceAction());
+	}
+
+	static final class GlanceAction implements Action {
+		private float yaw, pitch;
+		private int stage, hold;
+
+		@Override
+		public int failMode() {
+			return SKIP;
+		}
+
+		@Override
+		public int tick(Minecraft mc, LocalPlayer p) {
+			switch (stage) {
+				case 0 -> {
+					double r = Human.RANDOM.nextDouble();
+					float side = (float) ((25 + Human.RANDOM.nextDouble() * 50) * (Human.RANDOM.nextBoolean() ? 1 : -1));
+					if (r < 0.2) side = 150 + (float) Human.RANDOM.nextDouble() * 40; // back the way we came
+					yaw = p.getYRot() + side;
+					pitch = (float) (r < 0.5 ? -15 + Human.RANDOM.nextDouble() * 20 : 10 + Human.RANDOM.nextDouble() * 30);
+					hold = Human.rand(8, 24);
+					Body.newTurn();
+					stage = 1;
+					return RUN;
+				}
+				case 1 -> {
+					if (Body.turnTo(p, yaw, pitch, 4f)) stage = 2;
+					return RUN;
+				}
+				default -> {
+					return hold-- > 0 ? RUN : DONE;
+				}
+			}
 		}
 	}
 
@@ -876,7 +926,8 @@ public final class Miner {
 					}
 					oreId = Blocks2.id(pos);
 					face = faceToward(p.getEyePosition(), pos);
-					aim = facePoint(pos, face, 0.1);
+					// Not the dead centre of the face every time: a hand on a mouse lands a little off each time.
+					aim = facePoint(pos, face, 0.22);
 					Body.newTurn();
 					delay = Human.delay(0, 4);
 					stage = 1;
@@ -1154,6 +1205,21 @@ public final class Miner {
 		}
 	}
 
+	/** Drops we went for and could not get (entity id -> tries): after two, left where they are. */
+	static final java.util.Map<Integer, Integer> collectTries = new java.util.HashMap<>();
+	/** Drops given up on (shown to the player once, written to the usage log). */
+	public static final Set<BlockPos> leftDrops = new java.util.LinkedHashSet<>();
+
+	/** A cell we may step onto to pick something up: the tunnel itself, a dug-out ore pocket, or one step beside them. */
+	static boolean nearDug(BlockPos c) {
+		if (tunnelSpace(c) || minedOre.contains(c)) return true;
+		for (Direction d : Direction.Plane.HORIZONTAL) {
+			BlockPos n = c.relative(d);
+			if (tunnelSpace(n) || minedOre.contains(n)) return true;
+		}
+		return false;
+	}
+
 	static final class CollectAction implements Action {
 		private int wait = -1;
 		private final int pass;
@@ -1197,6 +1263,16 @@ public final class Miner {
 				if (Chores.isJunk(p, ie.getItem())) continue;
 				if (reach.intersects(e.getBoundingBox())) continue;
 				BlockPos at = e.blockPosition();
+				// Tried twice already and it is still lying there (behind a wall, in a dungeon, down a crack): like a
+				// player, let it be instead of going for it over and over.
+				int tries = collectTries.getOrDefault(e.getId(), 0);
+				if (tries >= 2) {
+					if (leftDrops.add(at.immutable())) {
+						Alerts.actionBar("줍지 못한 아이템을 두고 가요: " + at.toShortString(), 0xFFFFAA00);
+						com.seolwoni.assistcore.log.UsageLog.event("mine", "줍지 못한 아이템 두고 감: " + ie.getItem().getCount() + " " + Inv.id(ie.getItem()) + " at " + at.toShortString());
+					}
+					continue;
+				}
 				// A drop in a small hole below our floor (a dug-out floor ore): stepping in means running at the edge
 				// and climbing out again. Filling the hole pushes the drop up to us instead, and leaves the floor whole.
 				if (!tunnelSpace(at) && at.getY() < home.getY() && Blocks2.isSolid(at.below()) && Blocks2.isOpen(at.above())
@@ -1221,6 +1297,13 @@ public final class Miner {
 					}
 				}
 				if (best == null || best.distManhattan(home) > 4) continue;
+				// Never go off into a cave or a dungeon after it: only where we dug (or one step beside).
+				if (!nearDug(best)) {
+					collectTries.merge(e.getId(), 2, Integer::sum);
+					continue;
+				}
+				collectTries.merge(e.getId(), 1, Integer::sum);
+				if (collectTries.size() > 256) collectTries.clear();
 				if (!best.equals(last)) walks.add(new WalkAction(best, true));
 				// Standing on the right cell is not always close enough (an item tucked into a hole):
 				// lean over towards it inside the cell.

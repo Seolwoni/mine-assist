@@ -145,7 +145,9 @@ public class MineRealTest implements FabricClientGameTest {
 		boolean poke = run.endsWith("-poke");
 		// "-shulker" stores into shulker boxes carried along (Assist Core PortableStorage) instead of walking home.
 		boolean shulker = run.endsWith("-shulker");
-		String suite = run.replace("-poke", "").replace("-shulker", "").replaceAll("-2$", "");
+		// "-west": the same start, digging west instead of south (into a dungeon next to the stairs: drops that cannot be reached).
+		boolean west = run.endsWith("-west");
+		String suite = run.replace("-poke", "").replace("-shulker", "").replace("-west", "").replaceAll("-2$", "");
 		ResourceKey<Biome> biome = switch (suite) {
 			case "real-plains", "real-deep" -> Biomes.PLAINS;
 			case "real-forest" -> Biomes.FOREST;
@@ -218,7 +220,7 @@ public class MineRealTest implements FabricClientGameTest {
 				c.foodKeep = 16;
 				c.autoEat = true;
 				Miner.resetJob();
-				mc.player.setYRot(0f);
+				mc.player.setYRot(west ? 90f : 0f);
 				mc.player.setXRot(10f);
 				if (!Miner.start(mc)) failures.add("Miner.start returned false");
 			});
@@ -280,6 +282,7 @@ public class MineRealTest implements FabricClientGameTest {
 			if (drops.total > 0 && drops.lost * 100 > drops.total * 5) failures.add(drops.lost + " of " + drops.total + " ore items lost (more than 5%)");
 			if (!drops.lostValuable.isEmpty()) failures.add("valuable drops lost: " + drops.lostValuable);
 			for (String n : context.computeOnClient(mc -> Miner.leftOverVoid.stream().map(BlockPos::toShortString).toList())) log.add("  ore left in place (open below): " + n);
+			for (String n : context.computeOnClient(mc -> Miner.leftDrops.stream().map(BlockPos::toShortString).toList())) log.add("  drop given up on (could not get to it): " + n);
 			if (running) {
 				failures.add("did not finish within " + limit + " ticks");
 				context.runOnClient(mc -> Miner.stop(null, null, false));
