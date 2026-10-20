@@ -169,6 +169,27 @@ public final class Miner {
 			job.oy = feet.getY();
 			job.oz = feet.getZ();
 			job.dir = Direction.fromYRot(p.getYRot()).get2DDataValue();
+			// Water or lava right where the first stairs go (a lake beside the start): it floods the stairs again and
+			// again. Like a player, dig the stairs the other way instead, if another way is drier.
+			{
+				Direction want = Direction.fromYRot(p.getYRot());
+				int best = fluidNearStairs(feet, want);
+				Direction pick = want;
+				if (best > 0) {
+					for (Direction d : new Direction[] { want.getClockWise(), want.getCounterClockWise(), want.getOpposite() }) {
+						int n = fluidNearStairs(feet, d);
+						if (n < best) {
+							best = n;
+							pick = d;
+						}
+					}
+				}
+				if (pick != want) {
+					job.dir = pick.get2DDataValue();
+					Alerts.chat("Mine Assist", "바라보는 쪽 계단 자리에 물·용암이 있어서 " + pick.getName() + " 방향으로 파요");
+					com.seolwoni.assistcore.log.UsageLog.event("mine", "계단 방향 변경 (물·용암): " + want.getName() + " → " + pick.getName());
+				}
+			}
 			job.targetY = cfg.targetY;
 			job.mainLength = cfg.mainLength;
 			job.branchLength = cfg.branchLength;
@@ -191,6 +212,21 @@ public final class Miner {
 		com.seolwoni.assistcore.log.UsageLog.start("mine", "목표 Y " + job.targetY + ", 가운데 굴 " + job.mainLength + "칸, 가지굴 " + job.branchLength + "칸/" + job.branchSpacing + "칸 간격, 작업 속도 " + cfg.pace
 				+ (job.mainK > 0 || job.stairsDone > 0 ? " (이어서: 계단 " + job.stairsDone + ", 가운데 " + job.mainK + ")" : ""));
 		return true;
+	}
+
+	/** Water and lava cells around the first 8 stairs in direction {@code d} (the cells dug and their walls). */
+	static int fluidNearStairs(BlockPos origin, Direction d) {
+		int n = 0;
+		Direction r = d.getClockWise();
+		for (int i = 0; i <= 8; i++) {
+			BlockPos s = origin.relative(d, i).below(i);
+			for (int side = -1; side <= 1; side++) {
+				for (int up = -1; up <= 3; up++) {
+					if (Blocks2.isFluid(s.relative(r, side).above(up))) n++;
+				}
+			}
+		}
+		return n;
 	}
 
 	/** Why the miner last stopped (title / subtitle), for the debug log and automated tests. */
@@ -253,6 +289,8 @@ public final class Miner {
 		if (mc.isPaused()) return;
 		if (!safety(mc, p, cfg)) return;
 		// Defense (Assist Path): while a creeper, an arrow or a mob needs dealing with, it has the controls.
+		// Getting away stays inside the tunnels we dug: running out into a cave is how the way back gets lost.
+		com.seolwoni.assistpath.defense.Defense.config.region = geo == null ? null : q -> q.getY() >= geo.origin.getY() - 1 || tunnelSpace(q) || tunnelSpace(q.above()); // up top: anywhere
 		if (cfg.mobMode <= 1 && com.seolwoni.assistpath.defense.Defense.guard(mc, p)) {
 			if (defenseFrom == null) defenseFrom = p.blockPosition().immutable();
 			String why = com.seolwoni.assistpath.defense.Defense.giveUp();
