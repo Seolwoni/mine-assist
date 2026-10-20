@@ -115,7 +115,11 @@ public class MineGameTest implements FabricClientGameTest {
 					if (!stopped.startsWith("시작 지점으로 돌아왔어요")) failures.add("return button: did not come back (" + stopped + ")");
 					else if (d > 2.0) failures.add("return button: stopped " + String.format("%.1f", d) + " blocks from the start");
 					context.waitTicks(20);
+					// (The test starts with "이어서 파기" off, for a fresh job; carrying on needs it on.)
+					context.runOnClient(mc -> MineConfig.get().resume = true);
 					boolean again = context.computeOnClient(mc -> Miner.start(mc));
+					String how = context.computeOnClient(mc -> Miner.status());
+					log.add("switched on again at the start: " + how + ", stairs done " + context.computeOnClient(mc -> Miner.job().stairsDone));
 					if (!again) failures.add("would not carry on from the start after going back (" + Miner.lastStop + ")");
 					ticks += w;
 				}
