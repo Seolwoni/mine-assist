@@ -283,6 +283,7 @@ public final class Miner {
 		com.seolwoni.mineassist.hud.MineStats.tick();
 
 		Human.humanLike = cfg.humanDelay;
+		Human.sprintJump = true;
 		Human.pace = cfg.pace;
 		if (queue.tick(mc, p)) return;
 		plan(mc, p, cfg);
