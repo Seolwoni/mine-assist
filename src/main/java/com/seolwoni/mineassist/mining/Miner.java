@@ -271,7 +271,6 @@ public final class Miner {
 			}
 			return;
 		}
-		}
 		job.ticks++;
 		com.seolwoni.mineassist.hud.MineStats.tick();
 
