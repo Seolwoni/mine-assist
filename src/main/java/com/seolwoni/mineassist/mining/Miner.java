@@ -375,7 +375,7 @@ public final class Miner {
 		Alerts.actionBar("하던 것을 멈추고 시작 지점으로 돌아가요", 0xFFFFAA00);
 		add(new CollectAction());
 		// Off the known route (fled into a cave, inside a pocket): first back onto where the job had got to.
-		add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(geo.pos(here)),
+		addCore(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(geo.pos(here)),
 				com.seolwoni.assistpath.PathOptions.FULL, SKIP));
 		run(() -> status("시작 지점으로 돌아가는 중"));
 		add(new RouteAction(geo.routeToOrigin(here)));
