@@ -99,6 +99,8 @@ public class MineConfig {
 
 	// ---- Storage ----
 	public boolean storeEnabled = true;
+	/** 보관 방식: 0 상자, 1 엔더 상자, 2 셜커 상자, 3 자동 (see PortableStorage). */
+	public int storeMode = 0;
 	public List<ChestEntry> chests = new ArrayList<>();
 
 	// ---- HUD ----

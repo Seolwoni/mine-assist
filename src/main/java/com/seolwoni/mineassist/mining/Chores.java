@@ -84,8 +84,16 @@ final class Chores {
 
 		// Full: go and store.
 		if (free <= 1) {
-			if (cfg.storeEnabled && !cfg.chests.isEmpty()) {
+			// A shulker box or an ender chest carried along: store right here, no walk home.
+			var box = cfg.storeEnabled ? com.seolwoni.assistcore.storage.PortableStorage.trip("mine", p, cfg.storeMode,
+					i -> !Storage.keepSet(p).contains(i), Miner::tunnelSpace, true) : null;
+			if (box != null) {
+				Miner.status(box.label());
+				Miner.addCore(box);
+			} else if (cfg.storeEnabled && !cfg.chests.isEmpty()) {
 				Miner.storageTrip(false);
+			} else if (cfg.storeEnabled && cfg.storeMode != com.seolwoni.assistcore.storage.PortableStorage.CHEST) {
+				Miner.stop("인벤토리 가득 참!", com.seolwoni.assistcore.storage.PortableStorage.whyNone(p, cfg.storeMode), true);
 			} else {
 				Miner.stop("인벤토리 가득 참!", "보관 상자를 지정하면 자동으로 보관해요", true);
 			}

@@ -273,7 +273,19 @@ public class MineConfigScreen extends Screen {
 			rebuildWidgets();
 		}).bounds(right, y, 150, 20).build());
 		y += ROW;
-		if (c.chests.isEmpty()) note("시작 지점 근처 상자를 바라보고 K로 지정하세요 (최대 10개)", y + 6);
+		addRenderableWidget(Button.builder(Component.literal("보관 방식: " + com.seolwoni.assistcore.storage.PortableStorage.LABELS[Math.max(0, Math.min(3, c.storeMode))]), b -> {
+			c.storeMode = (c.storeMode + 1) % 4;
+			MineConfig.save();
+			rebuildWidgets();
+		}).bounds(left, y, 150, 20).build());
+		labels.add(new Object[] {switch (c.storeMode) {
+			case 1 -> "엔더 상자를 그 자리에 놓고 담아요 (실크터치로 회수)";
+			case 2 -> "셜커 상자를 그 자리에 놓고 담은 뒤 다시 주워요";
+			case 3 -> "엔더(실크터치) → 셜커 → 지정한 상자 순서";
+			default -> "지정한 상자까지 걸어가서 담아요";
+		}, right, y + 6, 0xFFAAAAAA, false});
+		y += ROW;
+		if (c.chests.isEmpty()) note(c.storeMode == 0 ? "시작 지점 근처 상자를 바라보고 K로 지정하세요 (최대 10개)" : "상자도 지정해 두면 들고 다니는 보관함이 없을 때 써요", y + 6);
 		int maxRows = Math.max(1, (this.height - y - 40) / 22);
 		for (int i = 0; i < Math.min(c.chests.size(), maxRows); i++) {
 			ChestEntry e = c.chests.get(i);

@@ -143,7 +143,9 @@ public class MineRealTest implements FabricClientGameTest {
 		// "-2" runs the same place a second time (to see how much the result varies between runs).
 		// "-poke" digs poke holes instead of branches (to compare how much is found per block dug).
 		boolean poke = run.endsWith("-poke");
-		String suite = run.replace("-poke", "").replaceAll("-2$", "");
+		// "-shulker" stores into shulker boxes carried along (Assist Core PortableStorage) instead of walking home.
+		boolean shulker = run.endsWith("-shulker");
+		String suite = run.replace("-poke", "").replace("-shulker", "").replaceAll("-2$", "");
 		ResourceKey<Biome> biome = switch (suite) {
 			case "real-plains", "real-deep" -> Biomes.PLAINS;
 			case "real-forest" -> Biomes.FOREST;
@@ -178,6 +180,10 @@ public class MineRealTest implements FabricClientGameTest {
 			if (RealWorld.night()) RealWorld.cmd(sp, "give @a minecraft:iron_sword"); // like a player going down at night
 			if (deep) RealWorld.cmd(sp, "give @a minecraft:torch 64");
 			RealWorld.cmd(sp, "give @a minecraft:cobblestone 128");
+			if (shulker) {
+				RealWorld.cmd(sp, "give @a minecraft:shulker_box 2");
+				RealWorld.cmd(sp, "give @a minecraft:brick 1280"); // 20 stacks of something to store: the inventory fills early
+			}
 			RealWorld.cmd(sp, "effect give @a minecraft:night_vision infinite 0 true");
 			RealWorld.cmd(sp, "effect give @a minecraft:saturation infinite 0 true");
 			RealWorld.cmd(sp, "tp @a " + (x + 0.5) + " " + g + " " + (z + 0.5) + " 0 10");
@@ -201,6 +207,8 @@ public class MineRealTest implements FabricClientGameTest {
 				c.craftTorches = false;
 				c.stopOnMob = false;
 				c.storeEnabled = true;
+				c.storeMode = shulker ? com.seolwoni.assistcore.storage.PortableStorage.SHULKER : 0;
+				com.seolwoni.assistcore.storage.PortableStorage.trips = 0;
 				c.chests.clear();
 				ChestEntry ch = new ChestEntry();
 				ch.x = chest.getX();
@@ -275,6 +283,25 @@ public class MineRealTest implements FabricClientGameTest {
 				failures.add("stopped early: " + stop);
 			}
 			if (minHealth < 14) failures.add("got hurt: health went down to " + minHealth);
+			if (shulker) {
+				int trips = context.computeOnClient(mc -> com.seolwoni.assistcore.storage.PortableStorage.trips);
+				int boxes = context.computeOnClient(mc -> {
+					int n = 0;
+					for (int i = 0; i < 36; i++) if (com.seolwoni.assistcore.storage.PortableStorage.isShulkerItem(mc.player.getInventory().getItem(i))) n++;
+					return n;
+				});
+				int standing = sp.getServer().computeOnServer(server -> {
+					int n = 0;
+					for (BlockPos q : BlockPos.betweenClosed(x - 40, startY - 80, z - 10, x + 40, startY + 5, z + 60)) {
+						if (server.overworld().getBlockState(q).getBlock() instanceof net.minecraft.world.level.block.ShulkerBoxBlock) n++;
+					}
+					return n;
+				});
+				log.add("shulker trips=" + trips + " shulker boxes carried at the end=" + boxes + " left standing=" + standing);
+				if (trips == 0) failures.add("never stored into a shulker box");
+				if (boxes != 2) failures.add("came back with " + boxes + " of 2 shulker boxes");
+				if (standing > 0) failures.add(standing + " shulker box(es) left standing in the mine");
+			}
 			double home = context.computeOnClient(mc -> mc.player.position().distanceTo(new net.minecraft.world.phys.Vec3(x + 0.5, startY, z + 0.5)));
 			if (!running && stop.startsWith("채광 완료") && home > 2.0) failures.add("finished but not back at the start (distance " + String.format("%.1f", home) + ")");
 			context.runOnClient(mc -> {

@@ -92,6 +92,11 @@ public final class Miner {
 		queue.add(a);
 	}
 
+	/** A shared Assist Core action (storing into a carried box). */
+	static void addCore(com.seolwoni.assistcore.engine.Action a) {
+		queue.add(a);
+	}
+
 	static void run(Runnable r) {
 		add((mc, p) -> {
 			r.run();
@@ -262,6 +267,9 @@ public final class Miner {
 			// where we were: drop it, walk back to the last place the job reached, and plan from the job state again.
 			defenseFrom = null;
 			queue.clear();
+			// A box put down to store into is still standing there: finish with it first.
+			var box = com.seolwoni.assistcore.storage.PortableStorage.interrupted(mc);
+			if (box != null) queue.add(box);
 			BlockPos back = geo.pos(here);
 			if (com.seolwoni.assistpath.walk.PathWalker.feet(p).distManhattan(back) > 0) {
 				// May dig or build a step on the way: after a fall into a cave the way back is up.
