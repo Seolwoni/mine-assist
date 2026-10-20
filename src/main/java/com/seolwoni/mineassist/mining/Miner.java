@@ -179,27 +179,6 @@ public final class Miner {
 			job.oy = feet.getY();
 			job.oz = feet.getZ();
 			job.dir = Direction.fromYRot(p.getYRot()).get2DDataValue();
-			// Water or lava right where the first stairs go (a lake beside the start): it floods the stairs again and
-			// again. Like a player, dig the stairs the other way instead, if another way is drier.
-			{
-				Direction want = Direction.fromYRot(p.getYRot());
-				int best = fluidNearStairs(feet, want);
-				Direction pick = want;
-				if (best >= 2) {
-					for (Direction d : new Direction[] { want.getClockWise(), want.getCounterClockWise(), want.getOpposite() }) {
-						int n = fluidNearStairs(feet, d);
-						if (n < best) {
-							best = n;
-							pick = d;
-						}
-					}
-				}
-				if (pick != want) {
-					job.dir = pick.get2DDataValue();
-					Alerts.chat("Mine Assist", "바라보는 쪽 계단 자리에 물·용암이 있어서 " + pick.getName() + " 방향으로 파요");
-					com.seolwoni.assistcore.log.UsageLog.event("mine", "계단 방향 변경 (물·용암): " + want.getName() + " → " + pick.getName());
-				}
-			}
 			job.targetY = cfg.targetY;
 			job.mainLength = cfg.mainLength;
 			job.branchLength = cfg.branchLength;
@@ -222,19 +201,6 @@ public final class Miner {
 		com.seolwoni.assistcore.log.UsageLog.start("mine", "목표 Y " + job.targetY + ", 가운데 굴 " + job.mainLength + "칸, 가지굴 " + job.branchLength + "칸/" + job.branchSpacing + "칸 간격, 작업 속도 " + cfg.pace
 				+ (job.mainK > 0 || job.stairsDone > 0 ? " (이어서: 계단 " + job.stairsDone + ", 가운데 " + job.mainK + ")" : ""));
 		return true;
-	}
-
-	/**
-	 * Water and lava in the cells the first 8 stairs will dig (not their walls: water beside the stairs gets
-	 * plugged as usual). Only stairs that would run right into a lake count.
-	 */
-	static int fluidNearStairs(BlockPos origin, Direction d) {
-		int n = 0;
-		for (int i = 1; i <= 8; i++) {
-			BlockPos s = origin.relative(d, i).below(i);
-			for (int up = 0; up <= 2; up++) if (Blocks2.isFluid(s.above(up))) n++;
-		}
-		return n;
 	}
 
 	/** Why the miner last stopped (title / subtitle), for the debug log and automated tests. */
