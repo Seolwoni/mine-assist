@@ -147,7 +147,7 @@ public class MineRealTest implements FabricClientGameTest {
 		boolean shulker = run.endsWith("-shulker");
 		// "-west": the same start, digging west instead of south (into a dungeon next to the stairs: drops that cannot be reached).
 		boolean west = run.endsWith("-west");
-		String suite = run.replace("-poke", "").replace("-shulker", "").replace("-west", "").replaceAll("-2$", "");
+		String suite = run.replace("-poke", "").replace("-shulker", "").replace("-west", "").replaceAll("-[0-9]$", "");
 		ResourceKey<Biome> biome = switch (suite) {
 			case "real-plains", "real-deep" -> Biomes.PLAINS;
 			case "real-forest" -> Biomes.FOREST;

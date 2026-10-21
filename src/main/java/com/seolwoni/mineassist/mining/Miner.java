@@ -127,6 +127,8 @@ public final class Miner {
 		MineConfig cfg = MineConfig.get();
 		if (p == null || mc.level == null) return false;
 		queue.clear();
+		lostCount = 0;
+		lostEpisodes = 0;
 		finishing = false;
 		torchFetchTried = false;
 		Chores.dumpBlockedUntil = 0;
@@ -278,11 +280,26 @@ public final class Miner {
 			var box = com.seolwoni.assistcore.storage.PortableStorage.interrupted(mc);
 			if (box != null) queue.add(box);
 			BlockPos back = geo.pos(here);
+			// Out of the dug tunnels (pushed into a cave, fell through): at most two goes at getting back. After that,
+			// no wandering about a dark cave: wall ourselves in where we stand and stop, so the player can come.
+			if (onDugGround(p.blockPosition())) {
+				lostCount = 0;
+				lostEpisodes = 0;
+			} else if (++lostEpisodes > 3) {
+				// Mobs keep interrupting the way back out there: stop trying.
+				shelterAndStop(p);
+				return;
+			}
 			if (com.seolwoni.assistpath.walk.PathWalker.feet(p).distManhattan(back) > 0) {
 				// May dig or build a step on the way: after a fall into a cave the way back is up.
 				queue.add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(back),
 						com.seolwoni.assistpath.PathOptions.FULL, com.seolwoni.assistcore.engine.Action.SKIP));
 				status("하던 곳으로 돌아가는 중");
+				add((mc2, p2) -> {
+					// Did not make it back (the path gave up): that counts as a go too.
+					if (!onDugGround(p2.blockPosition()) && ++lostCount >= 2) shelterAndStop(p2);
+					return DONE;
+				});
 			}
 			return;
 		}
@@ -1223,6 +1240,31 @@ public final class Miner {
 	static final java.util.Map<Integer, Integer> collectTries = new java.util.HashMap<>();
 	/** Drops given up on (shown to the player once, written to the usage log). */
 	public static final Set<BlockPos> leftDrops = new java.util.LinkedHashSet<>();
+
+	/** Times in a row we ended up off the dug tunnels after Defense (see the tick). */
+	private static int lostCount, lostEpisodes;
+
+	/** Walls and roof around where we stand (feet and head level), then stop and tell the player where. */
+	static void shelterAndStop(LocalPlayer p) {
+		queue.clear();
+		BlockPos f = p.blockPosition();
+		status("블록으로 몸을 막는 중");
+		List<Action> walls = new ArrayList<>();
+		for (Direction d : Direction.Plane.HORIZONTAL) {
+			walls.add(new PlaceAction(f.relative(d), PlaceAction.PLUG, SKIP));
+			walls.add(new PlaceAction(f.above().relative(d), PlaceAction.PLUG, SKIP));
+		}
+		walls.add(new PlaceAction(f.above(2), PlaceAction.PLUG, SKIP));
+		pushFront(walls);
+		add((mc, pl) -> {
+			lostCount = 0;
+			lostEpisodes = 0;
+			com.seolwoni.assistcore.log.UsageLog.event("mine", "굴 밖에서 돌아가지 못해 몸을 막고 멈춤: " + f.toShortString());
+			Alerts.chat("Mine Assist", "굴 밖 동굴(" + f.toShortString() + ")에서 돌아가는 길을 못 찾아, 블록으로 몸을 막고 멈췄어요.");
+			stop("굴 밖에서 길을 잃었어요", "블록으로 몸을 막고 멈췄어요: " + f.toShortString(), true);
+			return DONE;
+		});
+	}
 
 	/** For the tests: is the player where the job dug (tunnels, ore pockets, one step beside), or up top? */
 	public static boolean onDugGround(BlockPos feet) {
