@@ -52,6 +52,8 @@ public final class Miner {
 	private static BlockPos defenseFrom;
 	/** Ore blocks we dug out: their holes are not caves, so they are never walled or roofed over (drops lie there). */
 	static final Set<BlockPos> minedOre = new HashSet<>();
+	/** Every cell we dug out this session (poke holes, pockets): ours, not a cave, never walled. */
+	static final Set<BlockPos> dug = new HashSet<>();
 	/** Ores left in place because their drops would fall into a cave or lava below (shown to the player). */
 	public static final Set<BlockPos> leftOverVoid = new java.util.LinkedHashSet<>();
 	static Loc here = Loc.origin();
@@ -151,6 +153,7 @@ public final class Miner {
 			geo = new Geo(job);
 			minedOre.clear();
 			leftOverVoid.clear();
+			dug.clear();
 			collectTries.clear();
 			leftDrops.clear();
 			// Jobs saved by 1.2.3 and older started with mainK = 1 and would skip main step 1.
@@ -183,6 +186,7 @@ public final class Miner {
 			geo = new Geo(job);
 			minedOre.clear();
 			leftOverVoid.clear();
+			dug.clear();
 			collectTries.clear();
 			leftDrops.clear();
 			here = Loc.origin();
@@ -900,6 +904,8 @@ public final class Miner {
 		private String reason = "";
 		private String oreId = "";
 		boolean ore;
+		/** Caves beside the block looked at (and closed) once. */
+		private boolean caveChecked;
 
 		MineAction(BlockPos pos, int failMode) {
 			this.pos = pos;
@@ -951,6 +957,24 @@ public final class Miner {
 						pushFront(plugs);
 						return RUN;
 					}
+					// A cave right beside the block: close it first, the same way as water and lava, so no gap ever
+					// opens onto the cave (mobs in it cannot see us or shoot, a knock cannot push us out into it).
+					if (!caveChecked && geo != null && pos.getY() < geo.origin.getY() - 1) {
+						caveChecked = true;
+						List<Action> walls = new ArrayList<>();
+						for (Direction dir : Direction.values()) {
+							BlockPos nb = pos.relative(dir);
+							if (!(Blocks2.isOpen(nb) || Blocks2.isSoftCover(nb)) || Blocks2.isFluid(nb)) continue;
+							if (tunnelSpace(nb) || minedOre.contains(nb) || dug.contains(nb) || occupiedByPlayer(p, nb)) continue;
+							if (nb.getY() >= geo.origin.getY() - 1) continue;
+							walls.add(new PlaceAction(nb, PlaceAction.WALL, SKIP));
+						}
+						if (!walls.isEmpty()) {
+							status("동굴 쪽을 먼저 막는 중");
+							pushFront(walls);
+							return RUN;
+						}
+					}
 					if (!Inv.selectPickaxe(mc, p)) {
 						reason = "쓸 수 있는 곡괭이가 없어요";
 						stop("곡괭이가 없어요", "쓸 수 있는 곡괭이가 없어요", true);
@@ -978,6 +1002,7 @@ public final class Miner {
 					p.swing(InteractionHand.MAIN_HAND);
 					ticks++;
 					if (Blocks2.isOpen(pos)) {
+						dug.add(pos.immutable());
 						job.blocksMined++;
 						com.seolwoni.mineassist.hud.MineStats.block();
 						if (ore || MineConfig.get().ores.contains(oreId)) {

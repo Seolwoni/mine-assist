@@ -82,7 +82,7 @@ public class MineConfig {
 	public int pokeDepth = 4;
 	public int mobRange = 8;
 	public int minHealth = 8;
-	public int plugKeep = 128;
+	public int plugKeep = 192;
 	/** Settings format version, for one-time migrations. */
 	public int cfgVersion = 0;
 
@@ -141,7 +141,7 @@ public class MineConfig {
 		c.running = false;
 		if (c.cfgVersion < 1) {
 			// 1.2.5: keep two stacks of cobblestone by default (caves now use a lot for floors and walls).
-			if (c.plugKeep <= 64) c.plugKeep = 128;
+			if (c.plugKeep <= 128) c.plugKeep = 192; // three stacks: caves are closed off before digging next to them
 			c.cfgVersion = 1;
 		}
 		c.mainLength = clamp(c.mainLength, 3, 2000);
