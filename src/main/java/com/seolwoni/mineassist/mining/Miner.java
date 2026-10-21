@@ -52,6 +52,8 @@ public final class Miner {
 	private static BlockPos defenseFrom;
 	/** Ore blocks we dug out: their holes are not caves, so they are never walled or roofed over (drops lie there). */
 	static final Set<BlockPos> minedOre = new HashSet<>();
+	/** Cave cells we tried to close before digging next to them (each only once). */
+	static final Set<BlockPos> caveTried = new HashSet<>();
 	/** Every cell we dug out this session (poke holes, pockets): ours, not a cave, never walled. */
 	static final Set<BlockPos> dug = new HashSet<>();
 	/** Ores left in place because their drops would fall into a cave or lava below (shown to the player). */
@@ -154,6 +156,7 @@ public final class Miner {
 			minedOre.clear();
 			leftOverVoid.clear();
 			dug.clear();
+			caveTried.clear();
 			collectTries.clear();
 			leftDrops.clear();
 			// Jobs saved by 1.2.3 and older started with mainK = 1 and would skip main step 1.
@@ -187,6 +190,7 @@ public final class Miner {
 			minedOre.clear();
 			leftOverVoid.clear();
 			dug.clear();
+			caveTried.clear();
 			collectTries.clear();
 			leftDrops.clear();
 			here = Loc.origin();
@@ -967,6 +971,9 @@ public final class Miner {
 							if (!(Blocks2.isOpen(nb) || Blocks2.isSoftCover(nb)) || Blocks2.isFluid(nb)) continue;
 							if (tunnelSpace(nb) || minedOre.contains(nb) || dug.contains(nb) || occupiedByPlayer(p, nb)) continue;
 							if (nb.getY() >= geo.origin.getY() - 1) continue;
+							// Once per cell: in a wide-open cave some cannot be built (nothing to build against); trying
+							// them again every time the step is planned again kept the miner at it for minutes.
+							if (!caveTried.add(nb.immutable())) continue;
 							walls.add(new PlaceAction(nb, PlaceAction.WALL, SKIP));
 						}
 						if (!walls.isEmpty()) {
