@@ -179,7 +179,24 @@ public class MineRealTest implements FabricClientGameTest {
 			RealWorld.cmd(sp, "give @a minecraft:diamond_pickaxe");
 			RealWorld.cmd(sp, "give @a minecraft:diamond_pickaxe");
 			RealWorld.cmd(sp, "give @a minecraft:torch 64");
-			if (RealWorld.night()) RealWorld.cmd(sp, "give @a minecraft:iron_sword"); // like a player going down at night
+			if (RealWorld.night()) {
+				// Like a player going down at night: from a house (walls, roof, torches: the chest and the stairs inside),
+				// in iron armour with an iron sword.
+				RealWorld.cmd(sp, "fill " + (x - 3) + " " + (g - 1) + " " + (z - 4) + " " + (x + 4) + " " + (g + 4) + " " + (z + 4) + " minecraft:cobblestone hollow");
+				RealWorld.cmd(sp, "fill " + (x - 2) + " " + g + " " + (z - 3) + " " + (x + 3) + " " + (g + 3) + " " + (z + 3) + " minecraft:air");
+				RealWorld.cmd(sp, "fill " + (x - 2) + " " + (g - 1) + " " + (z - 3) + " " + (x + 3) + " " + (g - 1) + " " + (z + 3) + " minecraft:cobblestone");
+				RealWorld.cmd(sp, "setblock " + (x - 2) + " " + (g + 2) + " " + (z - 3) + " minecraft:torch");
+				RealWorld.cmd(sp, "setblock " + (x + 3) + " " + (g + 2) + " " + (z + 3) + " minecraft:torch");
+				RealWorld.cmd(sp, "setblock " + (x - 2) + " " + (g + 2) + " " + (z + 3) + " minecraft:torch");
+				RealWorld.cmd(sp, "setblock " + (x + 3) + " " + (g + 2) + " " + (z - 3) + " minecraft:torch");
+				RealWorld.cmd(sp, "setblock " + (x + 2) + " " + g + " " + (z - 2) + " minecraft:chest[facing=north]");
+				RealWorld.cmd(sp, "item replace block " + (x + 2) + " " + g + " " + (z - 2) + " container.0 with minecraft:bread 32");
+				RealWorld.cmd(sp, "give @a minecraft:iron_sword");
+				RealWorld.cmd(sp, "item replace entity @a armor.head with minecraft:iron_helmet");
+				RealWorld.cmd(sp, "item replace entity @a armor.chest with minecraft:iron_chestplate");
+				RealWorld.cmd(sp, "item replace entity @a armor.legs with minecraft:iron_leggings");
+				RealWorld.cmd(sp, "item replace entity @a armor.feet with minecraft:iron_boots");
+			}
 			if (deep) RealWorld.cmd(sp, "give @a minecraft:torch 64");
 			RealWorld.cmd(sp, "give @a minecraft:cobblestone 128");
 			if (shulker) {
@@ -227,6 +244,7 @@ public class MineRealTest implements FabricClientGameTest {
 			log.add("target y " + (deep ? -54 : startY - 30) + ", main 16, branches 5 every 3");
 			context.takeScreenshot(run + "-00-start");
 
+			int outsideSamples = 0, walkBackSamples = 0;
 			int ticks = 0, shots = 1;
 			final int limit = 20 * 60 * (deep ? 40 : 25);
 			boolean running = true;
@@ -245,6 +263,8 @@ public class MineRealTest implements FabricClientGameTest {
 				final int t = ticks;
 				log.add(context.computeOnClient(mc -> "t=" + t + " pos=" + mc.player.blockPosition().toShortString() + " hp=" + (int) mc.player.getHealth()
 						+ " status=" + Miner.status()));
+				if (!context.computeOnClient(mc -> Miner.onDugGround(mc.player.blockPosition()))) outsideSamples++;
+				if (context.computeOnClient(mc -> Miner.status()).contains("하던 곳으로 돌아가는")) walkBackSamples++;
 				minHealth = Math.min(minHealth, context.computeOnClient(mc -> mc.player.getHealth()));
 				// Drops lying near us for more than 15 s were left behind (items vanish after 5 minutes, so note them now).
 				List<String> stale = sp.getServer().computeOnServer(server -> {
@@ -271,6 +291,7 @@ public class MineRealTest implements FabricClientGameTest {
 			log.add("stopped after " + ticks + " ticks (" + ticks / 20 + " s): " + stop);
 			log.add(timing.summary() + ", server tick " + String.format("%.1f", RealWorld.mspt(sp)) + " ms");
 			log.add(com.seolwoni.assistpath.AssistPath.Stats.summary());
+			log.add("outside the dug tunnels: " + outsideSamples * 2 + " s, walking back after Defense: " + walkBackSamples * 2 + " s");
 			log.add(context.computeOnClient(mc -> com.seolwoni.assistpath.defense.Defense.Stats.summary() + " giveUp=" + com.seolwoni.assistpath.defense.Defense.giveUp() + " night=" + RealWorld.night()));
 			for (String ev : context.computeOnClient(mc -> new ArrayList<>(com.seolwoni.assistpath.defense.Defense.Stats.events))) log.add("  defense: " + ev);
 			for (String ev : context.computeOnClient(mc -> new ArrayList<>(com.seolwoni.assistpath.defense.Defense.Stats.events))) log.add("  defense: " + ev);

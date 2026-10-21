@@ -1224,6 +1224,13 @@ public final class Miner {
 	/** Drops given up on (shown to the player once, written to the usage log). */
 	public static final Set<BlockPos> leftDrops = new java.util.LinkedHashSet<>();
 
+	/** For the tests: is the player where the job dug (tunnels, ore pockets, one step beside), or up top? */
+	public static boolean onDugGround(BlockPos feet) {
+		if (geo == null) return true;
+		if (feet.getY() >= geo.origin.getY() - 1) return true;
+		return nearDug(feet) || nearDug(feet.below()) || nearDug(feet.above());
+	}
+
 	/** A cell we may step onto to pick something up: the tunnel itself, a dug-out ore pocket, or one step beside them. */
 	static boolean nearDug(BlockPos c) {
 		if (tunnelSpace(c) || minedOre.contains(c)) return true;
