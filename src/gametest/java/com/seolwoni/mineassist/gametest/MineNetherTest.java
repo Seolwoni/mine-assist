@@ -155,7 +155,7 @@ public class MineNetherTest implements FabricClientGameTest {
 			String stop = context.computeOnClient(mc -> Miner.lastStop);
 			log.add("stopped after " + ticks + " ticks (" + ticks / 20 + " s): " + stop);
 			log.add(com.seolwoni.assistpath.AssistPath.Stats.summary());
-			log.add(context.computeOnClient(mc -> com.seolwoni.assistpath.defense.Defense.Stats.summary()));
+			log.add(context.computeOnClient(mc -> com.seolwoni.assistpath.defense.Defense.Stats.summary() + " ghastShelters=" + com.seolwoni.mineassist.mining.Miner.ghastShelters));
 			for (String ev : context.computeOnClient(mc -> new ArrayList<>(com.seolwoni.assistpath.defense.Defense.Stats.events))) log.add("  defense: " + ev);
 			log.add("lowest health " + minHealth + ", burning " + burning * 2 + " s, in lava " + inLava * 2 + " s, outside the dug tunnels " + outside * 2 + " s");
 			drops.report(sp, log);

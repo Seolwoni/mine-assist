@@ -140,6 +140,9 @@ public final class Miner {
 		queue.clear();
 		lostCount = 0;
 		lostEpisodes = 0;
+		lastSafe = null;
+		sheltering = false;
+		ghastShelters = 0;
 		finishing = false;
 		torchFetchTried = false;
 		Chores.dumpBlockedUntil = 0;
@@ -334,6 +337,7 @@ public final class Miner {
 		Human.humanLike = cfg.humanDelay;
 		Human.sprintJump = true;
 		Human.pace = cfg.pace;
+		if (ghastWatch(mc, p)) return;
 		edgeSneak(mc, p);
 		if (queue.tick(mc, p)) return;
 		plan(mc, p, cfg);
@@ -1408,40 +1412,117 @@ public final class Miner {
 		// Not while walking: crouching stops a step down onto the next stair (it holds us at every edge), so the
 		// walk would stall. The knocks that throw us off come while we stand and work (dig, build a bridge).
 		boolean walking = mc.options.keyUp.isDown() || mc.options.keyDown.isDown() || mc.options.keyLeft.isDown() || mc.options.keyRight.isDown();
-		if (!walking && p.onGround() && !p.isInWater()) {
-			BlockPos f = p.blockPosition();
-			for (Direction d : Direction.Plane.HORIZONTAL) {
-				BlockPos n = f.relative(d);
-				if (!Blocks2.isOpen(n) || Blocks2.isFluid(n)) continue;
-				int drop = 0;
-				boolean lava = false;
-				for (int k = 1; k <= 4; k++) {
-					BlockPos b = n.below(k);
-					if (Blocks2.isLava(b)) {
-						lava = true;
-						break;
-					}
-					if (!Blocks2.isOpen(b)) break;
-					drop++;
-				}
-				if (drop >= 3 || lava) {
-					edge = true;
-					break;
-				}
-				// An opening from our tunnel into a cave, however shallow its floor: a knock pushes us into the cave
-				// and further down from there (night: an arrow while digging a branch, then an 8-block fall).
-				if (geo != null && underground(n) && !tunnelSpace(n) && !dug.contains(n) && !minedOre.contains(n)) {
-					edge = true;
-					break;
-				}
-			}
-		}
+		if (!walking && p.onGround() && !p.isInWater()) edge = edgeAt(p.blockPosition());
 		if (edge) {
 			mc.options.keyShift.setDown(true);
 			edgeSneaking = true;
 		} else if (edgeSneaking) {
 			mc.options.keyShift.setDown(false);
 			edgeSneaking = false;
+		}
+	}
+
+	/** Standing at {@code f}: is there an open drop (3 or more down, or lava) or an opening into a cave beside us? */
+	static boolean edgeAt(BlockPos f) {
+		for (Direction d : Direction.Plane.HORIZONTAL) {
+			BlockPos n = f.relative(d);
+			if (!Blocks2.isOpen(n) || Blocks2.isFluid(n)) continue;
+			int drop = 0;
+			boolean lava = false;
+			for (int k = 1; k <= 4; k++) {
+				BlockPos b = n.below(k);
+				if (Blocks2.isLava(b)) {
+					lava = true;
+					break;
+				}
+				if (!Blocks2.isOpen(b)) break;
+				drop++;
+			}
+			if (drop >= 3 || lava) return true;
+			// An opening from our tunnel into a cave, however shallow its floor: a knock pushes us into the cave
+			// and further down from there (night: an arrow while digging a branch, then an 8-block fall).
+			if (geo != null && underground(n) && !tunnelSpace(n) && !dug.contains(n) && !minedOre.contains(n)) return true;
+		}
+		return false;
+	}
+
+	// ------------------------------------------------------------------ ghasts
+
+	/** The last place we stood that had no drop or cave opening beside it (inside our own walled tunnel). */
+	private static BlockPos lastSafe;
+	private static boolean sheltering;
+	public static int ghastShelters;
+
+	/** A ghast that can see us (we can see it too: it is in plain sight), within 64 blocks. */
+	static net.minecraft.world.entity.Entity watchingGhast(Minecraft mc, LocalPlayer p) {
+		for (net.minecraft.world.entity.Entity e : mc.level.getEntities(p, p.getBoundingBox().inflate(64))) {
+			if (!e.isAlive() || !"ghast".equals(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).getPath())) continue;
+			if (p.hasLineOfSight(e)) return e;
+		}
+		return null;
+	}
+
+	/**
+	 * In the Nether, a ghast's fireball blast throws us further than crouching can hold (nether-b: off a bridge, 18
+	 * blocks down towards lava). So while a ghast can see us, we never stand at an edge: back into the walled tunnel,
+	 * crouch out of its sight, and go on once it has not seen us for a while. True when this took over the tick.
+	 */
+	private static boolean ghastWatch(Minecraft mc, LocalPlayer p) {
+		if (!inNether || geo == null) return false;
+		BlockPos feet = p.blockPosition();
+		if (p.onGround() && !edgeAt(feet) && onDugGround(feet)) lastSafe = feet.immutable();
+		if (sheltering || lastSafe == null || !edgeAt(feet)) return false;
+		if (watchingGhast(mc, p) == null) return false;
+		if (ghastShelters >= 8) {
+			// Ghasts keep coming back over this cave: no more work at its edge today.
+			stop("가스트가 계속 나타나서 굴 안에서 멈췄어요", "가스트를 처리하거나 자리를 옮긴 뒤 다시 켜주세요", true);
+			return true;
+		}
+		sheltering = true;
+		ghastShelters++;
+		queue.clear();
+		Body.release(mc);
+		if (mc.gameMode != null) mc.gameMode.stopDestroyBlock();
+		var box = com.seolwoni.assistcore.storage.PortableStorage.interrupted(mc);
+		if (box != null) queue.add(box);
+		status("가스트를 피해 굴 안으로 들어가는 중");
+		Alerts.chat("Mine Assist", "가스트가 보고 있어서 낭떠러지에서 물러나 굴 안에서 기다려요");
+		final BlockPos to = lastSafe;
+		queue.add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(to), com.seolwoni.assistpath.PathOptions.WALK,
+				com.seolwoni.assistcore.engine.Action.SKIP));
+		queue.add(new GhastWaitAction());
+		BlockPos back = geo.pos(here);
+		queue.add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(back), com.seolwoni.assistpath.PathOptions.WALK,
+				com.seolwoni.assistcore.engine.Action.SKIP));
+		add((mc2, p2) -> {
+			sheltering = false;
+			return DONE;
+		});
+		return false;
+	}
+
+	/** Crouched in the tunnel until no ghast has seen us for five seconds; a minute at most, then the job stops. */
+	static final class GhastWaitAction implements Action {
+		private int clear, total;
+
+		@Override
+		public int tick(Minecraft mc, LocalPlayer p) {
+			mc.options.keyShift.setDown(true);
+			if (total == 0) status("가스트가 지나가길 기다리는 중");
+			total++;
+			if (watchingGhast(mc, p) == null) clear++;
+			else clear = 0;
+			if (clear >= 100) {
+				mc.options.keyShift.setDown(false);
+				return DONE;
+			}
+			if (total > 1200) {
+				mc.options.keyShift.setDown(false);
+				sheltering = false;
+				stop("가스트가 1분 넘게 지켜보고 있어서 굴 안에서 멈췄어요", "가스트를 처리하거나 자리를 옮긴 뒤 다시 켜주세요", true);
+				return DONE;
+			}
+			return RUN;
 		}
 	}
 
