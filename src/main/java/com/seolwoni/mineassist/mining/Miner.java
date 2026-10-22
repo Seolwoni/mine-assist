@@ -54,6 +54,13 @@ public final class Miner {
 	static final Set<BlockPos> minedOre = new HashSet<>();
 	/** Cave cells we tried to close before digging next to them (each only once). */
 	static final Set<BlockPos> caveTried = new HashSet<>();
+	/** Goes at closing each cave cell (at most two, the second only once there is something to build against). */
+	static final java.util.Map<BlockPos, Integer> caveTries = new java.util.HashMap<>();
+
+	static boolean hasSupport(BlockPos c) {
+		for (Direction d : Direction.values()) if (Blocks2.isSolid(c.relative(d))) return true;
+		return false;
+	}
 	/** Every cell we dug out this session (poke holes, pockets): ours, not a cave, never walled. */
 	static final Set<BlockPos> dug = new HashSet<>();
 	/** Ores left in place because their drops would fall into a cave or lava below (shown to the player). */
@@ -163,6 +170,7 @@ public final class Miner {
 			leftOverVoid.clear();
 			dug.clear();
 			caveTried.clear();
+			caveTries.clear();
 			collectTries.clear();
 			leftDrops.clear();
 			// Jobs saved by 1.2.3 and older started with mainK = 1 and would skip main step 1.
@@ -197,6 +205,7 @@ public final class Miner {
 			leftOverVoid.clear();
 			dug.clear();
 			caveTried.clear();
+			caveTries.clear();
 			collectTries.clear();
 			leftDrops.clear();
 			here = Loc.origin();
@@ -1011,7 +1020,11 @@ public final class Miner {
 							if (!underground(nb)) continue;
 							// Once per cell: in a wide-open cave some cannot be built (nothing to build against); trying
 							// them again every time the step is planned again kept the miner at it for minutes.
-							if (!caveTried.add(nb.immutable())) continue;
+							// A second go only when there is now something to build against (a wall was built next to it).
+							int tries = caveTries.getOrDefault(nb, 0);
+							if (tries >= 2 || (tries == 1 && !hasSupport(nb))) continue;
+							caveTries.put(nb.immutable(), tries + 1);
+							caveTried.add(nb.immutable());
 							walls.add(new PlaceAction(nb, PlaceAction.WALL, SKIP));
 						}
 						if (!walls.isEmpty()) {
@@ -1408,6 +1421,12 @@ public final class Miner {
 					drop++;
 				}
 				if (drop >= 3 || lava) {
+					edge = true;
+					break;
+				}
+				// An opening from our tunnel into a cave, however shallow its floor: a knock pushes us into the cave
+				// and further down from there (night: an arrow while digging a branch, then an 8-block fall).
+				if (geo != null && underground(n) && !tunnelSpace(n) && !dug.contains(n) && !minedOre.contains(n)) {
 					edge = true;
 					break;
 				}
