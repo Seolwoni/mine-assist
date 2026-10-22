@@ -93,7 +93,7 @@ public class MineConfig {
 	/** Drink a fire resistance potion when burning or touching lava. */
 	public boolean netherFireRes = false;
 	/** Netherrack kept for plugging lava (in the Nether the plug blocks are netherrack). */
-	public int netherPlugKeep = 192;
+	public int netherPlugKeep = 576;
 	/** Settings format version, for one-time migrations. */
 	public int cfgVersion = 0;
 
@@ -168,10 +168,15 @@ public class MineConfig {
 			if (c.netherPlugKeep <= 64) c.netherPlugKeep = 192;
 			c.cfgVersion = 3;
 		}
+		if (c.cfgVersion < 4) {
+			// 1.10.2: nine stacks (a stair through a big Nether cave used up 192 halfway down).
+			if (c.netherPlugKeep <= 192) c.netherPlugKeep = 576;
+			c.cfgVersion = 4;
+		}
 		if (c.netherOres == null) c.netherOres = new ArrayList<>(NETHER_ORES);
 		c.netherTargetY = clamp(c.netherTargetY, 1, 126);
 		c.netherPattern = clamp(c.netherPattern, 0, 1);
-		c.netherPlugKeep = clamp(c.netherPlugKeep, 0, 512);
+		c.netherPlugKeep = clamp(c.netherPlugKeep, 0, 1024);
 		c.mainLength = clamp(c.mainLength, 3, 2000);
 		c.pace = clamp(c.pace, 0, 2);
 		c.foodKeep = clamp(c.foodKeep, 0, 64);
