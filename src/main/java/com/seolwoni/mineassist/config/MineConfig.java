@@ -32,6 +32,7 @@ public class MineConfig {
 			"minecraft:nether_gold_ore", "minecraft:nether_quartz_ore",
 			"minecraft:ancient_debris");
 
+	public static final List<String> NETHER_ORES = List.of("minecraft:ancient_debris", "minecraft:nether_quartz_ore", "minecraft:nether_gold_ore");
 	// Must come after DEFAULT_ORES: the field initialisers below copy it.
 	private static MineConfig instance = new MineConfig();
 
@@ -85,7 +86,6 @@ public class MineConfig {
 	public int plugKeep = 192;
 
 	// ---- Nether (used instead of the overworld values when started in the Nether) ----
-	public static final List<String> NETHER_ORES = List.of("minecraft:ancient_debris", "minecraft:nether_quartz_ore", "minecraft:nether_gold_ore");
 	public int netherTargetY = 15;
 	public List<String> netherOres = new ArrayList<>(NETHER_ORES);
 	/** 0 = branches, 1 = poke holes (the default: debris is rare, seeing more wall pays). */
