@@ -24,7 +24,7 @@
 		"java": ">=25",
 		"fabric-api": "*",
 		"assistcore": ">=1.7.2",
-		"assistpath": ">=0.4.8"
+		"assistpath": ">=0.4.9"
 	},
 	"suggests": {
 		"modmenu": "*"

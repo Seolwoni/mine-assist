@@ -229,6 +229,8 @@ public final class Miner {
 		queue.clear();
 		Body.release(mc);
 		mc.options.keyUse.setDown(false);
+		if (edgeSneaking) mc.options.keyShift.setDown(false);
+		edgeSneaking = false;
 		if (mc.gameMode != null) mc.gameMode.stopDestroyBlock();
 		if (mc.player != null && mc.gui.screen() instanceof AbstractContainerScreen<?> s && !(s instanceof InventoryScreen)) {
 			mc.player.closeContainer();
@@ -323,6 +325,7 @@ public final class Miner {
 		Human.humanLike = cfg.humanDelay;
 		Human.sprintJump = true;
 		Human.pace = cfg.pace;
+		edgeSneak(mc, p);
 		if (queue.tick(mc, p)) return;
 		plan(mc, p, cfg);
 	}
@@ -1364,8 +1367,59 @@ public final class Miner {
 	 * everywhere counts: there is no safe open ground up top.
 	 */
 	static boolean underground(BlockPos q) {
-		if (inNether) return true;
+		// Nether: everything is underground (caves above and below), except the room the player started in (a
+		// shelter: its air is not a cave to wall off).
+		if (inNether) return !startRoom(q);
 		return q.getY() < geo.origin.getY() - 1;
+	}
+
+	/** Around the start: within 5 blocks sideways, from the floor to 5 above it. */
+	static boolean startRoom(BlockPos q) {
+		BlockPos o = geo.origin;
+		return Math.abs(q.getX() - o.getX()) <= 5 && Math.abs(q.getZ() - o.getZ()) <= 5 && q.getY() >= o.getY() - 1 && q.getY() <= o.getY() + 5;
+	}
+
+	/** We hold sneak because we stand at an open drop (see {@link #edgeSneak}). */
+	private static boolean edgeSneaking;
+
+	/**
+	 * Like a player on a bridge over a cave: crouch while standing next to an open drop (3 or more blocks down, or
+	 * lava), so a knock (a fireball, an arrow) cannot push us over the edge. Crouching keeps the feet on the block.
+	 */
+	private static void edgeSneak(Minecraft mc, LocalPlayer p) {
+		boolean edge = false;
+		// Not while walking: crouching stops a step down onto the next stair (it holds us at every edge), so the
+		// walk would stall. The knocks that throw us off come while we stand and work (dig, build a bridge).
+		boolean walking = mc.options.keyUp.isDown() || mc.options.keyDown.isDown() || mc.options.keyLeft.isDown() || mc.options.keyRight.isDown();
+		if (!walking && p.onGround() && !p.isInWater()) {
+			BlockPos f = p.blockPosition();
+			for (Direction d : Direction.Plane.HORIZONTAL) {
+				BlockPos n = f.relative(d);
+				if (!Blocks2.isOpen(n) || Blocks2.isFluid(n)) continue;
+				int drop = 0;
+				boolean lava = false;
+				for (int k = 1; k <= 4; k++) {
+					BlockPos b = n.below(k);
+					if (Blocks2.isLava(b)) {
+						lava = true;
+						break;
+					}
+					if (!Blocks2.isOpen(b)) break;
+					drop++;
+				}
+				if (drop >= 3 || lava) {
+					edge = true;
+					break;
+				}
+			}
+		}
+		if (edge) {
+			mc.options.keyShift.setDown(true);
+			edgeSneaking = true;
+		} else if (edgeSneaking) {
+			mc.options.keyShift.setDown(false);
+			edgeSneaking = false;
+		}
 	}
 
 	/** Times in a row we ended up off the dug tunnels after Defense (see the tick). */
