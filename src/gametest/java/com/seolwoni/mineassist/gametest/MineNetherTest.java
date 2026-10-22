@@ -23,8 +23,8 @@ import net.minecraft.world.level.Level;
  * <ul>
  * <li>nether-a / nether-b / nether-c: three places, stairs down to Y 15.</li>
  * <li>nether-a-fire: place a with fire resistance potions and the setting on.</li>
- * <li>nether-up: place a, target 8 blocks above the start: the stairs climb (no shelter: the stairs go up through
- * where its roof would be).</li>
+ * <li>nether-up: place a, target 8 blocks above the start: the stairs climb (from the shelter too: the stairs dig out
+ * through its roof).</li>
  * </ul>
  * Checked: no ancient debris, gold or quartz lost, never on fire or in lava (without the potions), finished and
  * back at the start.
@@ -68,16 +68,12 @@ public class MineNetherTest implements FabricClientGameTest {
 			}
 			int x = at[0], g = at[1], z = at[2];
 			log.add("start in the Nether at " + x + ", " + g + ", " + z + (fire ? " (fire resistance on)" : "") + (up ? " (stairs up)" : ""));
-			if (!up) {
-				// A shelter, the way a player digs in: walls, roof, light; the chest and the stairs inside.
-				RealWorld.cmd(sp, IN + "fill " + (x - 3) + " " + (g - 1) + " " + (z - 4) + " " + (x + 4) + " " + (g + 4) + " " + (z + 4) + " minecraft:cobblestone hollow");
-				RealWorld.cmd(sp, IN + "fill " + (x - 2) + " " + (g - 1) + " " + (z - 3) + " " + (x + 3) + " " + (g - 1) + " " + (z + 3) + " minecraft:cobblestone");
-				RealWorld.cmd(sp, IN + "setblock " + (x - 2) + " " + (g + 2) + " " + (z - 3) + " minecraft:torch");
-				RealWorld.cmd(sp, IN + "setblock " + (x + 3) + " " + (g + 2) + " " + (z + 3) + " minecraft:torch");
-			} else {
-				RealWorld.cmd(sp, IN + "fill " + (x - 2) + " " + g + " " + (z - 3) + " " + (x + 3) + " " + (g + 2) + " " + (z - 1) + " minecraft:air");
-				RealWorld.cmd(sp, IN + "fill " + (x - 2) + " " + (g - 1) + " " + (z - 3) + " " + (x + 3) + " " + (g - 1) + " " + (z - 1) + " minecraft:cobblestone");
-			}
+			// A shelter, the way a player digs in: walls, roof, light; the chest and the stairs inside (stairs that
+			// climb dig their way out through the roof).
+			RealWorld.cmd(sp, IN + "fill " + (x - 3) + " " + (g - 1) + " " + (z - 4) + " " + (x + 4) + " " + (g + 4) + " " + (z + 4) + " minecraft:cobblestone hollow");
+			RealWorld.cmd(sp, IN + "fill " + (x - 2) + " " + (g - 1) + " " + (z - 3) + " " + (x + 3) + " " + (g - 1) + " " + (z + 3) + " minecraft:cobblestone");
+			RealWorld.cmd(sp, IN + "setblock " + (x - 2) + " " + (g + 2) + " " + (z - 3) + " minecraft:torch");
+			RealWorld.cmd(sp, IN + "setblock " + (x + 3) + " " + (g + 2) + " " + (z + 3) + " minecraft:torch");
 			RealWorld.cmd(sp, IN + "setblock " + (x + 2) + " " + g + " " + (z - 2) + " minecraft:chest[facing=north]");
 			RealWorld.cmd(sp, IN + "item replace block " + (x + 2) + " " + g + " " + (z - 2) + " container.0 with minecraft:bread 32");
 			RealWorld.cmd(sp, "give @a minecraft:diamond_pickaxe");
