@@ -27,7 +27,7 @@ public final class Inv extends InvBase {
 	}
 
 	public static boolean isPlug(ItemStack s) {
-		return !s.isEmpty() && (s.is(Items.COBBLESTONE) || s.is(Items.COBBLED_DEEPSLATE));
+		return !s.isEmpty() && (s.is(Items.COBBLESTONE) || s.is(Items.COBBLED_DEEPSLATE) || s.is(Items.NETHERRACK) || s.is(Items.BLACKSTONE));
 	}
 
 	public static boolean isCoal(ItemStack s) {

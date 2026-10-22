@@ -38,7 +38,7 @@ public class MineRealTest implements FabricClientGameTest {
 	 * picked up or the test ends, and notes what the miner was doing whenever something happened to it.
 	 */
 	static final class DropTracker {
-		static final java.util.regex.Pattern VALUABLE = java.util.regex.Pattern.compile("(raw_\\w+|coal|diamond|emerald|lapis_lazuli|redstone|quartz|gold_nugget|amethyst_shard)");
+		static final java.util.regex.Pattern VALUABLE = java.util.regex.Pattern.compile("(raw_\\w+|coal|diamond|emerald|lapis_lazuli|redstone|quartz|gold_nugget|amethyst_shard|ancient_debris)");
 
 		static final class Drop {
 			int id, count, born, gone = -1;
@@ -49,11 +49,13 @@ public class MineRealTest implements FabricClientGameTest {
 		}
 
 		final Map<Integer, Drop> all = new java.util.LinkedHashMap<>();
+		/** Which world the drops are in (the Nether test follows drops there). */
+		net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> dim = net.minecraft.world.level.Level.OVERWORLD;
 
 		void scan(ClientGameTestContext context, TestSingleplayerContext sp, int tick) {
 			String status = context.computeOnClient(mc -> Miner.status());
 			sp.getServer().runOnServer(server -> {
-				var level = server.overworld();
+				var level = server.getLevel(dim);
 				var pl = server.getPlayerList().getPlayers().get(0);
 				java.util.Set<Integer> alive = new java.util.HashSet<>();
 				for (var ie : level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, pl.getBoundingBox().inflate(12))) {
@@ -99,14 +101,14 @@ public class MineRealTest implements FabricClientGameTest {
 
 		int total, lost;
 		final List<String> lostValuable = new ArrayList<>();
-		static final java.util.regex.Pattern PRECIOUS = java.util.regex.Pattern.compile("(raw_iron|raw_gold|diamond|emerald|lapis_lazuli|redstone|gold_nugget|quartz)");
+		static final java.util.regex.Pattern PRECIOUS = java.util.regex.Pattern.compile("(raw_iron|raw_gold|diamond|emerald|lapis_lazuli|redstone|gold_nugget|quartz|ancient_debris)");
 
 		void report(TestSingleplayerContext sp, List<String> log) {
 			// Whatever is still alive at the end was really lost.
 			sp.getServer().runOnServer(server -> {
 				for (Drop d : all.values()) {
 					if (d.gone >= 0) continue;
-					var e = server.overworld().getEntity(d.id);
+					var e = server.getLevel(dim).getEntity(d.id);
 					if (e == null || !e.isAlive()) d.end = "gone (not seen)";
 					else d.end = "LOST";
 				}

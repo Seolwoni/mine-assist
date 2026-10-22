@@ -130,7 +130,7 @@ final class Chores {
 		ItemStack sel = inv.getItem(selected);
 		if (Inv.isPlug(sel)) kept += sel.getCount();
 		for (int i : plugs) {
-			if (kept < cfg.plugKeep) kept += inv.getItem(i).getCount();
+			if (kept < Miner.plugKeep()) kept += inv.getItem(i).getCount();
 			else out.add(i);
 		}
 		return out;
@@ -142,7 +142,7 @@ final class Chores {
 	static boolean isJunk(LocalPlayer p, ItemStack s) {
 		MineConfig cfg = MineConfig.get();
 		if (!cfg.discardEnabled || s.isEmpty() || !cfg.discardItems.contains(Inv.id(s))) return false;
-		return !Inv.isPlug(s) || Inv.count(p, Inv::isPlug) >= cfg.plugKeep;
+		return !Inv.isPlug(s) || Inv.count(p, Inv::isPlug) >= Miner.plugKeep();
 	}
 
 	/** Ticks (job time) before the next throw-away, after one where the junk came straight back. */

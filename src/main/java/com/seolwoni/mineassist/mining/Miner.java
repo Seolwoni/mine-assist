@@ -137,6 +137,12 @@ public final class Miner {
 		torchFetchTried = false;
 		Chores.dumpBlockedUntil = 0;
 		BlockPos feet = p.blockPosition();
+		inNether = mc.level.dimension().equals(net.minecraft.world.level.Level.NETHER);
+		if (inNether && !wearsGold(p)) {
+			// Piglins leave a player alone who wears at least one piece of gold armour.
+			Alerts.title("금 갑옷이 없어요", "피글린이 덤벼요: 금 투구 하나라도 쓰는 걸 권해요", 0xFFFFAA00);
+			Alerts.chat("Mine Assist", "네더에서는 금 갑옷을 하나라도 입어야 피글린이 덤비지 않아요. 그대로 시작해요.");
+		}
 		if (p.isInWater() || Blocks2.isFluid(feet) || Blocks2.isFluid(feet.below())) {
 			// Stairs dug from under water fill up at once (and the way home is a swim): start on dry ground.
 			Alerts.title("물에서는 시작할 수 없어요", "마른 땅 위에 서서 켜주세요", 0xFFFF5555);
@@ -168,7 +174,7 @@ public final class Miner {
 			run(() -> here = frontier);
 			Alerts.actionBar("이어서 파기 시작", 0xFF55FF55);
 		} else {
-			if (p.blockPosition().getY() < cfg.targetY) {
+			if (!inNether && p.blockPosition().getY() < cfg.targetY) {
 				Alerts.title("목표 Y보다 아래에 있어요", "Y " + cfg.targetY + " 이상에서 시작해주세요", 0xFFFF5555);
 				Alerts.warning();
 				return false;
@@ -180,11 +186,11 @@ public final class Miner {
 			job.oy = feet.getY();
 			job.oz = feet.getZ();
 			job.dir = Direction.fromYRot(p.getYRot()).get2DDataValue();
-			job.targetY = cfg.targetY;
+			job.targetY = inNether ? cfg.netherTargetY : cfg.targetY;
 			job.mainLength = cfg.mainLength;
 			job.branchLength = cfg.branchLength;
 			job.branchSpacing = cfg.branchSpacing;
-			job.pattern = cfg.digPattern;
+			job.pattern = inNether ? cfg.netherPattern : cfg.digPattern;
 			job.save();
 			geo = new Geo(job);
 			minedOre.clear();
@@ -269,7 +275,7 @@ public final class Miner {
 		if (!safety(mc, p, cfg)) return;
 		// Defense (Assist Path): while a creeper, an arrow or a mob needs dealing with, it has the controls.
 		// Getting away stays inside the tunnels we dug: running out into a cave is how the way back gets lost.
-		com.seolwoni.assistpath.defense.Defense.config.region = geo == null ? null : q -> q.getY() >= geo.origin.getY() - 1 || tunnelSpace(q) || tunnelSpace(q.above()); // up top: anywhere
+		com.seolwoni.assistpath.defense.Defense.config.region = geo == null ? null : q -> !underground(q) || tunnelSpace(q) || tunnelSpace(q.above()); // up top: anywhere
 		if (cfg.mobMode <= 1 && com.seolwoni.assistpath.defense.Defense.guard(mc, p)) {
 			if (defenseFrom == null) defenseFrom = p.blockPosition().immutable();
 			String why = com.seolwoni.assistpath.defense.Defense.giveUp();
@@ -328,9 +334,35 @@ public final class Miner {
 			stop("죽었어요", "사망 위치를 채팅에 남겼어요", true);
 			return false;
 		}
-		if (p.isInLava() || p.isOnFire()) {
-			stop("위험! 불이나 용암", "채광을 멈췄어요", true);
+		if (drinkTicks > 0) {
+			// Drinking fire resistance: hold use until the potion is down (about 1.6 s).
+			drinkTicks++;
+			mc.options.keyUse.setDown(true);
+			if ((drinkTicks > 8 && !p.isUsingItem()) || drinkTicks > 60) {
+				mc.options.keyUse.setDown(false);
+				drinkTicks = 0;
+			}
 			return false;
+		}
+		if (p.isInLava() || p.isOnFire()) {
+			boolean resist = p.hasEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE);
+			if (!resist && inNether && cfg.netherFireRes && Inv.count(p, Miner::isFireRes) > 0) {
+				int slot = Inv.bringToHotbar(mc, p, Miner::isFireRes);
+				if (slot >= 0) {
+					Body.release(mc);
+					Inv.select(p, slot);
+					mc.gameMode.useItem(p, InteractionHand.MAIN_HAND);
+					drinkTicks = 1;
+					status("불 저항 물약 마시는 중");
+					com.seolwoni.assistcore.log.UsageLog.event("mine", "불이 붙어 불 저항 물약을 마셨어요");
+					return false;
+				}
+			}
+			// Burning with fire resistance on: harmless, carry on (but never keep working while in lava).
+			if (!(resist && !p.isInLava())) {
+				stop("위험! 불이나 용암", "채광을 멈췄어요", true);
+				return false;
+			}
 		}
 		if (p.getHealth() <= cfg.minHealth) {
 			stop("체력이 낮아요", "채광을 멈췄어요", true);
@@ -339,7 +371,8 @@ public final class Miner {
 		if (cfg.mobMode == 2 && job.ticks % 10 == 0) {
 			AABB box = p.getBoundingBox().inflate(cfg.mobRange);
 			for (Entity e : mc.level.getEntities(p, box)) {
-				if (e instanceof Enemy && e.isAlive()) {
+				if (e instanceof Enemy && e.isAlive() && !(e instanceof net.minecraft.world.entity.NeutralMob)
+						&& !com.seolwoni.assistpath.defense.Threats.calmPiglin(e)) {
 					stop("몹이 다가와요", e.getName().getString() + " 근처에 있어요", true);
 					return false;
 				}
@@ -437,9 +470,11 @@ public final class Miner {
 			int i = job.stairsDone + 1;
 			BlockPos s = geo.stair(i);
 			status("계단 파는 중 (" + i + "/" + n + ")");
-			List<BlockPos> col = List.of(s.above(2), s.above(), s);
+			// Down: the step and two above it. Up: the step and one above it, plus the roof over the step we stand
+			// on (room to jump up).
+			List<BlockPos> col = geo.up ? List.of(geo.stair(i - 1).above(2), s.above(), s) : List.of(s.above(2), s.above(), s);
 			for (BlockPos b : col) add(new MineAction(b, END));
-			add(new PlaceAction(s.below(), PlaceAction.PLUG, END));
+			floor(s.below(), END);
 			add(new WalkAction(s));
 			run(() -> {
 				job.stairsDone = i;
@@ -474,8 +509,8 @@ public final class Miner {
 		BlockPos m = geo.main(nk), l = geo.lane1(nk);
 		List<BlockPos> col = List.of(m.above(), m, l.above(), l);
 		for (BlockPos b : col) add(new MineAction(b, END));
-		add(new PlaceAction(m.below(), PlaceAction.PLUG, END));
-		add(new PlaceAction(l.below(), PlaceAction.PLUG, END));
+		floor(m.below(), END);
+		floor(l.below(), END);
 		add(new WalkAction(m));
 		run(() -> {
 			job.mainK = nk;
@@ -555,7 +590,7 @@ public final class Miner {
 		status(sideName + " 가지굴 " + (k / job.branchSpacing) + "번 (" + nd + "/" + job.branchLength + ")");
 		List<BlockPos> col = List.of(b.above(), b);
 		for (BlockPos x : col) add(new MineAction(x, ABANDON));
-		add(new PlaceAction(b.below(), PlaceAction.PLUG, ABANDON));
+		floor(b.below(), ABANDON);
 		add(new WalkAction(b));
 		run(() -> {
 			job.branchD = nd;
@@ -670,10 +705,10 @@ public final class Miner {
 		int side = dx * geo.r.getStepX() + dz * geo.r.getStepZ();
 		int n = geo.stairs;
 		if (along >= 0 && along <= n) {
-			int up = q.getY() - (geo.origin.getY() - along);
+			int up = q.getY() - (geo.origin.getY() + geo.dy() * along);
 			return side == 0 && up >= 0 && up <= 2;
 		}
-		int up = q.getY() - (geo.origin.getY() - n);
+		int up = q.getY() - (geo.origin.getY() + geo.dy() * n);
 		if (up < 0 || up > 1) return false;
 		if (side == 0 || side == 1) return true;
 		int k = along - n;
@@ -963,14 +998,14 @@ public final class Miner {
 					}
 					// A cave right beside the block: close it first, the same way as water and lava, so no gap ever
 					// opens onto the cave (mobs in it cannot see us or shoot, a knock cannot push us out into it).
-					if (!caveChecked && geo != null && pos.getY() < geo.origin.getY() - 1) {
+					if (!caveChecked && geo != null && underground(pos)) {
 						caveChecked = true;
 						List<Action> walls = new ArrayList<>();
 						for (Direction dir : Direction.values()) {
 							BlockPos nb = pos.relative(dir);
 							if (!(Blocks2.isOpen(nb) || Blocks2.isSoftCover(nb)) || Blocks2.isFluid(nb)) continue;
 							if (tunnelSpace(nb) || minedOre.contains(nb) || dug.contains(nb) || occupiedByPlayer(p, nb)) continue;
-							if (nb.getY() >= geo.origin.getY() - 1) continue;
+							if (!underground(nb)) continue;
 							// Once per cell: in a wide-open cave some cannot be built (nothing to build against); trying
 							// them again every time the step is planned again kept the miner at it for minutes.
 							if (!caveTried.add(nb.immutable())) continue;
@@ -1012,7 +1047,7 @@ public final class Miner {
 						dug.add(pos.immutable());
 						job.blocksMined++;
 						com.seolwoni.mineassist.hud.MineStats.block();
-						if (ore || MineConfig.get().ores.contains(oreId)) {
+						if (ore || ores().contains(oreId)) {
 							job.oresMined++;
 							com.seolwoni.mineassist.hud.MineStats.ore(oreId);
 						}
@@ -1273,6 +1308,66 @@ public final class Miner {
 	/** Drops given up on (shown to the player once, written to the usage log). */
 	public static final Set<BlockPos> leftDrops = new java.util.LinkedHashSet<>();
 
+	/** The job is in the Nether (set at start): no "up top", everything is underground; netherrack plugs. */
+	/**
+	 * Make the floor cell solid: plug it if open. Magma (it burns whoever walks on it) is dug out first and
+	 * replaced (the lava under it is plugged first, as for any dig).
+	 */
+	static void floor(BlockPos f, int failMode) {
+		// Looked at when we get there (the floor shows only once the cell above it is dug).
+		add((mc, p) -> {
+			if (Blocks2.state(f).is(net.minecraft.world.level.block.Blocks.MAGMA_BLOCK)) {
+				status("마그마 블록 바꾸는 중");
+				pushFront(new MineAction(f, failMode));
+			}
+			return DONE;
+		});
+		add(new PlaceAction(f, PlaceAction.PLUG, failMode));
+	}
+
+	static boolean inNether;
+	private static int drinkTicks;
+
+	static boolean isFireRes(net.minecraft.world.item.ItemStack st) {
+		if (st.isEmpty() || !st.is(net.minecraft.world.item.Items.POTION)) return false;
+		var pc = st.get(net.minecraft.core.component.DataComponents.POTION_CONTENTS);
+		if (pc == null) return false;
+		for (var e : pc.getAllEffects()) if (e.getEffect().value() == net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE.value()) return true;
+		return false;
+	}
+
+	/** Ores to dig: the Nether list in the Nether. */
+	static java.util.List<String> ores() {
+		MineConfig c = MineConfig.get();
+		return inNether ? c.netherOres : c.ores;
+	}
+
+	/** Plug blocks to keep. */
+	public static int plugKeep() {
+		MineConfig c = MineConfig.get();
+		return inNether ? c.netherPlugKeep : c.plugKeep;
+	}
+
+	static boolean wearsGold(net.minecraft.world.entity.player.Player p) {
+		for (net.minecraft.world.entity.EquipmentSlot sl : new net.minecraft.world.entity.EquipmentSlot[] {
+				net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
+				net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET}) {
+			net.minecraft.world.item.ItemStack st = p.getItemBySlot(sl);
+			if (st.is(net.minecraft.world.item.Items.GOLDEN_HELMET) || st.is(net.minecraft.world.item.Items.GOLDEN_CHESTPLATE)
+					|| st.is(net.minecraft.world.item.Items.GOLDEN_LEGGINGS) || st.is(net.minecraft.world.item.Items.GOLDEN_BOOTS)) return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Below the start, in the ground (where caves are closed off and Defense keeps to the tunnels). In the Nether
+	 * everywhere counts: there is no safe open ground up top.
+	 */
+	static boolean underground(BlockPos q) {
+		if (inNether) return true;
+		return q.getY() < geo.origin.getY() - 1;
+	}
+
 	/** Times in a row we ended up off the dug tunnels after Defense (see the tick). */
 	private static int lostCount, lostEpisodes;
 
@@ -1301,7 +1396,7 @@ public final class Miner {
 	/** For the tests: is the player where the job dug (tunnels, ore pockets, one step beside), or up top? */
 	public static boolean onDugGround(BlockPos feet) {
 		if (geo == null) return true;
-		if (feet.getY() >= geo.origin.getY() - 1) return true;
+		if (!underground(feet)) return true;
 		return nearDug(feet) || nearDug(feet.below()) || nearDug(feet.above());
 	}
 
@@ -1640,7 +1735,7 @@ public final class Miner {
 					BlockPos n = b.relative(dir);
 					if (tunnel.contains(n) || found.contains(n)) continue;
 					if (!allSides && !cfg.mineFloorCeiling && (n.getY() > top || n.getY() < bottom)) continue;
-					if (cfg.ores.contains(Blocks2.id(n))) vein(n, found, p);
+					if (ores().contains(Blocks2.id(n))) vein(n, found, p);
 				}
 			}
 			if (found.isEmpty()) return DONE;
@@ -1663,6 +1758,22 @@ public final class Miner {
 				for (Direction dir : o.getY() < feetY ? new Direction[] {Direction.DOWN, Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST} : new Direction[] {Direction.DOWN}) {
 					BlockPos n = o.relative(dir);
 					if (!tunnelSpace(n) && !found.contains(n) && (Blocks2.isOpen(n) || Blocks2.isFluid(n))) escape = true;
+				}
+				// Nether: lava on any side of the ore (above above all): never dig it, a plug may not hold and a flow
+				// from above lands on us. Leave it for the player, with its place.
+				boolean byLava = false;
+				if (inNether) for (Direction dir : Direction.values()) {
+					if (Blocks2.isLava(o.relative(dir))) byLava = true;
+				}
+				if (byLava) {
+					if (leftOverVoid.add(o.immutable())) {
+						String where = o.getX() + ", " + o.getY() + ", " + o.getZ();
+						pocketNote("left " + Blocks2.id(o) + " at " + where + ": lava next to it");
+						Alerts.actionBar("용암 옆이라 남겨둔 광석: " + where, 0xFFFFAA55);
+						Alerts.chat("Mine Assist", "용암 옆이라 남겨둔 " + Blocks2.state(o).getBlock().getName().getString() + ": " + where);
+						com.seolwoni.assistcore.log.UsageLog.event("mine", "용암 옆이라 남겨둔 광석 " + Blocks2.id(o) + " (" + where + ")");
+					}
+					continue;
 				}
 				if (escape) {
 					if (leftOverVoid.add(o.immutable())) {
@@ -1704,7 +1815,7 @@ public final class Miner {
 			while (!open.isEmpty() && found.size() < 48) {
 				BlockPos b = open.poll();
 				if (found.contains(b)) continue;
-				if (!cfg.ores.contains(Blocks2.id(b))) continue;
+				if (!ores().contains(Blocks2.id(b))) continue;
 				if (eye.distanceTo(Vec3.atCenterOf(b)) > 4.5) continue;
 				found.add(b);
 				for (Direction dir : Direction.values()) open.add(b.relative(dir));

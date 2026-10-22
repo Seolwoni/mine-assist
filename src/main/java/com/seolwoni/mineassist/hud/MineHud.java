@@ -141,7 +141,7 @@ public final class MineHud {
 			if (j.branchSpacing > 0 && j.mainK > 0 && j.mainK % j.branchSpacing == 0 && j.branchSide < 2 && j.branchD > 0) {
 				prog += " · " + (j.branchSide == 0 ? "왼쪽" : "오른쪽") + " 가지 " + j.branchD + "/" + j.branchLength;
 			}
-			int stairs = Math.max(0, j.oy - j.targetY);
+			int stairs = Math.abs(j.oy - j.targetY);
 			if (j.stairsDone < stairs) prog = "계단 " + j.stairsDone + "/" + stairs;
 			out.add(List.of(new Seg("진행: ", GOLD), new Seg(prog, WHITE)));
 			out.add(List.of(new Seg("시작 지점: ", GOLD), new Seg(j.ox + ", " + j.oy + ", " + j.oz, WHITE)));

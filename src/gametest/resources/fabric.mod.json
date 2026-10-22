@@ -7,7 +7,8 @@
 	"entrypoints": {
 		"fabric-client-gametest": [
 			"com.seolwoni.mineassist.gametest.MineGameTest",
-			"com.seolwoni.mineassist.gametest.MineRealTest"
+			"com.seolwoni.mineassist.gametest.MineRealTest",
+			"com.seolwoni.mineassist.gametest.MineNetherTest"
 		]
 	},
 	"depends": {

@@ -83,6 +83,17 @@ public class MineConfig {
 	public int mobRange = 8;
 	public int minHealth = 8;
 	public int plugKeep = 192;
+
+	// ---- Nether (used instead of the overworld values when started in the Nether) ----
+	public static final List<String> NETHER_ORES = List.of("minecraft:ancient_debris", "minecraft:nether_quartz_ore", "minecraft:nether_gold_ore");
+	public int netherTargetY = 15;
+	public List<String> netherOres = new ArrayList<>(NETHER_ORES);
+	/** 0 = branches, 1 = poke holes (the default: debris is rare, seeing more wall pays). */
+	public int netherPattern = 1;
+	/** Drink a fire resistance potion when burning or touching lava. */
+	public boolean netherFireRes = false;
+	/** Netherrack kept for plugging lava (in the Nether the plug blocks are netherrack). */
+	public int netherPlugKeep = 64;
 	/** Settings format version, for one-time migrations. */
 	public int cfgVersion = 0;
 
@@ -95,7 +106,8 @@ public class MineConfig {
 	// ---- Discard ----
 	public boolean discardEnabled = true;
 	public List<String> discardItems = new ArrayList<>(List.of(
-			"minecraft:cobblestone", "minecraft:cobbled_deepslate", "minecraft:dirt", "minecraft:gravel"));
+			"minecraft:cobblestone", "minecraft:cobbled_deepslate", "minecraft:dirt", "minecraft:gravel",
+			"minecraft:netherrack", "minecraft:basalt", "minecraft:blackstone"));
 
 	// ---- Storage ----
 	public boolean storeEnabled = true;
@@ -141,9 +153,20 @@ public class MineConfig {
 		c.running = false;
 		if (c.cfgVersion < 1) {
 			// 1.2.5: keep two stacks of cobblestone by default (caves now use a lot for floors and walls).
-			if (c.plugKeep <= 128) c.plugKeep = 192; // three stacks: caves are closed off before digging next to them
+			if (c.plugKeep <= 64) c.plugKeep = 128;
 			c.cfgVersion = 1;
 		}
+		if (c.cfgVersion < 2) {
+			// 1.9.x: three stacks: caves are closed off before digging next to them.
+			if (c.plugKeep <= 128) c.plugKeep = 192;
+			// Nether mining: its stone is thrown away like cobblestone.
+			for (String id : List.of("minecraft:netherrack", "minecraft:basalt", "minecraft:blackstone")) if (!c.discardItems.contains(id)) c.discardItems.add(id);
+			c.cfgVersion = 2;
+		}
+		if (c.netherOres == null) c.netherOres = new ArrayList<>(NETHER_ORES);
+		c.netherTargetY = clamp(c.netherTargetY, 1, 126);
+		c.netherPattern = clamp(c.netherPattern, 0, 1);
+		c.netherPlugKeep = clamp(c.netherPlugKeep, 0, 512);
 		c.mainLength = clamp(c.mainLength, 3, 2000);
 		c.pace = clamp(c.pace, 0, 2);
 		c.foodKeep = clamp(c.foodKeep, 0, 64);

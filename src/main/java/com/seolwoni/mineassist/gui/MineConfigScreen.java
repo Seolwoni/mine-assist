@@ -22,7 +22,7 @@ import net.minecraft.network.chat.Component;
 
 /** Mine Assist settings (opened from Mod Menu). Start/stop sits at the very top. */
 public class MineConfigScreen extends Screen {
-	private static final String[] TABS = {"기본", "광석", "곡괭이", "횃불", "안전·음식", "버리기", "보관", "HUD"};
+	private static final String[] TABS = {"기본", "광석", "곡괭이", "횃불", "안전·음식", "버리기", "보관", "HUD", "네더"};
 	private static final String[] PICK_MODES = {"손에 든 곡괭이", "손에 든 곡괭이 (파괴보호)", "핫바 곡괭이 전부", "핫바 곡괭이 전부 (파괴보호)"};
 	private static final String[] TORCH_OUT = {"횃불 없이 계속", "멈추고 알림", "상자에서 꺼내오기"};
 	private static final List<String> ITEM_PRESETS = List.of(
@@ -91,11 +91,11 @@ public class MineConfigScreen extends Screen {
 
 		for (int i = 0; i < TABS.length; i++) {
 			final int idx = i;
-			int col = i % 4, tw = (310 - 6) / 4;
+			int col = i % 5, tw = (310 - 8) / 5;
 			Button tb = Button.builder(Component.literal(TABS[i]), b -> {
 				tab = idx;
 				rebuildWidgets();
-			}).bounds(left + col * (tw + 2), i < 4 ? 46 : 68, tw, 20).build();
+			}).bounds(left + col * (tw + 2), i < 5 ? 46 : 68, tw, 20).build();
 			tb.active = i != tab;
 			addRenderableWidget(tb);
 		}
@@ -109,7 +109,8 @@ public class MineConfigScreen extends Screen {
 			case 4 -> safety(left, right, y);
 			case 5 -> discard(left, right, y);
 			case 6 -> storage(left, right, y);
-			default -> hud(left, right, y);
+			case 7 -> hud(left, right, y);
+			default -> nether(left, right, y);
 		}
 		// Up here with the other main buttons: at the bottom it covered the last rows on small screens (phones).
 		addRenderableWidget(Button.builder(Component.literal("완료"), b -> onClose())
@@ -197,6 +198,28 @@ public class MineConfigScreen extends Screen {
 		toggle(left, y, 310, "바닥·천장 광석도 캐기", () -> c.mineFloorCeiling, v -> c.mineFloorCeiling = v);
 		y += ROW + 4;
 		note("굴 벽·바닥·천장에 드러난 광석을 이어진 덩어리째 캐요. 벽 너머는 보지 않아요.", y);
+	}
+
+	private void nether(int left, int right, int y) {
+		MineConfig c = c();
+		slider(left, y, 150, "네더 목표 Y", "", 1, 126, c.netherTargetY, v -> c.netherTargetY = v);
+		addRenderableWidget(Button.builder(Component.literal("굴 방식: " + (c.netherPattern == 1 ? "구멍 뚫기" : "가지굴")), b -> {
+			c.netherPattern = c.netherPattern == 1 ? 0 : 1;
+			MineConfig.save();
+			rebuildWidgets();
+		}).bounds(right, y, 150, 20).build());
+		y += ROW;
+		addRenderableWidget(Button.builder(Component.literal("네더에서 캘 광석 고르기 (" + c.netherOres.size() + "개)"),
+				b -> this.minecraft.gui.setScreen(new PickerScreen(this, "네더에서 캘 광석", c.netherOres, true, MineConfig.NETHER_ORES,
+						"고대 잔해·석영·네더 금", MineConfig::save))).bounds(left, y, 310, 20).build());
+		y += ROW;
+		toggle(left, y, 150, "불 저항 물약 마시기", () -> c.netherFireRes, v -> c.netherFireRes = v);
+		slider(right, y, 150, "네더랙 남겨두기", "개", 0, 256, c.netherPlugKeep, v -> c.netherPlugKeep = v);
+		y += ROW + 4;
+		note("네더에서 켜면 이 설정으로 파요 (Y 15 아래면 계단으로 내려가고, 위면 올라가요).", y);
+		note("용암이 위·옆에 있으면 먼저 막고, 못 막으면 그 칸은 건너뛰고 좌표를 남겨요.", y + 12);
+		note("금 갑옷을 하나라도 입어야 피글린이 덤비지 않아요. 좀비 피글린은 절대 치지 않아요.", y + 24);
+		note("상자는 사방이 막힌 곳에 두세요 (가스트·화염이 부술 수 있어요).", y + 36);
 	}
 
 	private void pick(int left, int right, int y) {

@@ -22,16 +22,24 @@ public final class Geo {
 	public final Direction d;
 	public final Direction r;
 	public final int stairs;
+	/** Stairs go up (started below the target height, as in the Nether under the ancient debris level). */
+	public final boolean up;
 
 	public Geo(JobState s) {
 		this.origin = new BlockPos(s.ox, s.oy, s.oz);
 		this.d = Direction.from2DDataValue(s.dir);
 		this.r = d.getClockWise();
-		this.stairs = Math.max(0, s.oy - s.targetY);
+		this.up = s.targetY > s.oy;
+		this.stairs = Math.abs(s.oy - s.targetY);
+	}
+
+	/** +1 when the stairs climb, -1 when they go down. */
+	public int dy() {
+		return up ? 1 : -1;
 	}
 
 	public BlockPos stair(int i) {
-		return origin.relative(d, i).below(i);
+		return origin.relative(d, i).above(dy() * i);
 	}
 
 	public BlockPos main0() {

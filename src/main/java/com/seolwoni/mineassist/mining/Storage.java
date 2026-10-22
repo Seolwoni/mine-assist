@@ -81,7 +81,7 @@ public final class Storage {
 		plugs.sort(Comparator.comparingInt((Integer i) -> inv.getItem(i).getCount()).reversed());
 		int keptPlugs = 0;
 		for (int i : plugs) {
-			if (keptPlugs < cfg.plugKeep) {
+			if (keptPlugs < Miner.plugKeep()) {
 				keep.add(i);
 				keptPlugs += inv.getItem(i).getCount();
 			} else if (cfg.discardEnabled && cfg.discardItems.contains(Inv.id(inv.getItem(i)))) {
