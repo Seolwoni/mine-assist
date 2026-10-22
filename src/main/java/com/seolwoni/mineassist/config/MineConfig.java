@@ -93,7 +93,7 @@ public class MineConfig {
 	/** Drink a fire resistance potion when burning or touching lava. */
 	public boolean netherFireRes = false;
 	/** Netherrack kept for plugging lava (in the Nether the plug blocks are netherrack). */
-	public int netherPlugKeep = 64;
+	public int netherPlugKeep = 192;
 	/** Settings format version, for one-time migrations. */
 	public int cfgVersion = 0;
 
@@ -162,6 +162,11 @@ public class MineConfig {
 			// Nether mining: its stone is thrown away like cobblestone.
 			for (String id : List.of("minecraft:netherrack", "minecraft:basalt", "minecraft:blackstone")) if (!c.discardItems.contains(id)) c.discardItems.add(id);
 			c.cfgVersion = 2;
+		}
+		if (c.cfgVersion < 3) {
+			// 1.10.1: three stacks of netherrack too (bridges over big Nether caves used up 64).
+			if (c.netherPlugKeep <= 64) c.netherPlugKeep = 192;
+			c.cfgVersion = 3;
 		}
 		if (c.netherOres == null) c.netherOres = new ArrayList<>(NETHER_ORES);
 		c.netherTargetY = clamp(c.netherTargetY, 1, 126);

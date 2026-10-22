@@ -214,7 +214,7 @@ public class MineConfigScreen extends Screen {
 						"고대 잔해·석영·네더 금", MineConfig::save))).bounds(left, y, 310, 20).build());
 		y += ROW;
 		toggle(left, y, 150, "불 저항 물약 마시기", () -> c.netherFireRes, v -> c.netherFireRes = v);
-		slider(right, y, 150, "네더랙 남겨두기", "개", 0, 256, c.netherPlugKeep, v -> c.netherPlugKeep = v);
+		slider(right, y, 150, "네더랙 남겨두기", "개", 0, 512, c.netherPlugKeep, v -> c.netherPlugKeep = v);
 		y += ROW + 4;
 		note("네더에서 켜면 이 설정으로 파요 (Y 15 아래면 계단으로 내려가고, 위면 올라가요).", y);
 		note("용암이 위·옆에 있으면 먼저 막고, 못 막으면 그 칸은 건너뛰고 좌표를 남겨요.", y + 12);

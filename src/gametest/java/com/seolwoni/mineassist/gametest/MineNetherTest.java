@@ -84,7 +84,7 @@ public class MineNetherTest implements FabricClientGameTest {
 			RealWorld.cmd(sp, "give @a minecraft:diamond_pickaxe");
 			RealWorld.cmd(sp, "give @a minecraft:torch 64");
 			RealWorld.cmd(sp, "give @a minecraft:iron_sword");
-			RealWorld.cmd(sp, "give @a minecraft:netherrack 64");
+			RealWorld.cmd(sp, "give @a minecraft:netherrack 192");
 			RealWorld.cmd(sp, "give @a minecraft:bread 16");
 			if (fire) RealWorld.cmd(sp, "give @a minecraft:potion[minecraft:potion_contents={potion:\"minecraft:long_fire_resistance\"}] 3");
 			RealWorld.cmd(sp, "item replace entity @a armor.head with minecraft:golden_helmet");
