@@ -23,8 +23,8 @@ import net.minecraft.world.level.Level;
  * <ul>
  * <li>nether-a / nether-b / nether-c: three places, stairs down to Y 15.</li>
  * <li>nether-a-fire: place a with fire resistance potions and the setting on.</li>
- * <li>nether-up: place a, target 8 blocks above the start: the stairs climb (from the shelter too: the stairs dig out
- * through its roof).</li>
+ * <li>nether-up: place a, target 8 blocks above the start: the stairs climb (from a shelter whose front wall is right
+ * in front: the stairs are dug up into the rock, as a player would).</li>
  * </ul>
  * Checked: no ancient debris, gold or quartz lost, never on fire or in lava (without the potions), finished and
  * back at the start.
@@ -61,7 +61,7 @@ public class MineNetherTest implements FabricClientGameTest {
 			RealWorld.cmd(sp, "effect give @a minecraft:resistance 10 255 true");
 			context.waitTicks(100);
 			sp.getConnection().waitForChunksRender();
-			int[] at = sp.getServer().computeOnServer(server -> findStart(server.getLevel(Level.NETHER), from));
+			int[] at = sp.getServer().computeOnServer(server -> findStart(server.getLevel(Level.NETHER), from, up));
 			if (at == null) {
 				failures.add("no place to start found near " + from.toShortString());
 				throw new AssertionError("no start");
@@ -70,10 +70,12 @@ public class MineNetherTest implements FabricClientGameTest {
 			log.add("start in the Nether at " + x + ", " + g + ", " + z + (fire ? " (fire resistance on)" : "") + (up ? " (stairs up)" : ""));
 			// A shelter, the way a player digs in: walls, roof, light; the chest and the stairs inside (stairs that
 			// climb dig their way out through the roof).
-			RealWorld.cmd(sp, IN + "fill " + (x - 3) + " " + (g - 1) + " " + (z - 4) + " " + (x + 4) + " " + (g + 4) + " " + (z + 4) + " minecraft:cobblestone hollow");
-			RealWorld.cmd(sp, IN + "fill " + (x - 2) + " " + (g - 1) + " " + (z - 3) + " " + (x + 3) + " " + (g - 1) + " " + (z + 3) + " minecraft:cobblestone");
+			// Stairs up: the shelter's front wall is right in front of the player (the stairs go up into the rock).
+			int front = up ? 1 : 4;
+			RealWorld.cmd(sp, IN + "fill " + (x - 3) + " " + (g - 1) + " " + (z - 4) + " " + (x + 4) + " " + (g + 4) + " " + (z + front) + " minecraft:cobblestone hollow");
+			RealWorld.cmd(sp, IN + "fill " + (x - 2) + " " + (g - 1) + " " + (z - 3) + " " + (x + 3) + " " + (g - 1) + " " + (z + front - 1) + " minecraft:cobblestone");
 			RealWorld.cmd(sp, IN + "setblock " + (x - 2) + " " + (g + 2) + " " + (z - 3) + " minecraft:torch");
-			RealWorld.cmd(sp, IN + "setblock " + (x + 3) + " " + (g + 2) + " " + (z + 3) + " minecraft:torch");
+			RealWorld.cmd(sp, IN + "setblock " + (x + 3) + " " + (g + 2) + " " + (z + front - 1) + " minecraft:torch");
 			RealWorld.cmd(sp, IN + "setblock " + (x + 2) + " " + g + " " + (z - 2) + " minecraft:chest[facing=north]");
 			RealWorld.cmd(sp, IN + "item replace block " + (x + 2) + " " + g + " " + (z - 2) + " container.0 with minecraft:bread 32");
 			RealWorld.cmd(sp, "give @a minecraft:diamond_pickaxe");
@@ -219,7 +221,7 @@ public class MineNetherTest implements FabricClientGameTest {
 	 * A spot to start, spiralling out from {@code from}: standing room (three free cells) on solid ground between
 	 * Y 40 and 100, and no lava within three blocks. {x, y, z} (y = feet), or null.
 	 */
-	private static int[] findStart(ServerLevel lv, BlockPos from) {
+	private static int[] findStart(ServerLevel lv, BlockPos from, boolean up) {
 		for (int r = 0; r <= 48; r += 2) {
 			for (int dx = -r; dx <= r; dx += 2) {
 				for (int dz = -r; dz <= r; dz += 2) {
@@ -237,7 +239,18 @@ public class MineNetherTest implements FabricClientGameTest {
 								break;
 							}
 						}
-						if (!lava) return new int[] {cx, y, cz};
+						if (lava) continue;
+						// Stairs up: like a player, start facing a wall: the ground ahead (south, 2 to 10 out, from the
+						// feet to 10 up) is nearly all solid, so the stairs are dug into it, not built in the air.
+						if (up) {
+							int solid = 0, all = 0;
+							for (BlockPos q : BlockPos.betweenClosed(f.offset(0, 0, 2), f.offset(0, 10, 10))) {
+								all++;
+								if (!lv.getBlockState(q).isAir() && lv.getFluidState(q).isEmpty()) solid++;
+							}
+							if (solid * 10 < all * 9) continue;
+						}
+						return new int[] {cx, y, cz};
 					}
 				}
 			}
