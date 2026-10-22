@@ -487,6 +487,9 @@ public final class Miner {
 			List<BlockPos> col = geo.up ? List.of(geo.stair(i - 1).above(2), s.above(), s) : List.of(s.above(2), s.above(), s);
 			for (BlockPos b : col) add(new MineAction(b, END));
 			floor(s.below(), END);
+			// Walls beside the new step before stepping onto it: over a big cave it is a bridge, and a knock while
+			// walking onto it (walking is never done crouched) must not throw us off. Built up from the floor's side.
+			enclose(col);
 			add(new WalkAction(s));
 			run(() -> {
 				job.stairsDone = i;
@@ -523,6 +526,7 @@ public final class Miner {
 		for (BlockPos b : col) add(new MineAction(b, END));
 		floor(m.below(), END);
 		floor(l.below(), END);
+		enclose(col);
 		add(new WalkAction(m));
 		run(() -> {
 			job.mainK = nk;
