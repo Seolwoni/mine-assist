@@ -135,26 +135,26 @@ public final class MineHud {
 		JobState j = Miner.job();
 		List<List<Seg>> out = new ArrayList<>();
 		out.add(List.of(new Seg("Mine Assist", GOLD)));
-		out.add(List.of(new Seg("상태: ", GOLD), new Seg(Miner.status(), cfg.running ? GREEN : RED)));
+		out.add(List.of(new Seg(com.seolwoni.assistcore.i18n.Tr.t("상태: "), GOLD), new Seg(Miner.status(), cfg.running ? GREEN : RED)));
 		if (j.active) {
-			String prog = "가운데 " + j.mainK + "/" + j.mainLength;
+			String prog = com.seolwoni.assistcore.i18n.Tr.t("가운데 ") + j.mainK + "/" + j.mainLength;
 			if (j.branchSpacing > 0 && j.mainK > 0 && j.mainK % j.branchSpacing == 0 && j.branchSide < 2 && j.branchD > 0) {
-				prog += " · " + (j.branchSide == 0 ? "왼쪽" : "오른쪽") + " 가지 " + j.branchD + "/" + j.branchLength;
+				prog += " · " + (j.branchSide == 0 ? com.seolwoni.assistcore.i18n.Tr.t("왼쪽") : com.seolwoni.assistcore.i18n.Tr.t("오른쪽")) + com.seolwoni.assistcore.i18n.Tr.t(" 가지 ") + j.branchD + "/" + j.branchLength;
 			}
 			int stairs = Math.abs(j.oy - j.targetY);
-			if (j.stairsDone < stairs) prog = "계단 " + j.stairsDone + "/" + stairs;
-			out.add(List.of(new Seg("진행: ", GOLD), new Seg(prog, WHITE)));
-			out.add(List.of(new Seg("시작 지점: ", GOLD), new Seg(j.ox + ", " + j.oy + ", " + j.oz, WHITE)));
+			if (j.stairsDone < stairs) prog = com.seolwoni.assistcore.i18n.Tr.t("계단 ") + j.stairsDone + "/" + stairs;
+			out.add(List.of(new Seg(com.seolwoni.assistcore.i18n.Tr.t("진행: "), GOLD), new Seg(prog, WHITE)));
+			out.add(List.of(new Seg(com.seolwoni.assistcore.i18n.Tr.t("시작 지점: "), GOLD), new Seg(j.ox + ", " + j.oy + ", " + j.oz, WHITE)));
 		}
 		if (mc.player != null) {
 			ItemStack hand = mc.player.getMainHandItem();
 			if (Inv.isPick(hand) && hand.isDamageableItem()) {
 				int r = Inv.remaining(hand);
-				out.add(List.of(new Seg("곡괭이: ", GOLD), new Seg(r + "/" + hand.getMaxDamage(), r <= cfg.protectDurability ? RED : WHITE)));
+				out.add(List.of(new Seg(com.seolwoni.assistcore.i18n.Tr.t("곡괭이: "), GOLD), new Seg(r + "/" + hand.getMaxDamage(), r <= cfg.protectDurability ? RED : WHITE)));
 			}
 			if (cfg.torches) {
 				int t = Inv.count(mc.player, Inv::isTorch);
-				out.add(List.of(new Seg("횃불: ", GOLD), new Seg(t + "개", t == 0 ? RED : WHITE)));
+				out.add(List.of(new Seg(com.seolwoni.assistcore.i18n.Tr.t("횃불: "), GOLD), new Seg(t + com.seolwoni.assistcore.i18n.Tr.t("개"), t == 0 ? RED : WHITE)));
 			}
 		}
 		return out;
@@ -174,12 +174,12 @@ public final class MineHud {
 		MineConfig cfg = MineConfig.get();
 		MineStats st = MineStats.shown();
 		List<List<Seg>> out = new ArrayList<>();
-		out.add(List.of(new Seg("채광 통계 ", GOLD), new Seg(cfg.statsTotals ? "(누적)" : "(이번 세션)", GRAY)));
+		out.add(List.of(new Seg(com.seolwoni.assistcore.i18n.Tr.t("채광 통계 "), GOLD), new Seg(cfg.statsTotals ? com.seolwoni.assistcore.i18n.Tr.t("(누적)") : com.seolwoni.assistcore.i18n.Tr.t("(이번 세션)"), GRAY)));
 		long total = st.totalOres();
 		long now = System.currentTimeMillis();
 		List<Map.Entry<String, MineStats.Entry>> list = new ArrayList<>(st.ores.entrySet());
 		list.sort(Comparator.comparingLong((Map.Entry<String, MineStats.Entry> e) -> e.getValue().count).reversed());
-		if (list.isEmpty()) out.add(List.of(new Seg("  아직 캔 광석이 없어요", GRAY)));
+		if (list.isEmpty()) out.add(List.of(new Seg(com.seolwoni.assistcore.i18n.Tr.t("  아직 캔 광석이 없어요"), GRAY)));
 		for (Map.Entry<String, MineStats.Entry> e : list) {
 			MineStats.Entry v = e.getValue();
 			out.add(List.of(
@@ -190,11 +190,11 @@ public final class MineHud {
 		}
 		double hours = st.ticks / 20.0 / 3600.0;
 		long perHour = hours > 0.01 ? Math.round(total / hours) : 0;
-		out.add(List.of(new Seg("총 광석: ", GOLD), new Seg(total + "", WHITE), new Seg(" [" + perHour + "/시간]", GRAY)));
-		out.add(List.of(new Seg("캔 블록: ", GOLD), new Seg(st.blocks + "", WHITE)));
-		out.add(List.of(new Seg("막은 용암·물: ", GOLD), new Seg(st.plugs + "", WHITE),
-				new Seg("  보관: ", GOLD), new Seg(st.trips + "번", WHITE)));
-		out.add(List.of(new Seg("채광 시간: ", GOLD), new Seg(time(st.ticks / 20), WHITE)));
+		out.add(List.of(new Seg(com.seolwoni.assistcore.i18n.Tr.t("총 광석: "), GOLD), new Seg(total + "", WHITE), new Seg(" [" + perHour + com.seolwoni.assistcore.i18n.Tr.t("/시간]"), GRAY)));
+		out.add(List.of(new Seg(com.seolwoni.assistcore.i18n.Tr.t("캔 블록: "), GOLD), new Seg(st.blocks + "", WHITE)));
+		out.add(List.of(new Seg(com.seolwoni.assistcore.i18n.Tr.t("막은 용암·물: "), GOLD), new Seg(st.plugs + "", WHITE),
+				new Seg(com.seolwoni.assistcore.i18n.Tr.t("  보관: "), GOLD), new Seg(st.trips + com.seolwoni.assistcore.i18n.Tr.t("번"), WHITE)));
+		out.add(List.of(new Seg(com.seolwoni.assistcore.i18n.Tr.t("채광 시간: "), GOLD), new Seg(time(st.ticks / 20), WHITE)));
 		return out;
 	}
 

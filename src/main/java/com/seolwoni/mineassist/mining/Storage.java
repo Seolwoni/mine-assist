@@ -172,7 +172,7 @@ public final class Storage {
 			switch (stage) {
 				case 0 -> {
 					if (cfg.chests.isEmpty()) {
-						reason = "보관 상자가 없어요";
+						reason = com.seolwoni.assistcore.i18n.Tr.t("보관 상자가 없어요");
 						return Miner.FAIL;
 					}
 					full = new boolean[cfg.chests.size()];
@@ -182,7 +182,7 @@ public final class Storage {
 					for (int i = 0; i < cfg.chests.size(); i++) if (cfg.chests.get(i).items.isEmpty()) order.add(i);
 					idx = 0;
 					stage = 1;
-					Miner.status("상자에 보관하는 중");
+					Miner.status(com.seolwoni.assistcore.i18n.Tr.t("상자에 보관하는 중"));
 					return Miner.RUN;
 				}
 				case 1 -> { // pick next chest that has work
@@ -230,7 +230,7 @@ public final class Storage {
 					Body.walkTo(p, c);
 					if (Body.walkTicks() > 160) {
 						Body.release(mc);
-						reason = "보관 상자까지 갈 수 없어요 (시작 지점 8칸 안에 두세요)";
+						reason = com.seolwoni.assistcore.i18n.Tr.t("보관 상자까지 갈 수 없어요 (시작 지점 8칸 안에 두세요)");
 						return Miner.FAIL;
 					}
 					return Miner.RUN;
@@ -250,7 +250,7 @@ public final class Storage {
 						return Miner.RUN;
 					}
 					if (--waitTicks <= 0) {
-						reason = "상자를 열지 못했어요";
+						reason = com.seolwoni.assistcore.i18n.Tr.t("상자를 열지 못했어요");
 						return Miner.FAIL;
 					}
 					return Miner.RUN;
@@ -299,16 +299,16 @@ public final class Storage {
 					}
 					if (!Body.walkTo(p, origin)) {
 						if (Body.walkTicks() > 160) {
-							reason = "시작 지점으로 돌아오지 못했어요";
+							reason = com.seolwoni.assistcore.i18n.Tr.t("시작 지점으로 돌아오지 못했어요");
 							return Miner.FAIL;
 						}
 						return Miner.RUN;
 					}
 					if (Inv.freeSlots(p) <= 1) {
-						Miner.stop("보관 상자가 가득 찼어요", "상자를 비우거나 더 지정해주세요", true);
+						Miner.stop(com.seolwoni.assistcore.i18n.Tr.t("보관 상자가 가득 찼어요"), com.seolwoni.assistcore.i18n.Tr.t("상자를 비우거나 더 지정해주세요"), true);
 						return Miner.RUN;
 					}
-					Alerts.actionBar("보관 완료 (" + moved + "칸)", 0xFF55FF55);
+					Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("보관 완료 (") + moved + com.seolwoni.assistcore.i18n.Tr.t("칸)"), 0xFF55FF55);
 					com.seolwoni.mineassist.hud.MineStats.trip();
 					return Miner.DONE;
 				}

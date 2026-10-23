@@ -52,10 +52,10 @@ import net.minecraft.world.phys.Vec3;
  * Each mod says which inventory slots may be stored and which cells must stay free (a tunnel, a farm path).
  */
 public final class PortableStorage implements Action {
-	/** The "보관 방식" setting every mod shares. */
+	/** The com.seolwoni.assistcore.i18n.Tr.t("보관 방식") setting every mod shares. */
 	public static final int CHEST = 0, ENDER = 1, SHULKER = 2, AUTO = 3;
-	public static final String[] LABELS = { "상자", "엔더 상자", "셜커 상자", "자동" };
-	public static final String HELP = "자동: 엔더 상자(실크터치 곡괭이 있을 때) → 셜커 상자 → 지정한 상자 순서";
+	public static final String[] LABELS = { com.seolwoni.assistcore.i18n.Tr.t("상자"), com.seolwoni.assistcore.i18n.Tr.t("엔더 상자"), com.seolwoni.assistcore.i18n.Tr.t("셜커 상자"), com.seolwoni.assistcore.i18n.Tr.t("자동") };
+	public static final String HELP = com.seolwoni.assistcore.i18n.Tr.t("자동: 엔더 상자(실크터치 곡괭이 있을 때) → 셜커 상자 → 지정한 상자 순서");
 
 	private static final double REACH = 4.3;
 	/** Shulker boxes found full in this session (same contents = same components): not tried again. */
@@ -122,12 +122,12 @@ public final class PortableStorage implements Action {
 	/** Why {@link #choose} found nothing, for the message when there are no chests either. */
 	public static String whyNone(LocalPlayer p, int mode) {
 		if (mode == ENDER) {
-			if (InvBase.count(p, PortableStorage::isEnderItem) == 0) return "엔더 상자가 없어요";
-			if (InvBase.count(p, PortableStorage::isSilkPick) == 0) return "실크터치 곡괭이가 없어 엔더 상자를 둘 곳이 없어요";
-			return "엔더 상자를 놓을 자리가 없어요";
+			if (InvBase.count(p, PortableStorage::isEnderItem) == 0) return com.seolwoni.assistcore.i18n.Tr.t("엔더 상자가 없어요");
+			if (InvBase.count(p, PortableStorage::isSilkPick) == 0) return com.seolwoni.assistcore.i18n.Tr.t("실크터치 곡괭이가 없어 엔더 상자를 둘 곳이 없어요");
+			return com.seolwoni.assistcore.i18n.Tr.t("엔더 상자를 놓을 자리가 없어요");
 		}
-		if (mode == SHULKER) return InvBase.count(p, PortableStorage::isShulkerItem) == 0 ? "셜커 상자가 없어요" : "셜커 상자가 모두 가득 찼어요";
-		return "들고 다니는 보관함이 없어요";
+		if (mode == SHULKER) return InvBase.count(p, PortableStorage::isShulkerItem) == 0 ? com.seolwoni.assistcore.i18n.Tr.t("셜커 상자가 없어요") : com.seolwoni.assistcore.i18n.Tr.t("셜커 상자가 모두 가득 찼어요");
+		return com.seolwoni.assistcore.i18n.Tr.t("들고 다니는 보관함이 없어요");
 	}
 
 	/** After a failed try, wait a minute before trying a box again (the mod falls back to chests meanwhile). */
@@ -146,7 +146,7 @@ public final class PortableStorage implements Action {
 
 	/** What the HUD can say while this runs. */
 	public String label() {
-		return kind == Kind.SHULKER ? "셜커 상자에 보관하는 중" : "엔더 상자에 보관하는 중";
+		return kind == Kind.SHULKER ? com.seolwoni.assistcore.i18n.Tr.t("셜커 상자에 보관하는 중") : com.seolwoni.assistcore.i18n.Tr.t("엔더 상자에 보관하는 중");
 	}
 
 	public static PortableStorage create(String mod, Kind kind, IntPredicate store, Predicate<BlockPos> avoid) {
@@ -221,7 +221,7 @@ public final class PortableStorage implements Action {
 
 	@Override
 	public int tick(Minecraft mc, LocalPlayer p) {
-		if (++ticks > 20 * 60) return fail(mc, p, "보관함 정리가 너무 오래 걸려요");
+		if (++ticks > 20 * 60) return fail(mc, p, com.seolwoni.assistcore.i18n.Tr.t("보관함 정리가 너무 오래 걸려요"));
 		switch (stage) {
 			case 0 -> { // where
 				current = this;
@@ -231,20 +231,20 @@ public final class PortableStorage implements Action {
 				Body.release(mc);
 				if (kind == Kind.ENDER_REUSE) {
 					box = nearEnderChest(p);
-					if (box == null) return fail(mc, p, "엔더 상자가 없어졌어요");
+					if (box == null) return fail(mc, p, com.seolwoni.assistcore.i18n.Tr.t("엔더 상자가 없어졌어요"));
 					placedByUs = false;
 					stage = 4;
 					return RUN;
 				}
 				box = spot(p, kind == Kind.ENDER_LEAVE);
-				if (box == null) return fail(mc, p, "보관함을 놓을 자리가 없어요");
+				if (box == null) return fail(mc, p, com.seolwoni.assistcore.i18n.Tr.t("보관함을 놓을 자리가 없어요"));
 				stage = 1;
 				return RUN;
 			}
 			case 1 -> { // box in hand
 				Predicate<ItemStack> which = kind == Kind.SHULKER ? PortableStorage::usableShulker : PortableStorage::isEnderItem;
 				int h = InvBase.bringToHotbar(mc, p, which, PortableStorage::worthKeepingInHotbar);
-				if (h < 0) return fail(mc, p, "보관함을 손에 들지 못했어요");
+				if (h < 0) return fail(mc, p, com.seolwoni.assistcore.i18n.Tr.t("보관함을 손에 들지 못했어요"));
 				InvBase.select(p, h);
 				placedStack = p.getInventory().getItem(h).copy();
 				otherShulkers.clear();
@@ -264,7 +264,7 @@ public final class PortableStorage implements Action {
 				ItemStack held = p.getMainHandItem();
 				if (!(kind == Kind.SHULKER ? isShulkerItem(held) : isEnderItem(held))) {
 					stage = 1;
-					if (++tries > 3) return fail(mc, p, "보관함을 손에 들지 못했어요");
+					if (++tries > 3) return fail(mc, p, com.seolwoni.assistcore.i18n.Tr.t("보관함을 손에 들지 못했어요"));
 					return RUN;
 				}
 				mc.gameMode.useItemOn(p, InteractionHand.MAIN_HAND, new BlockHitResult(aim, face, box.below(), false));
@@ -278,21 +278,21 @@ public final class PortableStorage implements Action {
 					placedByUs = true;
 					if (kind == Kind.ENDER_LEAVE) {
 						LEFT.add(box);
-						UsageLog.event(mod, "엔더 상자를 두고 감 (실크터치 곡괭이 없음): " + box.toShortString());
+						UsageLog.event(mod, com.seolwoni.assistcore.i18n.Tr.t("엔더 상자를 두고 감 (실크터치 곡괭이 없음): ") + box.toShortString());
 					}
 					delay = Human.delay(2, 6);
 					stage = 4;
 					return RUN;
 				}
 				if (--delay <= 0) {
-					if (++tries > 3) return fail(mc, p, "보관함을 놓지 못했어요");
+					if (++tries > 3) return fail(mc, p, com.seolwoni.assistcore.i18n.Tr.t("보관함을 놓지 못했어요"));
 					stage = 2;
 					delay = Human.delay(4, 8);
 				}
 				return RUN;
 			}
 			case 4 -> { // look at it and open
-				if (!isBox(Blocks2.state(box))) return fail(mc, p, "보관함이 없어졌어요");
+				if (!isBox(Blocks2.state(box))) return fail(mc, p, com.seolwoni.assistcore.i18n.Tr.t("보관함이 없어졌어요"));
 				if (!inReach(mc, p)) return RUN;
 				if (delay-- > 0) return RUN;
 				face = Aim.faceToward(p.getEyePosition(), box);
@@ -303,7 +303,7 @@ public final class PortableStorage implements Action {
 			}
 			case 5 -> {
 				if (!Body.lookAt(p, aim, 3f)) return RUN;
-				if (p.getEyePosition().distanceTo(aim) > REACH + 0.5) return fail(mc, p, "보관함에 손이 닿지 않아요");
+				if (p.getEyePosition().distanceTo(aim) > REACH + 0.5) return fail(mc, p, com.seolwoni.assistcore.i18n.Tr.t("보관함에 손이 닿지 않아요"));
 				mc.gameMode.useItemOn(p, InteractionHand.MAIN_HAND, new BlockHitResult(aim, face, box, false));
 				p.swing(InteractionHand.MAIN_HAND);
 				delay = 40;
@@ -319,7 +319,7 @@ public final class PortableStorage implements Action {
 				if (--delay <= 0) {
 					if (++tries > 4) {
 						stage = 9; // take the box back anyway
-						reason = "보관함을 열지 못했어요";
+						reason = com.seolwoni.assistcore.i18n.Tr.t("보관함을 열지 못했어요");
 						return RUN;
 					}
 					stage = 4;
@@ -367,7 +367,7 @@ public final class PortableStorage implements Action {
 				if (h < 0 && kind == Kind.ENDER_SILK) {
 					// The pickaxe is gone (broke?): leave the ender chest rather than turn it into obsidian.
 					LEFT.add(box);
-					UsageLog.event(mod, "엔더 상자를 두고 감 (실크터치 곡괭이가 없어짐): " + box.toShortString());
+					UsageLog.event(mod, com.seolwoni.assistcore.i18n.Tr.t("엔더 상자를 두고 감 (실크터치 곡괭이가 없어짐): ") + box.toShortString());
 					stage = 13;
 					return RUN;
 				}
@@ -405,7 +405,7 @@ public final class PortableStorage implements Action {
 				if (--delay <= 0) {
 					mc.gameMode.stopDestroyBlock();
 					LEFT.add(box);
-					UsageLog.event(mod, "보관함을 다시 줍지 못함: " + box.toShortString());
+					UsageLog.event(mod, com.seolwoni.assistcore.i18n.Tr.t("보관함을 다시 줍지 못함: ") + box.toShortString());
 					stage = 13;
 				}
 				return RUN;
@@ -422,8 +422,8 @@ public final class PortableStorage implements Action {
 					Body.walkTo(p, at);
 					if (delay < -100) {
 						Body.release(mc);
-						UsageLog.event(mod, "보관함이 굴러가 줍지 못함: " + at.toShortString());
-						Alerts.actionBar("보관함을 줍지 못했어요: " + at.toShortString(), 0xFFFF5555);
+						UsageLog.event(mod, com.seolwoni.assistcore.i18n.Tr.t("보관함이 굴러가 줍지 못함: ") + at.toShortString());
+						Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("보관함을 줍지 못했어요: ") + at.toShortString(), 0xFFFF5555);
 						stage = 13;
 					}
 				}
@@ -448,9 +448,9 @@ public final class PortableStorage implements Action {
 					Alerts.actionBar(reason, 0xFFFFAA00);
 					return FAIL;
 				}
-				String what = kind == Kind.SHULKER ? "셜커 상자" : "엔더 상자";
-				Alerts.actionBar(what + "에 보관 (" + moved + "칸)" + (kind == Kind.ENDER_LEAVE ? " · 엔더 상자는 " + box.toShortString() + "에 두었어요" : ""), 0xFF55FF55);
-				UsageLog.event(mod, what + "에 보관 " + moved + "칸");
+				String what = kind == Kind.SHULKER ? com.seolwoni.assistcore.i18n.Tr.t("셜커 상자") : com.seolwoni.assistcore.i18n.Tr.t("엔더 상자");
+				Alerts.actionBar(what + com.seolwoni.assistcore.i18n.Tr.t("에 보관 (") + moved + com.seolwoni.assistcore.i18n.Tr.t("칸)") + (kind == Kind.ENDER_LEAVE ? com.seolwoni.assistcore.i18n.Tr.t(" · 엔더 상자는 ") + box.toShortString() + com.seolwoni.assistcore.i18n.Tr.t("에 두었어요") : ""), 0xFF55FF55);
+				UsageLog.event(mod, what + com.seolwoni.assistcore.i18n.Tr.t("에 보관 ") + moved + com.seolwoni.assistcore.i18n.Tr.t("칸"));
 				if (moved > 0) trips++;
 				return DONE;
 			}
@@ -463,7 +463,7 @@ public final class PortableStorage implements Action {
 		Body.release(mc);
 		if (Chests.openScreen(mc) != null) p.closeContainer();
 		if (prevSlot >= 0) InvBase.select(p, prevSlot);
-		UsageLog.event(mod, "보관함 사용 실패: " + why);
+		UsageLog.event(mod, com.seolwoni.assistcore.i18n.Tr.t("보관함 사용 실패: ") + why);
 		Alerts.actionBar(why, 0xFFFFAA00);
 		blockedUntil = System.currentTimeMillis() + 60_000;
 		return FAIL;
@@ -511,9 +511,9 @@ public final class PortableStorage implements Action {
 		if (best == null || walkTicks > 300) {
 			Body.release(mc);
 			LEFT.add(box);
-			UsageLog.event(mod, "보관함으로 돌아가지 못함: " + box.toShortString());
-			Alerts.actionBar("보관함을 두고 왔어요: " + box.toShortString(), 0xFFFF5555);
-			reason = "보관함으로 돌아가지 못했어요 (" + box.toShortString() + ")";
+			UsageLog.event(mod, com.seolwoni.assistcore.i18n.Tr.t("보관함으로 돌아가지 못함: ") + box.toShortString());
+			Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("보관함을 두고 왔어요: ") + box.toShortString(), 0xFFFF5555);
+			reason = com.seolwoni.assistcore.i18n.Tr.t("보관함으로 돌아가지 못했어요 (") + box.toShortString() + ")";
 			stage = 13;
 			return false;
 		}

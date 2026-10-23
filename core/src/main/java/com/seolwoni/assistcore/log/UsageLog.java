@@ -56,7 +56,7 @@ public final class UsageLog {
 	public static void start(String mod, String what) {
 		started.put(mod, System.currentTimeMillis());
 		Journal.begin(mod, what);
-		event(mod, "▶ 시작: " + what);
+		event(mod, com.seolwoni.assistcore.i18n.Tr.t("▶ 시작: ") + what);
 	}
 
 	/** A job ends, with the reason and a short summary of what it did. */
@@ -64,12 +64,12 @@ public final class UsageLog {
 		Journal.finish(mod, reason, summary);
 		Long t0 = started.remove(mod);
 		String took = t0 == null ? "" : " (" + duration(System.currentTimeMillis() - t0) + ")";
-		event(mod, "■ 끝" + took + ": " + reason + (summary == null || summary.isEmpty() ? "" : " | " + summary));
+		event(mod, com.seolwoni.assistcore.i18n.Tr.t("■ 끝") + took + ": " + reason + (summary == null || summary.isEmpty() ? "" : " | " + summary));
 	}
 
 	public static String duration(long ms) {
 		long s = ms / 1000;
-		return s >= 3600 ? String.format("%d시간 %d분", s / 3600, s / 60 % 60) : String.format("%d분 %d초", s / 60, s % 60);
+		return s >= 3600 ? String.format(com.seolwoni.assistcore.i18n.Tr.t("%d시간 %d분"), s / 3600, s / 60 % 60) : String.format(com.seolwoni.assistcore.i18n.Tr.t("%d분 %d초"), s / 60, s % 60);
 	}
 
 	private static void cleanOld(Path root) {

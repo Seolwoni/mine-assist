@@ -14,13 +14,13 @@ public class HudEditScreen extends Screen {
 	private double grabDx, grabDy;
 
 	public HudEditScreen(Screen parent) {
-		super(Component.literal("HUD 위치 편집"));
+		super(Component.literal(com.seolwoni.assistcore.i18n.Tr.t("HUD 위치 편집")));
 		this.parent = parent;
 	}
 
 	@Override
 	protected void init() {
-		addRenderableWidget(Button.builder(Component.literal("완료"), b -> onClose())
+		addRenderableWidget(Button.builder(Component.literal(com.seolwoni.assistcore.i18n.Tr.t("완료")), b -> onClose())
 				.bounds(this.width / 2 - 50, this.height - 28, 100, 20).build());
 	}
 
@@ -41,7 +41,7 @@ public class HudEditScreen extends Screen {
 			g.text(this.font, Component.literal(Math.round(box.scale() * 100) + "%").getVisualOrderText(),
 					(int) b[0], (int) (b[1] + b[3]) + 2, 0xFFFFFF55, true);
 		}
-		g.centeredText(this.font, Component.literal("드래그로 이동 · 노란 칸을 끌거나 휠로 크기 조절"), this.width / 2, 8, 0xFFFFFFFF);
+		g.centeredText(this.font, Component.literal(com.seolwoni.assistcore.i18n.Tr.t("드래그로 이동 · 노란 칸을 끌거나 휠로 크기 조절")), this.width / 2, 8, 0xFFFFFFFF);
 	}
 
 	private static HudBox hit(double mx, double my) {

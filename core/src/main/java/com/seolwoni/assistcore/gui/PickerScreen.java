@@ -89,7 +89,7 @@ public class PickerScreen extends Screen {
 		labels.clear();
 		int cx = this.width / 2;
 		int left = cx - 155;
-		EditBox box = new EditBox(this.font, left, 24, 230, 20, Component.literal("검색"));
+		EditBox box = new EditBox(this.font, left, 24, 230, 20, Component.literal(com.seolwoni.assistcore.i18n.Tr.t("검색")));
 		box.setMaxLength(50);
 		box.setValue(query);
 		box.setResponder(s -> {
@@ -100,7 +100,7 @@ public class PickerScreen extends Screen {
 			}
 		});
 		addRenderableWidget(box);
-		addRenderableWidget(Button.builder(Component.literal("모두 해제"), b -> {
+		addRenderableWidget(Button.builder(Component.literal(com.seolwoni.assistcore.i18n.Tr.t("모두 해제")), b -> {
 			list.clear();
 			save.run();
 			rebuildWidgets();
@@ -127,7 +127,7 @@ public class PickerScreen extends Screen {
 			}).bounds(x, yy, 152, 20).build());
 			icons.add(new Object[] {icon(id), x + 3, yy + 2});
 		}
-		if (all.isEmpty()) labels.add(new Object[] {"찾는 게 없어요", cx, y + 8});
+		if (all.isEmpty()) labels.add(new Object[] {com.seolwoni.assistcore.i18n.Tr.t("찾는 게 없어요"), cx, y + 8});
 		if (pages > 1) {
 			int py = this.height - 50;
 			Button prev = Button.builder(Component.literal("◀"), b -> {
@@ -144,7 +144,7 @@ public class PickerScreen extends Screen {
 			addRenderableWidget(next);
 			labels.add(new Object[] {(page + 1) + " / " + pages, cx, py + 6});
 		}
-		addRenderableWidget(Button.builder(Component.literal("완료"), b -> onClose())
+		addRenderableWidget(Button.builder(Component.literal(com.seolwoni.assistcore.i18n.Tr.t("완료")), b -> onClose())
 				.bounds(cx - 75, this.height - 26, 150, 20).build());
 	}
 
@@ -160,7 +160,7 @@ public class PickerScreen extends Screen {
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float delta) {
 		super.extractRenderState(g, mouseX, mouseY, delta);
-		g.centeredText(this.font, Component.literal(this.title.getString() + " (" + list.size() + "개 선택)"), this.width / 2, 8, 0xFFFFFFFF);
+		g.centeredText(this.font, Component.literal(this.title.getString() + " (" + list.size() + com.seolwoni.assistcore.i18n.Tr.t("개 선택)")), this.width / 2, 8, 0xFFFFFFFF);
 		for (Object[] i : icons) g.item((ItemStack) i[0], (int) i[1], (int) i[2]);
 		for (Object[] l : labels) g.centeredText(this.font, Component.literal((String) l[0]), (int) l[1], (int) l[2], 0xFFAAAAAA);
 		if (help != null) g.centeredText(this.font, Component.literal(help), this.width / 2, 48, 0xFFAAAAAA);

@@ -31,6 +31,7 @@ final class RealWorld {
 	}
 
 	static String suite() {
+		com.seolwoni.assistcore.i18n.Tr.korean = true; // the tests check the Korean texts
 		String s = System.getenv("ASSIST_GT");
 		// "...-nopath" runs the same suite with Assist Path switched off (ASSIST_NO_PATH), for comparison.
 		return s == null || s.isBlank() ? "flat" : s.trim().replace("-nopath", "").replace("-night", "");

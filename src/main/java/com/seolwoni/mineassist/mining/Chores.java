@@ -35,7 +35,7 @@ final class Chores {
 				Miner.storageTrip(true);
 				return true;
 			}
-			Miner.stop("곡괭이가 없어요", "쓸 수 있는 곡괭이가 없어요", true);
+			Miner.stop(com.seolwoni.assistcore.i18n.Tr.t("곡괭이가 없어요"), com.seolwoni.assistcore.i18n.Tr.t("쓸 수 있는 곡괭이가 없어요"), true);
 			return true;
 		}
 
@@ -46,7 +46,7 @@ final class Chores {
 				&& Miner.job.ticks >= craftBlockedUntil) {
 			CraftAction craft = CraftAction.plan(p, cfg.torchKeep - torches);
 			if (craft != null) {
-				Miner.status("횃불 만드는 중");
+				Miner.status(com.seolwoni.assistcore.i18n.Tr.t("횃불 만드는 중"));
 				Miner.add(craft);
 				return true;
 			}
@@ -54,7 +54,7 @@ final class Chores {
 		if (cfg.torches && torches == 0) {
 			switch (cfg.torchOutAction) {
 				case 1 -> {
-					Miner.stop("횃불이 없어요", "횃불 재료가 떨어졌어요", true);
+					Miner.stop(com.seolwoni.assistcore.i18n.Tr.t("횃불이 없어요"), com.seolwoni.assistcore.i18n.Tr.t("횃불 재료가 떨어졌어요"), true);
 					return true;
 				}
 				case 2 -> {
@@ -70,7 +70,7 @@ final class Chores {
 
 		// Food.
 		if (cfg.autoEat && p.getFoodData().getFoodLevel() <= cfg.eatThreshold && Inv.count(p, Inv::isFood) > 0) {
-			Miner.status("먹는 중");
+			Miner.status(com.seolwoni.assistcore.i18n.Tr.t("먹는 중"));
 			Miner.add(new EatAction());
 			return true;
 		}
@@ -93,9 +93,9 @@ final class Chores {
 			} else if (cfg.storeEnabled && !cfg.chests.isEmpty()) {
 				Miner.storageTrip(false);
 			} else if (cfg.storeEnabled && cfg.storeMode != com.seolwoni.assistcore.storage.PortableStorage.CHEST) {
-				Miner.stop("인벤토리 가득 참!", com.seolwoni.assistcore.storage.PortableStorage.whyNone(p, cfg.storeMode), true);
+				Miner.stop(com.seolwoni.assistcore.i18n.Tr.t("인벤토리 가득 참!"), com.seolwoni.assistcore.storage.PortableStorage.whyNone(p, cfg.storeMode), true);
 			} else {
-				Miner.stop("인벤토리 가득 참!", "보관 상자를 지정하면 자동으로 보관해요", true);
+				Miner.stop(com.seolwoni.assistcore.i18n.Tr.t("인벤토리 가득 참!"), com.seolwoni.assistcore.i18n.Tr.t("보관 상자를 지정하면 자동으로 보관해요"), true);
 			}
 			return true;
 		}
@@ -160,7 +160,7 @@ final class Chores {
 			int after = junkCount(p);
 			if (before > 0 && after > before / 2) {
 				dumpBlockedUntil = Miner.job.ticks + 1200;
-				com.seolwoni.assistcore.log.UsageLog.event("mine", "버린 블록이 다시 주워졌어요 (" + after + "/" + before + "): 1분 동안 버리지 않아요");
+				com.seolwoni.assistcore.log.UsageLog.event("mine", com.seolwoni.assistcore.i18n.Tr.t("버린 블록이 다시 주워졌어요 (") + after + "/" + before + com.seolwoni.assistcore.i18n.Tr.t("): 1분 동안 버리지 않아요"));
 			}
 			return Miner.DONE;
 		};
@@ -194,7 +194,7 @@ final class Chores {
 					if (com.seolwoni.assistcore.util.Blocks2.isFluid(q) || com.seolwoni.assistcore.util.Blocks2.unbreakable(q)) bad = true;
 				}
 				if (bad || com.seolwoni.assistcore.util.Blocks2.isFalling(top.above())) continue;
-				Miner.status("필요 없는 블록 버리는 중");
+				Miner.status(com.seolwoni.assistcore.i18n.Tr.t("필요 없는 블록 버리는 중"));
 				int before = junkCount(p);
 				Miner.pushFront(List.of(new Miner.MineAction(top, Miner.SKIP), new Miner.MineAction(a, Miner.SKIP), new Miner.MineAction(b, Miner.SKIP),
 						new DiscardAction(side, 40f), new Miner.WaitAction(30), checkDump(before)));
@@ -235,7 +235,7 @@ final class Chores {
 					if (!MineConfig.get().discardEnabled || !Inv.canClick(mc, p)) return Miner.DONE;
 					slots = junkSlots(p);
 					if (slots.isEmpty()) return Miner.DONE;
-					Miner.status("필요 없는 블록 버리는 중");
+					Miner.status(com.seolwoni.assistcore.i18n.Tr.t("필요 없는 블록 버리는 중"));
 					yaw = toward.toYRot() + (float) Human.jitter(5);
 					Body.newTurn();
 					delay = Human.delay(2, 6);
@@ -407,7 +407,7 @@ final class Chores {
 			if (steps.isEmpty()) {
 				int now = Inv.count(p, Inv::isTorch);
 				if (now > before) {
-					Alerts.actionBar("횃불을 만들었어요 (" + now + "개)", 0xFF55FF55);
+					Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("횃불을 만들었어요 (") + now + com.seolwoni.assistcore.i18n.Tr.t("개)"), 0xFF55FF55);
 				} else {
 					craftBlockedUntil = Miner.job.ticks + 2400;
 				}

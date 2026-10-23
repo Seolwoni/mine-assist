@@ -34,7 +34,7 @@ public final class AssistHud {
 		CoreConfig c = CoreConfig.get();
 		c.hudHidden = !c.hudHidden;
 		CoreConfig.save();
-		Alerts.actionBar(c.hudHidden ? "Assist HUD 숨김" : "Assist HUD 보임", 0xFFFFAA00);
+		Alerts.actionBar(c.hudHidden ? com.seolwoni.assistcore.i18n.Tr.t("Assist HUD 숨김") : com.seolwoni.assistcore.i18n.Tr.t("Assist HUD 보임"), 0xFFFFAA00);
 		Alerts.click();
 	}
 

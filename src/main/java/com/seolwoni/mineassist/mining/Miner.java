@@ -67,7 +67,7 @@ public final class Miner {
 	public static final Set<BlockPos> leftOverVoid = new java.util.LinkedHashSet<>();
 	static Loc here = Loc.origin();
 	private static final ActionQueue queue = new ActionQueue(Miner::onFail);
-	private static String status = "꺼짐";
+	private static String status = com.seolwoni.assistcore.i18n.Tr.t("꺼짐");
 	private static int nextPause;
 	private static boolean finishing;
 	private static boolean torchFetchTried;
@@ -150,12 +150,12 @@ public final class Miner {
 		inNether = mc.level.dimension().equals(net.minecraft.world.level.Level.NETHER);
 		if (inNether && !wearsGold(p)) {
 			// Piglins leave a player alone who wears at least one piece of gold armour.
-			Alerts.title("금 갑옷이 없어요", "피글린이 덤벼요: 금 투구 하나라도 쓰는 걸 권해요", 0xFFFFAA00);
-			Alerts.chat("Mine Assist", "네더에서는 금 갑옷을 하나라도 입어야 피글린이 덤비지 않아요. 그대로 시작해요.");
+			Alerts.title(com.seolwoni.assistcore.i18n.Tr.t("금 갑옷이 없어요"), com.seolwoni.assistcore.i18n.Tr.t("피글린이 덤벼요: 금 투구 하나라도 쓰는 걸 권해요"), 0xFFFFAA00);
+			Alerts.chat("Mine Assist", com.seolwoni.assistcore.i18n.Tr.t("네더에서는 금 갑옷을 하나라도 입어야 피글린이 덤비지 않아요. 그대로 시작해요."));
 		}
 		if (p.isInWater() || Blocks2.isFluid(feet) || Blocks2.isFluid(feet.below())) {
 			// Stairs dug from under water fill up at once (and the way home is a swim): start on dry ground.
-			Alerts.title("물에서는 시작할 수 없어요", "마른 땅 위에 서서 켜주세요", 0xFFFF5555);
+			Alerts.title(com.seolwoni.assistcore.i18n.Tr.t("물에서는 시작할 수 없어요"), com.seolwoni.assistcore.i18n.Tr.t("마른 땅 위에 서서 켜주세요"), 0xFFFF5555);
 			Alerts.warning();
 			return false;
 		}
@@ -163,8 +163,8 @@ public final class Miner {
 		if (cfg.resume && job.active && job.world.equals(worldKey(mc))) {
 			BlockPos o = new BlockPos(job.ox, job.oy, job.oz);
 			if (feet.distManhattan(o) > 1) {
-				Alerts.title("시작 지점이 아니에요", "이어서 파려면 " + o.getX() + ", " + o.getY() + ", " + o.getZ() + "에서 켜주세요", 0xFFFF5555);
-				Alerts.chat("Mine Assist", "이어서 파려면 시작 지점 " + o.toShortString() + "으로 가서 켜주세요. 새로 시작하려면 설정 → 기본 → 진행 초기화.");
+				Alerts.title(com.seolwoni.assistcore.i18n.Tr.t("시작 지점이 아니에요"), com.seolwoni.assistcore.i18n.Tr.t("이어서 파려면 ") + o.getX() + ", " + o.getY() + ", " + o.getZ() + com.seolwoni.assistcore.i18n.Tr.t("에서 켜주세요"), 0xFFFF5555);
+				Alerts.chat("Mine Assist", com.seolwoni.assistcore.i18n.Tr.t("이어서 파려면 시작 지점 ") + o.toShortString() + com.seolwoni.assistcore.i18n.Tr.t("으로 가서 켜주세요. 새로 시작하려면 설정 → 기본 → 진행 초기화."));
 				Alerts.warning();
 				return false;
 			}
@@ -180,13 +180,13 @@ public final class Miner {
 			if (job.stairsDone < geo.stairs && job.mainK == 1) job.mainK = 0;
 			here = Loc.origin();
 			Loc frontier = frontier();
-			status("이어서 파러 가는 중");
+			status(com.seolwoni.assistcore.i18n.Tr.t("이어서 파러 가는 중"));
 			addRouteOut(frontier);
 			run(() -> here = frontier);
-			Alerts.actionBar("이어서 파기 시작", 0xFF55FF55);
+			Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("이어서 파기 시작"), 0xFF55FF55);
 		} else {
 			if (!inNether && p.blockPosition().getY() < cfg.targetY) {
-				Alerts.title("목표 Y보다 아래에 있어요", "Y " + cfg.targetY + " 이상에서 시작해주세요", 0xFFFF5555);
+				Alerts.title(com.seolwoni.assistcore.i18n.Tr.t("목표 Y보다 아래에 있어요"), "Y " + cfg.targetY + com.seolwoni.assistcore.i18n.Tr.t(" 이상에서 시작해주세요"), 0xFFFF5555);
 				Alerts.warning();
 				return false;
 			}
@@ -212,7 +212,7 @@ public final class Miner {
 			collectTries.clear();
 			leftDrops.clear();
 			here = Loc.origin();
-			Alerts.actionBar("채광 시작: " + geo.d.getName() + " 방향, Y " + job.targetY, 0xFF55FF55);
+			Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("채광 시작: ") + geo.d.getName() + com.seolwoni.assistcore.i18n.Tr.t(" 방향, Y ") + job.targetY, 0xFF55FF55);
 		}
 		// Gear up at the chests before setting off (food, torches, a spare pickaxe).
 		if (cfg.storeEnabled && !cfg.chests.isEmpty() && Storage.needsSupplies(p)) {
@@ -221,8 +221,8 @@ public final class Miner {
 		nextPause = Human.rand(1500, 4000);
 		cfg.running = true;
 		MineConfig.save();
-		com.seolwoni.assistcore.log.UsageLog.start("mine", "목표 Y " + job.targetY + ", 가운데 굴 " + job.mainLength + "칸, 가지굴 " + job.branchLength + "칸/" + job.branchSpacing + "칸 간격, 작업 속도 " + cfg.pace
-				+ (job.mainK > 0 || job.stairsDone > 0 ? " (이어서: 계단 " + job.stairsDone + ", 가운데 " + job.mainK + ")" : ""));
+		com.seolwoni.assistcore.log.UsageLog.start("mine", com.seolwoni.assistcore.i18n.Tr.t("목표 Y ") + job.targetY + com.seolwoni.assistcore.i18n.Tr.t(", 가운데 굴 ") + job.mainLength + com.seolwoni.assistcore.i18n.Tr.t("칸, 가지굴 ") + job.branchLength + com.seolwoni.assistcore.i18n.Tr.t("칸/") + job.branchSpacing + com.seolwoni.assistcore.i18n.Tr.t("칸 간격, 작업 속도 ") + cfg.pace
+				+ (job.mainK > 0 || job.stairsDone > 0 ? com.seolwoni.assistcore.i18n.Tr.t(" (이어서: 계단 ") + job.stairsDone + com.seolwoni.assistcore.i18n.Tr.t(", 가운데 ") + job.mainK + ")" : ""));
 		return true;
 	}
 
@@ -232,8 +232,8 @@ public final class Miner {
 	public static void stop(String title, String sub, boolean alert) {
 		lastStop = (title == null ? "" : title) + (sub == null ? "" : " / " + sub);
 		com.seolwoni.mineassist.hud.MineStats ms = com.seolwoni.mineassist.hud.MineStats.session;
-		com.seolwoni.assistcore.log.UsageLog.end("mine", lastStop.isEmpty() ? "직접 껐어요" : lastStop, "캔 블록 " + ms.blocks + ", 광석 " + job.oresMined + ", 막은 용암·물 " + ms.plugs + ", 상자 왕복 " + ms.trips + (leftOverVoid.isEmpty() ? "" : ", 옆·아래가 비어 남겨둔 광석 " + leftOverVoid.size() + "개")
-				+ "번, 계단 " + job.stairsDone + ", 가운데 " + job.mainK + " | " + com.seolwoni.assistpath.AssistPath.Stats.summary());
+		com.seolwoni.assistcore.log.UsageLog.end("mine", lastStop.isEmpty() ? com.seolwoni.assistcore.i18n.Tr.t("직접 껐어요") : lastStop, com.seolwoni.assistcore.i18n.Tr.t("캔 블록 ") + ms.blocks + com.seolwoni.assistcore.i18n.Tr.t(", 광석 ") + job.oresMined + com.seolwoni.assistcore.i18n.Tr.t(", 막은 용암·물 ") + ms.plugs + com.seolwoni.assistcore.i18n.Tr.t(", 상자 왕복 ") + ms.trips + (leftOverVoid.isEmpty() ? "" : com.seolwoni.assistcore.i18n.Tr.t(", 옆·아래가 비어 남겨둔 광석 ") + leftOverVoid.size() + com.seolwoni.assistcore.i18n.Tr.t("개"))
+				+ com.seolwoni.assistcore.i18n.Tr.t("번, 계단 ") + job.stairsDone + com.seolwoni.assistcore.i18n.Tr.t(", 가운데 ") + job.mainK + " | " + com.seolwoni.assistpath.AssistPath.Stats.summary());
 		Minecraft mc = Minecraft.getInstance();
 		MineConfig cfg = MineConfig.get();
 		cfg.running = false;
@@ -248,7 +248,7 @@ public final class Miner {
 			mc.player.closeContainer();
 		}
 		job.save();
-		status("꺼짐");
+		status(com.seolwoni.assistcore.i18n.Tr.t("꺼짐"));
 		if (title != null) {
 			if (alert) {
 				Alerts.title(title, sub, 0xFFFF5555);
@@ -295,7 +295,7 @@ public final class Miner {
 			String why = com.seolwoni.assistpath.defense.Defense.giveUp();
 			if (why != null) {
 				com.seolwoni.assistpath.defense.Defense.reset(mc);
-				stop(why, "싸우기를 켜거나 안전한 곳에서 다시 켜주세요", true);
+				stop(why, com.seolwoni.assistcore.i18n.Tr.t("싸우기를 켜거나 안전한 곳에서 다시 켜주세요"), true);
 			}
 			return;
 		}
@@ -322,7 +322,7 @@ public final class Miner {
 				// May dig or build a step on the way: after a fall into a cave the way back is up.
 				queue.add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(back),
 						com.seolwoni.assistpath.PathOptions.FULL, com.seolwoni.assistcore.engine.Action.SKIP));
-				status("하던 곳으로 돌아가는 중");
+				status(com.seolwoni.assistcore.i18n.Tr.t("하던 곳으로 돌아가는 중"));
 				add((mc2, p2) -> {
 					// Did not make it back (the path gave up): that counts as a go too.
 					if (!onDugGround(p2.blockPosition()) && ++lostCount >= 2) shelterAndStop(p2);
@@ -346,8 +346,8 @@ public final class Miner {
 	private static boolean safety(Minecraft mc, LocalPlayer p, MineConfig cfg) {
 		if (p.isDeadOrDying()) {
 			BlockPos b = p.blockPosition();
-			Alerts.chat("Mine Assist", "사망 위치: " + b.getX() + ", " + b.getY() + ", " + b.getZ());
-			stop("죽었어요", "사망 위치를 채팅에 남겼어요", true);
+			Alerts.chat("Mine Assist", com.seolwoni.assistcore.i18n.Tr.t("사망 위치: ") + b.getX() + ", " + b.getY() + ", " + b.getZ());
+			stop(com.seolwoni.assistcore.i18n.Tr.t("죽었어요"), com.seolwoni.assistcore.i18n.Tr.t("사망 위치를 채팅에 남겼어요"), true);
 			return false;
 		}
 		if (drinkTicks > 0) {
@@ -369,19 +369,19 @@ public final class Miner {
 					Inv.select(p, slot);
 					mc.gameMode.useItem(p, InteractionHand.MAIN_HAND);
 					drinkTicks = 1;
-					status("불 저항 물약 마시는 중");
-					com.seolwoni.assistcore.log.UsageLog.event("mine", "불이 붙어 불 저항 물약을 마셨어요");
+					status(com.seolwoni.assistcore.i18n.Tr.t("불 저항 물약 마시는 중"));
+					com.seolwoni.assistcore.log.UsageLog.event("mine", com.seolwoni.assistcore.i18n.Tr.t("불이 붙어 불 저항 물약을 마셨어요"));
 					return false;
 				}
 			}
 			// Burning with fire resistance on: harmless, carry on (but never keep working while in lava).
 			if (!(resist && !p.isInLava())) {
-				stop("위험! 불이나 용암", "채광을 멈췄어요", true);
+				stop(com.seolwoni.assistcore.i18n.Tr.t("위험! 불이나 용암"), com.seolwoni.assistcore.i18n.Tr.t("채광을 멈췄어요"), true);
 				return false;
 			}
 		}
 		if (p.getHealth() <= cfg.minHealth) {
-			stop("체력이 낮아요", "채광을 멈췄어요", true);
+			stop(com.seolwoni.assistcore.i18n.Tr.t("체력이 낮아요"), com.seolwoni.assistcore.i18n.Tr.t("채광을 멈췄어요"), true);
 			return false;
 		}
 		if (cfg.mobMode == 2 && job.ticks % 10 == 0) {
@@ -389,7 +389,7 @@ public final class Miner {
 			for (Entity e : mc.level.getEntities(p, box)) {
 				if (e instanceof Enemy && e.isAlive() && !(e instanceof net.minecraft.world.entity.NeutralMob)
 						&& !com.seolwoni.assistpath.defense.Threats.calmPiglin(e)) {
-					stop("몹이 다가와요", e.getName().getString() + " 근처에 있어요", true);
+					stop(com.seolwoni.assistcore.i18n.Tr.t("몹이 다가와요"), e.getName().getString() + com.seolwoni.assistcore.i18n.Tr.t(" 근처에 있어요"), true);
 					return false;
 				}
 			}
@@ -405,14 +405,14 @@ public final class Miner {
 				// Give up this branch: drop what is queued and let the planner walk back to the main tunnel.
 				queue.clear();
 				job.branchD = Math.max(job.branchD, job.branchLength);
-				Alerts.actionBar("가지굴을 더 팔 수 없어서 다음 가지굴로 넘어가요", 0xFFFFAA00);
+				Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("가지굴을 더 팔 수 없어서 다음 가지굴로 넘어가요"), 0xFFFFAA00);
 			}
 			case END -> {
 				queue.clear();
-				Alerts.actionBar("가운데 굴이 막혀서 마무리하고 돌아가요", 0xFFFFAA00);
+				Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("가운데 굴이 막혀서 마무리하고 돌아가요"), 0xFFFFAA00);
 				goHomeAndFinish();
 			}
-			default -> stop("채광을 멈췄어요", a.failReason().isEmpty() ? "진행할 수 없어요" : a.failReason(), true);
+			default -> stop(com.seolwoni.assistcore.i18n.Tr.t("채광을 멈췄어요"), a.failReason().isEmpty() ? com.seolwoni.assistcore.i18n.Tr.t("진행할 수 없어요") : a.failReason(), true);
 		}
 	}
 
@@ -425,7 +425,7 @@ public final class Miner {
 		if (--nextPause <= 0) {
 			nextPause = Human.rand(1500, 4000);
 			add(new WaitAction(Human.rand(30, 100)));
-			status("잠깐 쉬는 중");
+			status(com.seolwoni.assistcore.i18n.Tr.t("잠깐 쉬는 중"));
 			return;
 		}
 		if (Chores.planChores(mc, p, cfg)) return;
@@ -445,25 +445,25 @@ public final class Miner {
 		if (mc.gameMode != null) mc.gameMode.stopDestroyBlock();
 		defenseFrom = null;
 		finishing = true;
-		com.seolwoni.assistcore.log.UsageLog.event("mine", "돌아가기 버튼: " + (mc.player == null ? "" : mc.player.blockPosition().toShortString()) + "에서 시작 지점으로");
-		Alerts.actionBar("하던 것을 멈추고 시작 지점으로 돌아가요", 0xFFFFAA00);
+		com.seolwoni.assistcore.log.UsageLog.event("mine", com.seolwoni.assistcore.i18n.Tr.t("돌아가기 버튼: ") + (mc.player == null ? "" : mc.player.blockPosition().toShortString()) + com.seolwoni.assistcore.i18n.Tr.t("에서 시작 지점으로"));
+		Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("하던 것을 멈추고 시작 지점으로 돌아가요"), 0xFFFFAA00);
 		add(new CollectAction());
 		// Off the known route (fled into a cave, inside a pocket): first back onto where the job had got to.
 		addCore(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(geo.pos(here)),
 				com.seolwoni.assistpath.PathOptions.FULL, SKIP));
-		run(() -> status("시작 지점으로 돌아가는 중"));
+		run(() -> status(com.seolwoni.assistcore.i18n.Tr.t("시작 지점으로 돌아가는 중")));
 		add(new RouteAction(geo.routeToOrigin(here)));
 		run(() -> here = Loc.origin());
 		if (cfg.storeEnabled && !cfg.chests.isEmpty()) add(new Storage.TripAction(geo.origin, geo.d, true));
 		run(() -> {
 			job.save();
-			stop("시작 지점으로 돌아왔어요", "다시 켜면 하던 곳부터 이어서 파요", true);
+			stop(com.seolwoni.assistcore.i18n.Tr.t("시작 지점으로 돌아왔어요"), com.seolwoni.assistcore.i18n.Tr.t("다시 켜면 하던 곳부터 이어서 파요"), true);
 		});
 	}
 
 	static void goHomeAndFinish() {
 		finishing = true;
-		status("시작 지점으로 돌아가는 중");
+		status(com.seolwoni.assistcore.i18n.Tr.t("시작 지점으로 돌아가는 중"));
 		add(new RouteAction(geo.routeToOrigin(here)));
 		run(() -> here = Loc.origin());
 		MineConfig cfg = MineConfig.get();
@@ -473,7 +473,7 @@ public final class Miner {
 		run(() -> {
 			job.active = false;
 			job.save();
-			stop("채광 완료!", "정리까지 끝내고 시작 지점으로 돌아왔어요", true);
+			stop(com.seolwoni.assistcore.i18n.Tr.t("채광 완료!"), com.seolwoni.assistcore.i18n.Tr.t("정리까지 끝내고 시작 지점으로 돌아왔어요"), true);
 			Alerts.ding();
 		});
 	}
@@ -485,7 +485,7 @@ public final class Miner {
 		if (job.stairsDone < n) {
 			int i = job.stairsDone + 1;
 			BlockPos s = geo.stair(i);
-			status("계단 파는 중 (" + i + "/" + n + ")");
+			status(com.seolwoni.assistcore.i18n.Tr.t("계단 파는 중 (") + i + "/" + n + ")");
 			// Down: the step and two above it. Up: the step and one above it, plus the roof over the step we stand
 			// on (room to jump up).
 			List<BlockPos> col = geo.up ? List.of(geo.stair(i - 1).above(2), s.above(), s) : List.of(s.above(2), s.above(), s);
@@ -524,7 +524,7 @@ public final class Miner {
 			return;
 		}
 		int nk = k + 1;
-		status("가운데 굴 파는 중 (" + nk + "/" + job.mainLength + ")");
+		status(com.seolwoni.assistcore.i18n.Tr.t("가운데 굴 파는 중 (") + nk + "/" + job.mainLength + ")");
 		BlockPos m = geo.main(nk), l = geo.lane1(nk);
 		List<BlockPos> col = List.of(m.above(), m, l.above(), l);
 		for (BlockPos b : col) add(new MineAction(b, END));
@@ -553,14 +553,14 @@ public final class Miner {
 	 */
 	private static void planPoke(int k, MineConfig cfg) {
 		int side = job.branchSide;
-		String sideName = side == 0 ? "왼쪽" : "오른쪽";
+		String sideName = side == 0 ? com.seolwoni.assistcore.i18n.Tr.t("왼쪽") : com.seolwoni.assistcore.i18n.Tr.t("오른쪽");
 		// Right side: stand in lane 1 (next to that wall).
 		if (side == 1 && !(here.kind() == Loc.MAIN && here.b() == 1)) {
 			add(new WalkAction(geo.lane1(k)));
 			run(() -> here = Loc.main(k, 1));
 			return;
 		}
-		status(sideName + " 벽에 구멍 뚫는 중 (" + (k / job.branchSpacing) + "번)");
+		status(sideName + com.seolwoni.assistcore.i18n.Tr.t(" 벽에 구멍 뚫는 중 (") + (k / job.branchSpacing) + com.seolwoni.assistcore.i18n.Tr.t("번)"));
 		int depth = Math.max(1, Math.min(5, cfg.pokeDepth));
 		List<BlockPos> hole = new ArrayList<>();
 		for (int j = 1; j <= depth; j++) hole.add(geo.branch(k, side, j).above());
@@ -578,11 +578,11 @@ public final class Miner {
 		MineConfig cfg = MineConfig.get();
 		int side = job.branchSide;
 		int d = job.branchD;
-		String sideName = side == 0 ? "왼쪽" : "오른쪽";
+		String sideName = side == 0 ? com.seolwoni.assistcore.i18n.Tr.t("왼쪽") : com.seolwoni.assistcore.i18n.Tr.t("오른쪽");
 
 		// Finished (or abandoned) this side: walk back to lane 0 of the main tunnel.
 		if (d >= job.branchLength) {
-			status(sideName + " 가지굴에서 돌아오는 중");
+			status(sideName + com.seolwoni.assistcore.i18n.Tr.t(" 가지굴에서 돌아오는 중"));
 			int reached = here.kind() == Loc.BRANCH ? here.c() : 0;
 			List<BlockPos> back = new ArrayList<>();
 			for (int j = reached - 1; j >= 1; j--) back.add(geo.branch(k, side, j));
@@ -607,7 +607,7 @@ public final class Miner {
 		}
 		int nd = d + 1;
 		BlockPos b = geo.branch(k, side, nd);
-		status(sideName + " 가지굴 " + (k / job.branchSpacing) + "번 (" + nd + "/" + job.branchLength + ")");
+		status(sideName + com.seolwoni.assistcore.i18n.Tr.t(" 가지굴 ") + (k / job.branchSpacing) + com.seolwoni.assistcore.i18n.Tr.t("번 (") + nd + "/" + job.branchLength + ")");
 		List<BlockPos> col = List.of(b.above(), b);
 		for (BlockPos x : col) add(new MineAction(x, ABANDON));
 		floor(b.below(), ABANDON);
@@ -687,11 +687,11 @@ public final class Miner {
 	/** Leave for the chests and come back to where we were. */
 	static void storageTrip(boolean forTorches) {
 		Loc back = here;
-		status("상자로 보관하러 가는 중");
+		status(com.seolwoni.assistcore.i18n.Tr.t("상자로 보관하러 가는 중"));
 		add(new RouteAction(geo.routeToOrigin(here)));
 		run(() -> here = Loc.origin());
 		add(new Storage.TripAction(geo.origin, geo.d));
-		status("다시 파러 가는 중");
+		status(com.seolwoni.assistcore.i18n.Tr.t("다시 파러 가는 중"));
 		addRouteOut(back);
 		run(() -> {
 			here = back;
@@ -949,7 +949,7 @@ public final class Miner {
 
 		@Override
 		public String failReason() {
-			return "길이 막혀서 움직일 수 없어요";
+			return com.seolwoni.assistcore.i18n.Tr.t("길이 막혀서 움직일 수 없어요");
 		}
 	}
 
@@ -990,14 +990,14 @@ public final class Miner {
 					if (Blocks2.isFluid(pos)) {
 						// Water or lava where the tunnel goes: fill it first, then dig the filler.
 						if (++plugTries > 4) {
-							reason = "용암·물을 막지 못했어요";
+							reason = com.seolwoni.assistcore.i18n.Tr.t("용암·물을 막지 못했어요");
 							return FAIL;
 						}
 						pushFront(new PlaceAction(pos, PlaceAction.PLUG, failMode));
 						return RUN;
 					}
 					if (Blocks2.unbreakable(pos)) {
-						reason = "캘 수 없는 블록이 있어요";
+						reason = com.seolwoni.assistcore.i18n.Tr.t("캘 수 없는 블록이 있어요");
 						return FAIL;
 					}
 					List<Action> plugs = new ArrayList<>();
@@ -1009,10 +1009,10 @@ public final class Miner {
 					}
 					if (!plugs.isEmpty()) {
 						if (++plugTries > 4) {
-							reason = "용암·물을 막지 못했어요";
+							reason = com.seolwoni.assistcore.i18n.Tr.t("용암·물을 막지 못했어요");
 							return FAIL;
 						}
-						status("용암·물 막는 중");
+						status(com.seolwoni.assistcore.i18n.Tr.t("용암·물 막는 중"));
 						pushFront(plugs);
 						return RUN;
 					}
@@ -1036,14 +1036,14 @@ public final class Miner {
 							walls.add(new PlaceAction(nb, PlaceAction.WALL, SKIP));
 						}
 						if (!walls.isEmpty()) {
-							status("동굴 쪽을 먼저 막는 중");
+							status(com.seolwoni.assistcore.i18n.Tr.t("동굴 쪽을 먼저 막는 중"));
 							pushFront(walls);
 							return RUN;
 						}
 					}
 					if (!Inv.selectPickaxe(mc, p)) {
-						reason = "쓸 수 있는 곡괭이가 없어요";
-						stop("곡괭이가 없어요", "쓸 수 있는 곡괭이가 없어요", true);
+						reason = com.seolwoni.assistcore.i18n.Tr.t("쓸 수 있는 곡괭이가 없어요");
+						stop(com.seolwoni.assistcore.i18n.Tr.t("곡괭이가 없어요"), com.seolwoni.assistcore.i18n.Tr.t("쓸 수 있는 곡괭이가 없어요"), true);
 						return RUN;
 					}
 					oreId = Blocks2.id(pos);
@@ -1079,7 +1079,7 @@ public final class Miner {
 						stage = 3;
 					} else if (ticks > 400) {
 						mc.gameMode.stopDestroyBlock();
-						reason = "블록이 캐지지 않아요";
+						reason = com.seolwoni.assistcore.i18n.Tr.t("블록이 캐지지 않아요");
 						return FAIL;
 					}
 					return RUN;
@@ -1088,7 +1088,7 @@ public final class Miner {
 					if (!Blocks2.isOpen(pos) || Blocks2.isFluid(pos)) {
 						// Gravel/sand fell in, or water flowed in: go again.
 						if (++retries > 30) {
-							reason = "떨어지는 블록이 너무 많아요";
+							reason = com.seolwoni.assistcore.i18n.Tr.t("떨어지는 블록이 너무 많아요");
 							return FAIL;
 						}
 						stage = 0;
@@ -1213,7 +1213,7 @@ public final class Miner {
 						List<BlockPos> chain = bridgeChain(p);
 						if (!chain.isEmpty()) {
 							bridges++;
-							status(kind == PLUG ? "동굴 위에 다리 놓는 중" : "동굴 벽 쌓는 중");
+							status(kind == PLUG ? com.seolwoni.assistcore.i18n.Tr.t("동굴 위에 다리 놓는 중") : com.seolwoni.assistcore.i18n.Tr.t("동굴 벽 쌓는 중"));
 							List<Action> puts = new ArrayList<>();
 							for (BlockPos c : chain) puts.add(new PlaceAction(c, kind, kind == PLUG ? failMode : SKIP));
 							pushFront(puts);
@@ -1221,12 +1221,12 @@ public final class Miner {
 						}
 					}
 					if (support == null) {
-						reason = kind == PLUG ? "막을 자리를 찾지 못했어요 (큰 동굴이나 용암 호수)" : "";
+						reason = kind == PLUG ? com.seolwoni.assistcore.i18n.Tr.t("막을 자리를 찾지 못했어요 (큰 동굴이나 용암 호수)") : "";
 						return torchKind() ? DONE : FAIL;
 					}
 					slot = Inv.bringToHotbar(mc, p, block() ? Inv::isPlug : Inv::isTorch);
 					if (slot == -1) {
-						reason = kind == PLUG ? "막을 조약돌이 없어요" : "";
+						reason = kind == PLUG ? com.seolwoni.assistcore.i18n.Tr.t("막을 조약돌이 없어요") : "";
 						return torchKind() ? DONE : FAIL;
 					}
 					delay = Human.delay(1, 5);
@@ -1257,7 +1257,7 @@ public final class Miner {
 						return DONE;
 					}
 					if (++attempts >= 3) {
-						reason = kind == PLUG ? "블록을 놓지 못했어요" : "";
+						reason = kind == PLUG ? com.seolwoni.assistcore.i18n.Tr.t("블록을 놓지 못했어요") : "";
 						return torchKind() ? DONE : FAIL;
 					}
 					stage = 0;
@@ -1341,7 +1341,7 @@ public final class Miner {
 		// Looked at when we get there (the floor shows only once the cell above it is dug).
 		add((mc, p) -> {
 			if (Blocks2.state(f).is(net.minecraft.world.level.block.Blocks.MAGMA_BLOCK)) {
-				status("마그마 블록 바꾸는 중");
+				status(com.seolwoni.assistcore.i18n.Tr.t("마그마 블록 바꾸는 중"));
 				pushFront(new MineAction(f, failMode));
 			}
 			return DONE;
@@ -1475,7 +1475,7 @@ public final class Miner {
 		if (watchingGhast(mc, p) == null) return false;
 		if (ghastShelters >= 8) {
 			// Ghasts keep coming back over this cave: no more work at its edge today.
-			stop("가스트가 계속 나타나서 굴 안에서 멈췄어요", "가스트를 처리하거나 자리를 옮긴 뒤 다시 켜주세요", true);
+			stop(com.seolwoni.assistcore.i18n.Tr.t("가스트가 계속 나타나서 굴 안에서 멈췄어요"), com.seolwoni.assistcore.i18n.Tr.t("가스트를 처리하거나 자리를 옮긴 뒤 다시 켜주세요"), true);
 			return true;
 		}
 		sheltering = true;
@@ -1485,8 +1485,8 @@ public final class Miner {
 		if (mc.gameMode != null) mc.gameMode.stopDestroyBlock();
 		var box = com.seolwoni.assistcore.storage.PortableStorage.interrupted(mc);
 		if (box != null) queue.add(box);
-		status("가스트를 피해 굴 안으로 들어가는 중");
-		Alerts.chat("Mine Assist", "가스트가 보고 있어서 낭떠러지에서 물러나 굴 안에서 기다려요");
+		status(com.seolwoni.assistcore.i18n.Tr.t("가스트를 피해 굴 안으로 들어가는 중"));
+		Alerts.chat("Mine Assist", com.seolwoni.assistcore.i18n.Tr.t("가스트가 보고 있어서 낭떠러지에서 물러나 굴 안에서 기다려요"));
 		final BlockPos to = lastSafe;
 		queue.add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(to), com.seolwoni.assistpath.PathOptions.WALK,
 				com.seolwoni.assistcore.engine.Action.SKIP));
@@ -1508,7 +1508,7 @@ public final class Miner {
 		@Override
 		public int tick(Minecraft mc, LocalPlayer p) {
 			mc.options.keyShift.setDown(true);
-			if (total == 0) status("가스트가 지나가길 기다리는 중");
+			if (total == 0) status(com.seolwoni.assistcore.i18n.Tr.t("가스트가 지나가길 기다리는 중"));
 			total++;
 			if (watchingGhast(mc, p) == null) clear++;
 			else clear = 0;
@@ -1519,7 +1519,7 @@ public final class Miner {
 			if (total > 1200) {
 				mc.options.keyShift.setDown(false);
 				sheltering = false;
-				stop("가스트가 1분 넘게 지켜보고 있어서 굴 안에서 멈췄어요", "가스트를 처리하거나 자리를 옮긴 뒤 다시 켜주세요", true);
+				stop(com.seolwoni.assistcore.i18n.Tr.t("가스트가 1분 넘게 지켜보고 있어서 굴 안에서 멈췄어요"), com.seolwoni.assistcore.i18n.Tr.t("가스트를 처리하거나 자리를 옮긴 뒤 다시 켜주세요"), true);
 				return DONE;
 			}
 			return RUN;
@@ -1533,7 +1533,7 @@ public final class Miner {
 	static void shelterAndStop(LocalPlayer p) {
 		queue.clear();
 		BlockPos f = p.blockPosition();
-		status("블록으로 몸을 막는 중");
+		status(com.seolwoni.assistcore.i18n.Tr.t("블록으로 몸을 막는 중"));
 		List<Action> walls = new ArrayList<>();
 		for (Direction d : Direction.Plane.HORIZONTAL) {
 			walls.add(new PlaceAction(f.relative(d), PlaceAction.PLUG, SKIP));
@@ -1544,9 +1544,9 @@ public final class Miner {
 		add((mc, pl) -> {
 			lostCount = 0;
 			lostEpisodes = 0;
-			com.seolwoni.assistcore.log.UsageLog.event("mine", "굴 밖에서 돌아가지 못해 몸을 막고 멈춤: " + f.toShortString());
-			Alerts.chat("Mine Assist", "굴 밖 동굴(" + f.toShortString() + ")에서 돌아가는 길을 못 찾아, 블록으로 몸을 막고 멈췄어요.");
-			stop("굴 밖에서 길을 잃었어요", "블록으로 몸을 막고 멈췄어요: " + f.toShortString(), true);
+			com.seolwoni.assistcore.log.UsageLog.event("mine", com.seolwoni.assistcore.i18n.Tr.t("굴 밖에서 돌아가지 못해 몸을 막고 멈춤: ") + f.toShortString());
+			Alerts.chat("Mine Assist", com.seolwoni.assistcore.i18n.Tr.t("굴 밖 동굴(") + f.toShortString() + com.seolwoni.assistcore.i18n.Tr.t(")에서 돌아가는 길을 못 찾아, 블록으로 몸을 막고 멈췄어요."));
+			stop(com.seolwoni.assistcore.i18n.Tr.t("굴 밖에서 길을 잃었어요"), com.seolwoni.assistcore.i18n.Tr.t("블록으로 몸을 막고 멈췄어요: ") + f.toShortString(), true);
 			return DONE;
 		});
 	}
@@ -1616,8 +1616,8 @@ public final class Miner {
 				int tries = collectTries.getOrDefault(e.getId(), 0);
 				if (tries >= 2) {
 					if (leftDrops.add(at.immutable())) {
-						Alerts.actionBar("줍지 못한 아이템을 두고 가요: " + at.toShortString(), 0xFFFFAA00);
-						com.seolwoni.assistcore.log.UsageLog.event("mine", "줍지 못한 아이템 두고 감: " + ie.getItem().getCount() + " " + Inv.id(ie.getItem()) + " at " + at.toShortString());
+						Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("줍지 못한 아이템을 두고 가요: ") + at.toShortString(), 0xFFFFAA00);
+						com.seolwoni.assistcore.log.UsageLog.event("mine", com.seolwoni.assistcore.i18n.Tr.t("줍지 못한 아이템 두고 감: ") + ie.getItem().getCount() + " " + Inv.id(ie.getItem()) + " at " + at.toShortString());
 					}
 					continue;
 				}
@@ -1659,7 +1659,7 @@ public final class Miner {
 				last = best;
 			}
 			if (walks.isEmpty()) return DONE;
-			status("떨어진 아이템 줍는 중");
+			status(com.seolwoni.assistcore.i18n.Tr.t("떨어진 아이템 줍는 중"));
 			walks.add(new WalkAction(home, false));
 			// Look once more: something may have rolled away while walking.
 			if (pass < 2) walks.add(new CollectAction(pass + 1));
@@ -1794,7 +1794,7 @@ public final class Miner {
 				todo.add(new CollectAction());
 				todo.add(this);
 				pocketNote("round " + rounds + ": dig a walkway of " + way.size() + " to the drop at " + s.toShortString());
-				status("광석 구멍에서 아이템 꺼내는 중");
+				status(com.seolwoni.assistcore.i18n.Tr.t("광석 구멍에서 아이템 꺼내는 중"));
 				wait = 0;
 				rounds--; // fetching does not count as a filling round
 				fetches++;
@@ -1854,7 +1854,7 @@ public final class Miner {
 			todo.add(new CollectAction());
 			todo.add(this); // look once more (a drop may need a second push)
 			wait = 0;
-			status("광석 구멍 메우며 아이템 꺼내는 중");
+			status(com.seolwoni.assistcore.i18n.Tr.t("광석 구멍 메우며 아이템 꺼내는 중"));
 			pushFront(todo);
 			return DONE;
 		}
@@ -1927,9 +1927,9 @@ public final class Miner {
 					if (leftOverVoid.add(o.immutable())) {
 						String where = o.getX() + ", " + o.getY() + ", " + o.getZ();
 						pocketNote("left " + Blocks2.id(o) + " at " + where + ": lava next to it");
-						Alerts.actionBar("용암 옆이라 남겨둔 광석: " + where, 0xFFFFAA55);
-						Alerts.chat("Mine Assist", "용암 옆이라 남겨둔 " + Blocks2.state(o).getBlock().getName().getString() + ": " + where);
-						com.seolwoni.assistcore.log.UsageLog.event("mine", "용암 옆이라 남겨둔 광석 " + Blocks2.id(o) + " (" + where + ")");
+						Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("용암 옆이라 남겨둔 광석: ") + where, 0xFFFFAA55);
+						Alerts.chat("Mine Assist", com.seolwoni.assistcore.i18n.Tr.t("용암 옆이라 남겨둔 ") + Blocks2.state(o).getBlock().getName().getString() + ": " + where);
+						com.seolwoni.assistcore.log.UsageLog.event("mine", com.seolwoni.assistcore.i18n.Tr.t("용암 옆이라 남겨둔 광석 ") + Blocks2.id(o) + " (" + where + ")");
 					}
 					continue;
 				}
@@ -1937,15 +1937,15 @@ public final class Miner {
 					if (leftOverVoid.add(o.immutable())) {
 						String where = o.getX() + ", " + o.getY() + ", " + o.getZ();
 						pocketNote("left " + Blocks2.id(o) + " at " + where + ": open below or beside");
-						Alerts.actionBar("옆·아래가 비어 있어 남겨둔 광석: " + where, 0xFFFFAA55);
-						com.seolwoni.assistcore.log.UsageLog.event("mine", "옆·아래가 비어 있어 남겨둔 광석 " + Blocks2.id(o) + " (" + where + ")");
+						Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("옆·아래가 비어 있어 남겨둔 광석: ") + where, 0xFFFFAA55);
+						com.seolwoni.assistcore.log.UsageLog.event("mine", com.seolwoni.assistcore.i18n.Tr.t("옆·아래가 비어 있어 남겨둔 광석 ") + Blocks2.id(o) + " (" + where + ")");
 					}
 					continue;
 				}
 				if (!alerted && cfg.alertOres.contains(id)) {
 					alerted = true;
 					String name = Blocks2.state(o).getBlock().getName().getString();
-					Alerts.title("광석 발견!", name, 0xFF55FFFF);
+					Alerts.title(com.seolwoni.assistcore.i18n.Tr.t("광석 발견!"), name, 0xFF55FFFF);
 					Alerts.ding();
 				}
 				MineAction m = new MineAction(o, SKIP);
@@ -1960,7 +1960,7 @@ public final class Miner {
 			// Pick up what is in reach first; only what is left after that gets pushed out by filling.
 			todo.add(new CollectAction());
 			todo.add(new PocketFillAction(new ArrayList<>(found)));
-			status("광석 캐는 중");
+			status(com.seolwoni.assistcore.i18n.Tr.t("광석 캐는 중"));
 			pushFront(todo);
 			return RUN;
 		}

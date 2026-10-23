@@ -31,7 +31,7 @@ public class JournalScreen extends Screen {
 
 	/** {@code mod}: "mine", "reel", "lumber", "farm", "build" (or null for all of them). */
 	public JournalScreen(Screen parent, String mod) {
-		super(Component.literal("작업 일지"));
+		super(Component.literal(com.seolwoni.assistcore.i18n.Tr.t("작업 일지")));
 		this.parent = parent;
 		this.mod = mod;
 		this.all = mod == null;
@@ -39,11 +39,11 @@ public class JournalScreen extends Screen {
 
 	static String modName(String m) {
 		return switch (m) {
-			case "mine" -> "마인";
-			case "reel" -> "릴";
-			case "lumber" -> "럼버";
-			case "farm" -> "팜";
-			case "build" -> "빌드";
+			case "mine" -> com.seolwoni.assistcore.i18n.Tr.t("마인");
+			case "reel" -> com.seolwoni.assistcore.i18n.Tr.t("릴");
+			case "lumber" -> com.seolwoni.assistcore.i18n.Tr.t("럼버");
+			case "farm" -> com.seolwoni.assistcore.i18n.Tr.t("팜");
+			case "build" -> com.seolwoni.assistcore.i18n.Tr.t("빌드");
 			default -> m;
 		};
 	}
@@ -78,7 +78,7 @@ public class JournalScreen extends Screen {
 		for (Map.Entry<String, Integer> e : l) {
 			if (e.getValue() <= 0) continue;
 			if (n == max) {
-				sb.append(" 외 ").append(l.size() - max).append("가지");
+				sb.append(com.seolwoni.assistcore.i18n.Tr.t(" 외 ")).append(l.size() - max).append(com.seolwoni.assistcore.i18n.Tr.t("가지"));
 				break;
 			}
 			if (n > 0) sb.append(" · ");
@@ -91,9 +91,9 @@ public class JournalScreen extends Screen {
 	static String dimName(String d) {
 		if (d == null) return "";
 		return switch (d) {
-			case "overworld" -> "오버월드";
-			case "the_nether" -> "네더";
-			case "the_end" -> "엔드";
+			case "overworld" -> com.seolwoni.assistcore.i18n.Tr.t("오버월드");
+			case "the_nether" -> com.seolwoni.assistcore.i18n.Tr.t("네더");
+			case "the_end" -> com.seolwoni.assistcore.i18n.Tr.t("엔드");
 			default -> d;
 		};
 	}
@@ -102,9 +102,9 @@ public class JournalScreen extends Screen {
 	protected void init() {
 		lines.clear();
 		int left = this.width / 2 - 170, w = 340;
-		addRenderableWidget(Button.builder(Component.literal("완료"), b -> onClose()).bounds(this.width / 2 + 120, 4, 50, 18).build());
+		addRenderableWidget(Button.builder(Component.literal(com.seolwoni.assistcore.i18n.Tr.t("완료")), b -> onClose()).bounds(this.width / 2 + 120, 4, 50, 18).build());
 		if (mod != null) {
-			addRenderableWidget(Button.builder(Component.literal(all ? "전체 모드" : modName(mod) + "만"), b -> {
+			addRenderableWidget(Button.builder(Component.literal(all ? com.seolwoni.assistcore.i18n.Tr.t("전체 모드") : modName(mod) + com.seolwoni.assistcore.i18n.Tr.t("만")), b -> {
 				all = !all;
 				page = 0;
 				rebuildWidgets();
@@ -116,7 +116,7 @@ public class JournalScreen extends Screen {
 		int pages = Math.max(1, (list.size() + per - 1) / per);
 		page = Math.max(0, Math.min(page, pages - 1));
 		if (list.isEmpty()) {
-			lines.add(new Object[] {"아직 기록이 없어요. 모드를 켜서 일을 시키면 끝날 때마다 여기에 남아요.", this.width / 2, y + 10, 0xFFAAAAAA, true});
+			lines.add(new Object[] {com.seolwoni.assistcore.i18n.Tr.t("아직 기록이 없어요. 모드를 켜서 일을 시키면 끝날 때마다 여기에 남아요."), this.width / 2, y + 10, 0xFFAAAAAA, true});
 		}
 		SimpleDateFormat day = new SimpleDateFormat("M/d HH:mm"), time = new SimpleDateFormat("HH:mm");
 		for (int i = page * per; i < Math.min(list.size(), (page + 1) * per); i++) {
@@ -124,14 +124,14 @@ public class JournalScreen extends Screen {
 			String head = "[" + modName(e.mod) + "] " + day.format(new Date(e.start)) + " → " + time.format(new Date(e.end)) + " (" + UsageLog.duration(e.end - e.start) + ") · "
 					+ dimName(e.dim) + " " + e.from;
 			lines.add(new Object[] {head, left, y, modColor(e.mod), false});
-			lines.add(new Object[] {"  끝: " + shorten(e.reason, 60), left, y + LINE, e.died ? 0xFFFF5555 : 0xFFDDDDDD, false});
+			lines.add(new Object[] {com.seolwoni.assistcore.i18n.Tr.t("  끝: ") + shorten(e.reason, 60), left, y + LINE, e.died ? 0xFFFF5555 : 0xFFDDDDDD, false});
 			String got = items(e.got, 5);
-			lines.add(new Object[] {"  얻음: " + (got.isEmpty() ? "-" : got), left, y + 2 * LINE, 0xFF55FF55, false});
+			lines.add(new Object[] {com.seolwoni.assistcore.i18n.Tr.t("  얻음: ") + (got.isEmpty() ? "-" : got), left, y + 2 * LINE, 0xFF55FF55, false});
 			String st = items(e.stored, 4), used = items(e.used, 4);
-			lines.add(new Object[] {"  상자에: " + (st.isEmpty() ? "-" : st) + "   씀: " + (used.isEmpty() ? "-" : used), left, y + 3 * LINE, 0xFFBBBBBB, false});
-			String danger = e.died ? "죽었어요" : (e.hurt == 0 && e.falls == 0 ? "없음" : (e.hurt > 0 ? "다침 " + e.hurt + "번 (가장 낮은 체력 " + Math.round(e.lowestHealth) + ")" : "")
-					+ (e.falls > 0 ? (e.hurt > 0 ? " · " : "") + "떨어짐 " + e.falls + "번" : ""));
-			lines.add(new Object[] {"  위험: " + danger, left, y + 4 * LINE, e.died || e.hurt > 0 ? 0xFFFFAA55 : 0xFF888888, false});
+			lines.add(new Object[] {com.seolwoni.assistcore.i18n.Tr.t("  상자에: ") + (st.isEmpty() ? "-" : st) + com.seolwoni.assistcore.i18n.Tr.t("   씀: ") + (used.isEmpty() ? "-" : used), left, y + 3 * LINE, 0xFFBBBBBB, false});
+			String danger = e.died ? com.seolwoni.assistcore.i18n.Tr.t("죽었어요") : (e.hurt == 0 && e.falls == 0 ? com.seolwoni.assistcore.i18n.Tr.t("없음") : (e.hurt > 0 ? com.seolwoni.assistcore.i18n.Tr.t("다침 ") + e.hurt + com.seolwoni.assistcore.i18n.Tr.t("번 (가장 낮은 체력 ") + Math.round(e.lowestHealth) + ")" : "")
+					+ (e.falls > 0 ? (e.hurt > 0 ? " · " : "") + com.seolwoni.assistcore.i18n.Tr.t("떨어짐 ") + e.falls + com.seolwoni.assistcore.i18n.Tr.t("번") : ""));
+			lines.add(new Object[] {com.seolwoni.assistcore.i18n.Tr.t("  위험: ") + danger, left, y + 4 * LINE, e.died || e.hurt > 0 ? 0xFFFFAA55 : 0xFF888888, false});
 			y += LINE * 5 + 4;
 		}
 		if (pages > 1) {
@@ -144,7 +144,7 @@ public class JournalScreen extends Screen {
 				page++;
 				rebuildWidgets();
 			}).bounds(left + w - 30, by, 30, 18).build()).active = page < pages - 1;
-			lines.add(new Object[] {(page + 1) + "/" + pages + " 쪽 · 모두 " + list.size() + "번", this.width / 2, by + 5, 0xFFAAAAAA, true});
+			lines.add(new Object[] {(page + 1) + "/" + pages + com.seolwoni.assistcore.i18n.Tr.t(" 쪽 · 모두 ") + list.size() + com.seolwoni.assistcore.i18n.Tr.t("번"), this.width / 2, by + 5, 0xFFAAAAAA, true});
 		}
 	}
 

@@ -24,12 +24,12 @@ public final class Chests {
 	public static void toggleLookedAt(Minecraft mc, List<ChestEntry> chests, Runnable save) {
 		HitResult hit = mc.hitResult;
 		if (!(hit instanceof BlockHitResult bhr) || hit.getType() != HitResult.Type.BLOCK || mc.level == null) {
-			Alerts.actionBar("상자를 바라보고 눌러주세요", 0xFFFF5555);
+			Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("상자를 바라보고 눌러주세요"), 0xFFFF5555);
 			return;
 		}
 		BlockPos pos = bhr.getBlockPos();
 		if (!(mc.level.getBlockEntity(pos) instanceof Container)) {
-			Alerts.actionBar("상자나 통 같은 보관함이 아니에요", 0xFFFF5555);
+			Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("상자나 통 같은 보관함이 아니에요"), 0xFFFF5555);
 			return;
 		}
 		for (int i = 0; i < chests.size(); i++) {
@@ -37,13 +37,13 @@ public final class Chests {
 			if (e.x == pos.getX() && e.y == pos.getY() && e.z == pos.getZ()) {
 				chests.remove(i);
 				save.run();
-				Alerts.actionBar("보관 상자 " + (i + 1) + "번 지정 해제", 0xFFFFAA00);
+				Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("보관 상자 ") + (i + 1) + com.seolwoni.assistcore.i18n.Tr.t("번 지정 해제"), 0xFFFFAA00);
 				Alerts.click();
 				return;
 			}
 		}
 		if (chests.size() >= MAX) {
-			Alerts.actionBar("상자는 " + MAX + "개까지 지정할 수 있어요", 0xFFFF5555);
+			Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("상자는 ") + MAX + com.seolwoni.assistcore.i18n.Tr.t("개까지 지정할 수 있어요"), 0xFFFF5555);
 			return;
 		}
 		ChestEntry e = new ChestEntry();
@@ -52,7 +52,7 @@ public final class Chests {
 		e.z = pos.getZ();
 		chests.add(e);
 		save.run();
-		Alerts.actionBar("보관 상자 " + chests.size() + "번 지정: " + pos.toShortString() + " (설정 → 보관에서 담을 아이템 지정)", 0xFF55FF55);
+		Alerts.actionBar(com.seolwoni.assistcore.i18n.Tr.t("보관 상자 ") + chests.size() + com.seolwoni.assistcore.i18n.Tr.t("번 지정: ") + pos.toShortString() + com.seolwoni.assistcore.i18n.Tr.t(" (설정 → 보관에서 담을 아이템 지정)"), 0xFF55FF55);
 		Alerts.click();
 	}
 
