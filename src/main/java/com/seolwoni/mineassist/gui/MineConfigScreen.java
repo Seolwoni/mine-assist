@@ -113,8 +113,11 @@ public class MineConfigScreen extends Screen {
 			default -> nether(left, right, y);
 		}
 		// Up here with the other main buttons: at the bottom it covered the last rows on small screens (phones).
+		// The worker's journal (Assist Core): this mod's jobs, newest first.
+		addRenderableWidget(Button.builder(Component.literal("일지"), b -> this.minecraft.gui.setScreen(new com.seolwoni.assistcore.gui.JournalScreen(this, "mine")))
+				.bounds(left + 210, 22, 48, 20).build());
 		addRenderableWidget(Button.builder(Component.literal("완료"), b -> onClose())
-				.bounds(left + 210, 22, 100, 20).build());
+				.bounds(left + 262, 22, 48, 20).build());
 	}
 
 	// ------------------------------------------------------------------ tabs

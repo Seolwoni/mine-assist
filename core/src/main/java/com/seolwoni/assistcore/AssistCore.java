@@ -38,6 +38,7 @@ public class AssistCore implements ClientModInitializer {
 				"key.assistcore.toggle_hud", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, category));
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (toggleHudKey.consumeClick()) AssistHud.toggleHidden();
+			com.seolwoni.assistcore.log.Journal.tick(client);
 		});
 		HudElementRegistry.addLast(id("hud"), (graphics, delta) -> AssistHud.render(graphics));
 		LOGGER.info("Assist Core {} loaded - made by seolwoni", version());

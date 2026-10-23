@@ -55,11 +55,13 @@ public final class UsageLog {
 	/** A job starts (remembered so the end line can say how long it ran). */
 	public static void start(String mod, String what) {
 		started.put(mod, System.currentTimeMillis());
+		Journal.begin(mod, what);
 		event(mod, "▶ 시작: " + what);
 	}
 
 	/** A job ends, with the reason and a short summary of what it did. */
 	public static void end(String mod, String reason, String summary) {
+		Journal.finish(mod, reason, summary);
 		Long t0 = started.remove(mod);
 		String took = t0 == null ? "" : " (" + duration(System.currentTimeMillis() - t0) + ")";
 		event(mod, "■ 끝" + took + ": " + reason + (summary == null || summary.isEmpty() ? "" : " | " + summary));
