@@ -143,6 +143,7 @@ public final class Miner {
 		lastSafe = null;
 		sheltering = false;
 		ghastShelters = 0;
+		edgeWalled.clear();
 		finishing = false;
 		torchFetchTried = false;
 		Chores.dumpBlockedUntil = 0;
@@ -304,6 +305,13 @@ public final class Miner {
 			// where we were: drop it, walk back to the last place the job reached, and plan from the job state again.
 			defenseFrom = null;
 			queue.clear();
+			// The shelter steps (if any) were just dropped: without this, ghast watching stayed off for the rest of
+			// the job (nether-b 1.10.10: hit by a fireball while waiting, then walked back to the edge unwatched).
+			sheltering = false;
+			if (inNether && geo != null && lastSafe != null && dangerGhast(mc, p) != null) {
+				shelter(mc, p);
+				return;
+			}
 			// A box put down to store into is still standing there: finish with it first.
 			var box = com.seolwoni.assistcore.storage.PortableStorage.interrupted(mc);
 			if (box != null) queue.add(box);
@@ -1456,27 +1464,87 @@ public final class Miner {
 	/** A ghast that can see us (we can see it too: it is in plain sight), within 64 blocks. */
 	static net.minecraft.world.entity.Entity watchingGhast(Minecraft mc, LocalPlayer p) {
 		for (net.minecraft.world.entity.Entity e : mc.level.getEntities(p, p.getBoundingBox().inflate(64))) {
-			if (!e.isAlive() || !"ghast".equals(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).getPath())) continue;
+			if (!e.isAlive() || !isGhast(e)) continue;
 			if (p.hasLineOfSight(e)) return e;
 		}
 		return null;
 	}
 
+	private static boolean isGhast(net.minecraft.world.entity.Entity e) {
+		return "ghast".equals(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).getPath());
+	}
+
+	/**
+	 * A ghast to keep away from an edge for: one that can see us within 64 blocks, or any ghast within 32 (hidden
+	 * behind our own walls it is still right there, and comes round in a moment).
+	 */
+	static net.minecraft.world.entity.Entity dangerGhast(Minecraft mc, LocalPlayer p) {
+		net.minecraft.world.entity.Entity seen = watchingGhast(mc, p);
+		if (seen != null) return seen;
+		for (net.minecraft.world.entity.Entity e : mc.level.getEntities(p, p.getBoundingBox().inflate(32))) {
+			if (e.isAlive() && isGhast(e)) return e;
+		}
+		return null;
+	}
+
+	/** Edge spots where we already tried to wall off the drop (once each). */
+	private static final Set<BlockPos> edgeWalled = new HashSet<>();
+
 	/**
 	 * In the Nether, a ghast's fireball blast throws us further than crouching can hold (nether-b: off a bridge, 18
-	 * blocks down towards lava). So while a ghast can see us, we never stand at an edge: back into the walled tunnel,
-	 * crouch out of its sight, and go on once it has not seen us for a while. True when this took over the tick.
+	 * blocks down towards lava). So while a ghast is about, we never stand at an edge: back into the walled tunnel,
+	 * crouch out of its sight, and go on once it has been gone for a while. And before working at an edge, the open
+	 * side gets a wall (feet and head) where one can be built, so a blast pushes us into stone, not over the drop.
+	 * True when this took over the tick.
 	 */
 	private static boolean ghastWatch(Minecraft mc, LocalPlayer p) {
 		if (!inNether || geo == null) return false;
 		BlockPos feet = p.blockPosition();
 		if (p.onGround() && !edgeAt(feet) && onDugGround(feet)) lastSafe = feet.immutable();
 		if (sheltering || lastSafe == null || !edgeAt(feet)) return false;
-		if (watchingGhast(mc, p) == null) return false;
+		if (dangerGhast(mc, p) != null) {
+			shelter(mc, p);
+			return true;
+		}
+		// Not while walking (a stair step down, the walk back): only where we stand and work.
+		boolean walking = mc.options.keyUp.isDown() || mc.options.keyDown.isDown() || mc.options.keyLeft.isDown() || mc.options.keyRight.isDown();
+		if (!walking && p.onGround() && edgeWalled.add(feet.immutable()) && Inv.count(p, Inv::isPlug) > 16) {
+			List<Action> walls = new ArrayList<>();
+			for (Direction d : Direction.Plane.HORIZONTAL) {
+				BlockPos n = feet.relative(d);
+				if (!dropBeside(n)) continue;
+				for (BlockPos c : new BlockPos[] {n, n.above()}) {
+					if (!Blocks2.isOpen(c) || Blocks2.isFluid(c) || tunnelSpace(c) || dug.contains(c) || minedOre.contains(c)) continue;
+					walls.add(new PlaceAction(c, PlaceAction.WALL, SKIP));
+				}
+			}
+			if (!walls.isEmpty()) {
+				status(com.seolwoni.assistcore.i18n.Tr.t("동굴 벽 쌓는 중"));
+				queue.pushFront(walls);
+			}
+		}
+		return false;
+	}
+
+	/** Beside us at {@code n}: an open drop of 3 or more, or lava (the same test as {@link #edgeAt}, one side). */
+	private static boolean dropBeside(BlockPos n) {
+		if (!Blocks2.isOpen(n) || Blocks2.isFluid(n)) return false;
+		int drop = 0;
+		for (int k = 1; k <= 4; k++) {
+			BlockPos b = n.below(k);
+			if (Blocks2.isLava(b)) return true;
+			if (!Blocks2.isOpen(b)) break;
+			drop++;
+		}
+		return drop >= 3;
+	}
+
+	/** Back to the last safe spot in our tunnel, wait there until no ghast is about, then back to the work. */
+	private static void shelter(Minecraft mc, LocalPlayer p) {
 		if (ghastShelters >= 8) {
 			// Ghasts keep coming back over this cave: no more work at its edge today.
 			stop(com.seolwoni.assistcore.i18n.Tr.t("가스트가 계속 나타나서 굴 안에서 멈췄어요"), com.seolwoni.assistcore.i18n.Tr.t("가스트를 처리하거나 자리를 옮긴 뒤 다시 켜주세요"), true);
-			return true;
+			return;
 		}
 		sheltering = true;
 		ghastShelters++;
@@ -1491,17 +1559,20 @@ public final class Miner {
 		queue.add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(to), com.seolwoni.assistpath.PathOptions.WALK,
 				com.seolwoni.assistcore.engine.Action.SKIP));
 		queue.add(new GhastWaitAction());
-		BlockPos back = geo.pos(here);
-		queue.add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(back), com.seolwoni.assistpath.PathOptions.WALK,
-				com.seolwoni.assistcore.engine.Action.SKIP));
+		// Watching again from here on: the walk back to the edge is where a ghast that came back would hit us.
 		add((mc2, p2) -> {
 			sheltering = false;
 			return DONE;
 		});
-		return false;
+		BlockPos back = geo.pos(here);
+		queue.add(new com.seolwoni.assistpath.walk.PathWalkAction(new com.seolwoni.assistpath.goals.GoalBlock(back), com.seolwoni.assistpath.PathOptions.WALK,
+				com.seolwoni.assistcore.engine.Action.SKIP));
 	}
 
-	/** Crouched in the tunnel until no ghast has seen us for five seconds; a minute at most, then the job stops. */
+	/**
+	 * Crouched in the tunnel until no ghast has been about (none in sight, none within 32 blocks) for 15 seconds;
+	 * a minute at most, then the job stops. (Out of its sight in the tunnel used to count as gone after 5 s.)
+	 */
 	static final class GhastWaitAction implements Action {
 		private int clear, total;
 
@@ -1510,9 +1581,9 @@ public final class Miner {
 			mc.options.keyShift.setDown(true);
 			if (total == 0) status(com.seolwoni.assistcore.i18n.Tr.t("가스트가 지나가길 기다리는 중"));
 			total++;
-			if (watchingGhast(mc, p) == null) clear++;
+			if (dangerGhast(mc, p) == null) clear++;
 			else clear = 0;
-			if (clear >= 100) {
+			if (clear >= 300) {
 				mc.options.keyShift.setDown(false);
 				return DONE;
 			}
