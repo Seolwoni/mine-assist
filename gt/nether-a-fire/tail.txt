@@ -1,0 +1,79 @@
+Fetching distribution.
+Downloading https://services.gradle.org/distributions/gradle-9.7.1-bin.zip
+..............10%..............20%...............30%..............40%...............50%..............60%...............70%..............80%..............90%...............100%
+
+Welcome to Gradle 9.7.1!
+
+Here are the highlights of this release:
+ - Isolated Projects graduates to incubating
+ - Broader Configuration Cache compatibility
+ - Resilient Sync helps you fix broken builds
+ - More source locations in problem reports
+
+For more details see https://docs.gradle.org/9.7.1/release-notes.html
+
+Starting a Gradle Daemon (subsequent builds will be faster)
+Calculating task graph as no cached configuration is available for tasks: build
+
+> Configure project :
+Fabric Loom: 1.18.4
+
+> Configure project :core
+Fabric Loom: 1.18.4
+
+> Configure project :path
+Fabric Loom: 1.18.4
+
+> Task :core:processIncludeJars
+> Task :core:processResources
+> Task :processResources
+> Task :path:processIncludeJars
+> Task :validateAccessWidener NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :core:processTestResources NO-SOURCE
+> Task :path:processResources
+> Task :core:validateAccessWidener NO-SOURCE
+> Task :path:processTestResources NO-SOURCE
+> Task :path:validateAccessWidener NO-SOURCE
+
+> Task :core:compileJava
+Note: /home/runner/work/mine-assist/mine-assist/core/src/main/java/com/seolwoni/assistcore/util/Blocks2.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :core:classes
+> Task :core:compileTestJava NO-SOURCE
+> Task :core:testClasses UP-TO-DATE
+> Task :core:test NO-SOURCE
+> Task :core:check UP-TO-DATE
+> Task :core:jar
+> Task :core:assemble
+> Task :core:build
+
+> Task :path:compileJava
+Note: /home/runner/work/mine-assist/mine-assist/path/src/main/java/com/seolwoni/assistpath/defense/Defense.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :path:classes
+> Task :path:compileTestJava NO-SOURCE
+> Task :path:testClasses UP-TO-DATE
+> Task :path:test NO-SOURCE
+> Task :path:check UP-TO-DATE
+> Task :path:jar
+> Task :path:assemble
+> Task :path:build
+> Task :processIncludeJars
+> Task :compileJava
+> Task :classes
+> Task :compileTestJava NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :jar
+> Task :assemble
+> Task :build
+
+[Incubating] Problems report is available at: file:///home/runner/work/mine-assist/mine-assist/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 41s
+12 actionable tasks: 12 executed
+Configuration cache entry stored.

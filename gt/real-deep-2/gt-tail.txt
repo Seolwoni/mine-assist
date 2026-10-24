@@ -1,0 +1,200 @@
+[04:52:15] [Server thread/INFO] (Minecraft) Loading 46 chunks for player spawn...
+[04:52:15] [Server thread/INFO] (Minecraft) Preparing spawn area: 16%
+[04:52:15] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:15] [Server thread/INFO] (Minecraft) Preparing spawn area: 16%
+[04:52:16] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:16] [Server thread/INFO] (Minecraft) Preparing spawn area: 16%
+[04:52:16] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:16] [Server thread/INFO] (Minecraft) Preparing spawn area: 16%
+[04:52:16] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:16] [Server thread/INFO] (Minecraft) Preparing spawn area: 16%
+[04:52:16] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:16] [Server thread/INFO] (Minecraft) Preparing spawn area: 16%
+[04:52:16] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:16] [Server thread/INFO] (Minecraft) Preparing spawn area: 16%
+[04:52:16] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:16] [Server thread/INFO] (Minecraft) Preparing spawn area: 16%
+[04:52:16] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:16] [Server thread/INFO] (Minecraft) Preparing spawn area: 16%
+[04:52:16] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:16] [Server thread/INFO] (Minecraft) Preparing spawn area: 16%
+[04:52:17] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:17] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 2027ms or 40 ticks behind
+[04:52:17] [Server thread/INFO] (Minecraft) Preparing spawn area: 25%
+[04:52:17] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:17] [Server thread/INFO] (Minecraft) Preparing spawn area: 27%
+[04:52:17] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:17] [Server thread/INFO] (Minecraft) Preparing spawn area: 27%
+[04:52:17] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:17] [Server thread/INFO] (Minecraft) Preparing spawn area: 27%
+[04:52:17] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:17] [Server thread/INFO] (Minecraft) Preparing spawn area: 27%
+[04:52:17] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:17] [Server thread/INFO] (Minecraft) Preparing spawn area: 27%
+[04:52:17] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:17] [Server thread/INFO] (Minecraft) Preparing spawn area: 27%
+[04:52:18] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:18] [Server thread/INFO] (Minecraft) Preparing spawn area: 27%
+[04:52:18] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:18] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:18] [Server thread/INFO] (Minecraft) Preparing spawn area: 53%
+[04:52:18] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:18] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:18] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:18] [Server thread/INFO] (Minecraft) Preparing spawn area: 56%
+[04:52:19] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:19] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:19] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:19] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:19] [Server thread/INFO] (Minecraft) Preparing spawn area: 56%
+[04:52:19] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:19] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:19] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:19] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:19] [Server thread/INFO] (Minecraft) Preparing spawn area: 100%
+[04:52:19] [Server thread/INFO] (Minecraft) Time elapsed: 11003 ms
+[04:52:19] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:20] [Server thread/INFO] (Minecraft) Player0[local:E:b7eb78d1] logged in with entity id 7 at (-81.5, 63.0, 167.5)
+[04:52:20] [Server thread/INFO] (Minecraft) Player0 joined the game
+[04:52:20] [Server thread/INFO] (Minecraft) Changing view distance to 5, from 10
+[04:52:20] [Server thread/INFO] (Minecraft) Changing simulation distance to 12, from 0
+[04:52:20] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: null screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:20] [Render thread/INFO] (Minecraft) Loaded 2 advancements
+[04:52:20] [Download-2/ERROR] (Minecraft) Failed to retrieve profile key pair
+
+MinecraftClientHttpException[type=HTTP_ERROR, status=401, response=ErrorResponse[path=/player/certificates, error=null, errorMessage=null, details=null]]
+	at knot//com.mojang.authlib.minecraft.client.MinecraftClient.buildHttpException(MinecraftClient.java:170)
+	at knot//com.mojang.authlib.minecraft.client.MinecraftClient.readServiceResponse(MinecraftClient.java:147)
+	at knot//com.mojang.authlib.minecraft.client.MinecraftClient.post(MinecraftClient.java:89)
+	at knot//com.mojang.authlib.yggdrasil.YggdrasilUserApiService.getKeyPair(YggdrasilUserApiService.java:62)
+	at knot//net.minecraft.client.multiplayer.AccountProfileKeyPairManager.fetchProfileKeyPair(AccountProfileKeyPairManager.java:128)
+	at knot//net.minecraft.client.multiplayer.AccountProfileKeyPairManager.lambda$readOrFetchProfileKeyPair$0(AccountProfileKeyPairManager.java:77)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1789)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+[04:52:20] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: ClientLevel screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:21] [Render thread/INFO] (Minecraft) Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[04:52:21] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: ClientLevel screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:21] [Render thread/INFO] (Minecraft) Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[04:52:21] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: ClientLevel screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:21] [Render thread/INFO] (Minecraft) Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[04:52:21] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: ClientLevel screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:22] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: ClientLevel screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:22] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: ClientLevel screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:22] [Render thread/INFO] (Minecraft) Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 8.
+[04:52:22] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: ClientLevel screen: net.minecraft.client.gui.screens.LevelLoadingScreen@5065bc2
+[04:52:22] [Render thread/INFO] (Minecraft) Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[04:52:23] [Render thread/INFO] (fabric-client-gametest-api-v1) World loading finished: ClientLevel screen: null
+[04:52:23] [Render thread/INFO] (Minecraft) Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[04:52:25] [Render thread/INFO] (Minecraft) Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
+[04:52:28] [Render thread/INFO] (Minecraft) Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
+[04:52:32] [Server thread/INFO] (Minecraft) The difficulty did not change; it is already set to Peaceful
+[04:52:32] [Server thread/INFO] (Minecraft) Set minecraft:overworld to time marker minecraft:noon
+[04:52:32] [Server thread/INFO] (Minecraft) Set the weather to clear
+[04:52:32] [Server thread/INFO] (Minecraft) No items were found on player Player0
+[04:52:32] [Server thread/INFO] (Minecraft) Target has no effects to remove
+[04:52:36] [Server thread/INFO] (Minecraft) Marked 49 chunks in minecraft:overworld from [-19, -17] to [-13, -11] to be force loaded
+[04:52:36] [Server thread/INFO] (Minecraft) Teleported Player0 to -255.500000, 63.000000, -223.500000
+[04:52:36] [Render thread/INFO] (Minecraft) Loaded 12 advancements
+[04:52:42] [Server thread/INFO] (Minecraft) Marked 39 chunks in minecraft:overworld from [-22, -19] to [-14, -11] to be force loaded
+[04:52:42] [Server thread/INFO] (Minecraft) Teleported Player0 to -273.500000, 63.000000, -229.500000
+[04:52:45] [Server thread/INFO] (Minecraft) No blocks were filled
+[04:52:45] [Server thread/INFO] (Minecraft) Changed the block at -272, 63, -232
+[04:52:45] [Server thread/INFO] (Minecraft) Replaced a slot at -272, 63, -232 with [Bread]
+[04:52:45] [Server thread/INFO] (Minecraft) Gave 1 [Diamond Pickaxe] to Player0
+[04:52:45] [Server thread/INFO] (Minecraft) Gave 1 [Diamond Pickaxe] to Player0
+[04:52:45] [Server thread/INFO] (Minecraft) Gave 64 [Torch] to Player0
+[04:52:45] [Server thread/INFO] (Minecraft) Gave 64 [Torch] to Player0
+[04:52:45] [Server thread/INFO] (Minecraft) Player0 has made the advancement [Stone Age]
+[04:52:45] [Server thread/INFO] (Minecraft) Gave 128 [Cobblestone] to Player0
+[04:52:45] [Server thread/INFO] (Minecraft) Applied effect Night Vision to Player0
+[04:52:45] [Server thread/INFO] (Minecraft) Applied effect Saturation to Player0
+[04:52:45] [Server thread/INFO] (Minecraft) Teleported Player0 to -273.500000, 63.000000, -229.500000
+[04:52:45] [Render thread/INFO] (Minecraft) [System] [CHAT] Player0 has made the advancement [Stone Age]
+[04:52:45] [Render thread/INFO] (Minecraft) Loaded 31 advancements
+[04:52:45] [Render thread/INFO] (Minecraft) Resizing Chunk Sections UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
+[04:52:48] [Render thread/INFO] (Minecraft) Resizing Chunk Sections UBO, capacity limit of 256 reached during a single frame. New capacity will be 512.
+[04:52:49] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 17068ms or 341 ticks behind
+[04:52:57] [Render thread/INFO] (Minecraft) Loaded 49 advancements
+[04:53:42] [Render thread/INFO] (Minecraft) Loaded 60 advancements
+[04:53:49] [Render thread/INFO] (Minecraft) Resizing Dynamic Transforms UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[04:56:06] [Render thread/INFO] (Minecraft) Loaded 70 advancements
+[04:56:42] [Render thread/INFO] (Minecraft) Loaded 73 advancements
+[04:57:27] [Render thread/INFO] (Minecraft) Loaded 74 advancements
+[04:57:54] [Render thread/INFO] (Minecraft) Loaded 76 advancements
+[04:58:38] [Render thread/INFO] (Minecraft) Loaded 79 advancements
+[04:59:08] [Render thread/INFO] (Minecraft) Loaded 89 advancements
+[04:59:27] [Render thread/INFO] (Minecraft) Loaded 92 advancements
+[05:00:35] [Render thread/INFO] (Minecraft) Loaded 103 advancements
+[05:00:43] [Render thread/INFO] (Minecraft) Loaded 124 advancements
+[05:01:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 2019ms or 40 ticks behind
+[05:02:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15019ms or 300 ticks behind
+[05:02:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15019ms or 300 ticks behind
+[05:03:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15019ms or 300 ticks behind
+[05:03:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15019ms or 300 ticks behind
+[05:04:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15019ms or 300 ticks behind
+[05:04:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15048ms or 300 ticks behind
+[05:05:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15048ms or 300 ticks behind
+[05:05:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15048ms or 300 ticks behind
+[05:06:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15048ms or 300 ticks behind
+[05:06:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15048ms or 300 ticks behind
+[05:07:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15048ms or 300 ticks behind
+[05:07:37] [Server thread/INFO] (Minecraft) Player0 has made the advancement [Diamonds!]
+[05:07:37] [Render thread/INFO] (Minecraft) [System] [CHAT] Player0 has made the advancement [Diamonds!]
+[05:07:37] [Render thread/INFO] (Minecraft) Loaded 140 advancements
+[05:07:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15048ms or 300 ticks behind
+[05:08:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15054ms or 301 ticks behind
+[05:08:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:09:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:09:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:10:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:10:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:11:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:11:43] [Render thread/INFO] (Minecraft) Loaded 157 advancements
+[05:11:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:12:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:12:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:13:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:13:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:14:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:14:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:15:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:15:32] [Render thread/INFO] (Minecraft) Loaded 165 advancements
+[05:15:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:16:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:16:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:17:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:17:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:18:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:18:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:19:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:19:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15004ms or 300 ticks behind
+[05:20:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15007ms or 300 ticks behind
+[05:20:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15007ms or 300 ticks behind
+[05:21:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15007ms or 300 ticks behind
+[05:21:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15007ms or 300 ticks behind
+[05:22:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15007ms or 300 ticks behind
+[05:22:58] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15007ms or 300 ticks behind
+[05:23:28] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 15007ms or 300 ticks behind
+[05:23:54] [Server thread/INFO] (Minecraft) Player0 lost connection: Disconnected
+[05:23:54] [Server thread/INFO] (Minecraft) Player0 left the game
+[05:23:54] [Server thread/INFO] (Minecraft) Stopping singleplayer server as player logged out
+[05:23:54] [Server thread/INFO] (Minecraft) Stopping server
+[05:23:54] [Server thread/INFO] (Minecraft) Saving players
+[05:23:54] [Server thread/INFO] (Minecraft) Saving worlds
+[05:23:54] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[05:23:54] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[05:23:54] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[05:23:54] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (world): All chunks are saved
+[05:23:54] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[05:23:54] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[05:23:54] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage: All dimensions are saved
+[05:23:55] [Render thread/ERROR] (Minecraft) ########## GL ERROR ##########
+[05:23:55] [Render thread/ERROR] (Minecraft) @ Render
+[05:23:55] [Render thread/ERROR] (Minecraft) 65547: X11: Standard cursor shape unavailable
+[05:23:55] [Render thread/INFO] (Minecraft) Stopping!
+
+BUILD SUCCESSFUL in 32m 10s
+18 actionable tasks: 6 executed, 12 up-to-date
+Configuration cache entry stored.

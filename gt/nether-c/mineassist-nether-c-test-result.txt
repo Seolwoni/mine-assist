@@ -1,0 +1,181 @@
+RESULT: FAIL (1)
+  FAIL valuable drops lost: [quartz x2]
+
+start in the Nether at -220, 44, 190
+target y 15, main 16, poke holes every 3 (depth 4)
+t=40 pos=-220, 44, 190 hp=20 status=계단 파는 중 (1/29)
+t=80 pos=-220, 44, 190 hp=20 status=동굴 벽 쌓는 중
+t=120 pos=-220, 44, 190 hp=20 status=동굴 벽 쌓는 중
+t=160 pos=-220, 43, 191 hp=20 status=계단 파는 중 (2/29)
+t=200 pos=-220, 43, 191 hp=20 status=동굴 벽 쌓는 중
+t=240 pos=-220, 43, 191 hp=20 status=동굴 벽 쌓는 중
+t=280 pos=-220, 42, 192 hp=20 status=계단 파는 중 (3/29)
+t=320 pos=-220, 42, 192 hp=20 status=계단 파는 중 (3/29)
+t=360 pos=-220, 41, 193 hp=20 status=계단 파는 중 (3/29)
+t=400 pos=-220, 41, 193 hp=20 status=계단 파는 중 (4/29)
+t=440 pos=-220, 40, 194 hp=20 status=계단 파는 중 (5/29)
+t=480 pos=-220, 40, 194 hp=20 status=계단 파는 중 (5/29)
+t=520 pos=-220, 39, 195 hp=20 status=계단 파는 중 (6/29)
+t=560 pos=-220, 38, 196 hp=20 status=계단 파는 중 (6/29)
+t=600 pos=-220, 38, 196 hp=20 status=계단 파는 중 (7/29)
+t=640 pos=-220, 37, 197 hp=20 status=계단 파는 중 (7/29)
+t=680 pos=-220, 37, 197 hp=20 status=계단 파는 중 (8/29)
+t=720 pos=-220, 37, 197 hp=20 status=계단 파는 중 (8/29)
+t=760 pos=-220, 36, 198 hp=20 status=계단 파는 중 (9/29)
+t=800 pos=-220, 35, 199 hp=20 status=계단 파는 중 (10/29)
+t=840 pos=-220, 34, 200 hp=20 status=계단 파는 중 (10/29)
+t=880 pos=-220, 34, 200 hp=20 status=계단 파는 중 (11/29)
+t=920 pos=-220, 34, 200 hp=20 status=계단 파는 중 (11/29)
+t=960 pos=-220, 33, 201 hp=20 status=계단 파는 중 (12/29)
+t=1000 pos=-220, 32, 202 hp=20 status=광석 캐는 중
+t=1040 pos=-220, 32, 202 hp=20 status=광석 캐는 중
+t=1080 pos=-220, 32, 202 hp=20 status=광석 캐는 중
+t=1120 pos=-220, 32, 202 hp=20 status=광석 캐는 중
+t=1160 pos=-220, 32, 202 hp=20 status=광석 캐는 중
+t=1200 pos=-220, 32, 202 hp=20 status=광석 캐는 중
+t=1240 pos=-220, 32, 202 hp=20 status=광석 캐는 중
+t=1280 pos=-220, 32, 202 hp=20 status=광석 캐는 중
+t=1320 pos=-220, 32, 202 hp=20 status=광석 캐는 중
+t=1360 pos=-220, 32, 202 hp=20 status=광석 캐는 중
+t=1400 pos=-220, 32, 202 hp=20 status=광석 캐는 중
+t=1440 pos=-220, 32, 202 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=1480 pos=-220, 32, 203 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=1520 pos=-220, 32, 204 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=1560 pos=-221, 32, 204 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=1600 pos=-220, 32, 203 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=1640 pos=-220, 32, 202 hp=20 status=광석 구멍 메우며 아이템 꺼내는 중
+t=1680 pos=-220, 32, 202 hp=20 status=광석 구멍 메우며 아이템 꺼내는 중
+t=1720 pos=-220, 32, 202 hp=20 status=광석 구멍 메우며 아이템 꺼내는 중
+t=1760 pos=-221, 32, 204 hp=20 status=떨어진 아이템 줍는 중
+t=1800 pos=-220, 32, 202 hp=20 status=떨어진 아이템 줍는 중
+t=1840 pos=-220, 32, 203 hp=20 status=계단 파는 중 (13/29)
+t=1880 pos=-220, 31, 203 hp=20 status=계단 파는 중 (14/29)
+t=1920 pos=-220, 31, 203 hp=20 status=계단 파는 중 (14/29)
+t=1960 pos=-220, 30, 204 hp=20 status=계단 파는 중 (14/29)
+t=2000 pos=-220, 30, 204 hp=20 status=계단 파는 중 (15/29)
+t=2040 pos=-220, 29, 205 hp=20 status=계단 파는 중 (16/29)
+t=2080 pos=-220, 29, 205 hp=20 status=용암·물 막는 중
+t=2120 pos=-220, 28, 206 hp=20 status=계단 파는 중 (17/29)
+t=2160 pos=-220, 28, 206 hp=20 status=용암·물 막는 중
+t=2200 pos=-220, 28, 206 hp=20 status=용암·물 막는 중
+t=2240 pos=-220, 28, 206 hp=20 status=용암·물 막는 중
+t=2280 pos=-220, 27, 207 hp=20 status=용암·물 막는 중
+t=2320 pos=-220, 27, 207 hp=20 status=용암·물 막는 중
+t=2360 pos=-220, 27, 207 hp=20 status=용암·물 막는 중
+t=2400 pos=-220, 27, 207 hp=20 status=용암·물 막는 중
+t=2440 pos=-220, 26, 208 hp=20 status=용암·물 막는 중
+t=2480 pos=-220, 26, 208 hp=20 status=용암·물 막는 중
+t=2520 pos=-220, 26, 208 hp=20 status=용암·물 막는 중
+t=2560 pos=-220, 26, 208 hp=20 status=용암·물 막는 중
+t=2600 pos=-220, 26, 208 hp=20 status=용암·물 막는 중
+t=2640 pos=-220, 25, 209 hp=20 status=용암·물 막는 중
+t=2680 pos=-220, 25, 209 hp=20 status=용암·물 막는 중
+t=2720 pos=-220, 25, 209 hp=20 status=용암·물 막는 중
+t=2760 pos=-220, 25, 209 hp=20 status=용암·물 막는 중
+t=2800 pos=-220, 25, 209 hp=20 status=용암·물 막는 중
+t=2840 pos=-220, 25, 209 hp=20 status=용암·물 막는 중
+t=2880 pos=-220, 24, 210 hp=20 status=용암·물 막는 중
+t=2920 pos=-220, 24, 210 hp=20 status=용암·물 막는 중
+t=2960 pos=-220, 24, 210 hp=20 status=용암·물 막는 중
+t=3000 pos=-220, 24, 210 hp=20 status=용암·물 막는 중
+t=3040 pos=-220, 24, 210 hp=20 status=용암·물 막는 중
+t=3080 pos=-220, 23, 211 hp=20 status=용암·물 막는 중
+t=3120 pos=-220, 23, 211 hp=20 status=용암·물 막는 중
+t=3160 pos=-220, 23, 211 hp=20 status=용암·물 막는 중
+t=3200 pos=-220, 23, 211 hp=20 status=용암·물 막는 중
+t=3240 pos=-220, 22, 212 hp=20 status=용암·물 막는 중
+t=3280 pos=-220, 22, 212 hp=20 status=용암·물 막는 중
+t=3320 pos=-220, 22, 212 hp=20 status=용암·물 막는 중
+t=3360 pos=-220, 22, 212 hp=20 status=용암·물 막는 중
+t=3400 pos=-220, 21, 213 hp=20 status=용암·물 막는 중
+t=3440 pos=-220, 21, 213 hp=20 status=계단 파는 중 (24/29)
+t=3480 pos=-220, 20, 214 hp=20 status=계단 파는 중 (25/29)
+t=3520 pos=-220, 20, 214 hp=20 status=계단 파는 중 (25/29)
+t=3560 pos=-220, 19, 215 hp=20 status=계단 파는 중 (25/29)
+t=3600 pos=-220, 19, 215 hp=20 status=계단 파는 중 (26/29)
+t=3640 pos=-220, 18, 216 hp=20 status=계단 파는 중 (27/29)
+t=3680 pos=-220, 18, 217 hp=20 status=계단 파는 중 (27/29)
+t=3720 pos=-220, 17, 217 hp=20 status=계단 파는 중 (28/29)
+t=3760 pos=-220, 16, 218 hp=20 status=계단 파는 중 (28/29)
+t=3800 pos=-220, 16, 218 hp=20 status=계단 파는 중 (29/29)
+t=3840 pos=-220, 15, 219 hp=20 status=가운데 굴 파는 중 (1/16)
+t=3880 pos=-220, 15, 219 hp=20 status=가운데 굴 파는 중 (1/16)
+t=3920 pos=-220, 15, 220 hp=20 status=가운데 굴 파는 중 (1/16)
+t=3960 pos=-220, 15, 220 hp=20 status=가운데 굴 파는 중 (2/16)
+t=4000 pos=-220, 15, 220 hp=20 status=가운데 굴 파는 중 (2/16)
+t=4040 pos=-220, 15, 221 hp=20 status=가운데 굴 파는 중 (3/16)
+t=4080 pos=-220, 15, 221 hp=20 status=가운데 굴 파는 중 (3/16)
+t=4120 pos=-220, 15, 222 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (1번)
+t=4160 pos=-220, 15, 222 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (1번)
+t=4200 pos=-221, 15, 222 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (1번)
+t=4240 pos=-221, 15, 222 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (1번)
+t=4280 pos=-221, 15, 222 hp=20 status=가운데 굴 파는 중 (4/16)
+t=4320 pos=-221, 15, 222 hp=20 status=가운데 굴 파는 중 (4/16)
+t=4360 pos=-220, 15, 223 hp=20 status=가운데 굴 파는 중 (5/16)
+t=4400 pos=-220, 15, 223 hp=20 status=가운데 굴 파는 중 (5/16)
+t=4440 pos=-220, 15, 224 hp=20 status=가운데 굴 파는 중 (6/16)
+t=4480 pos=-220, 15, 224 hp=20 status=가운데 굴 파는 중 (6/16)
+t=4520 pos=-220, 15, 225 hp=20 status=가운데 굴 파는 중 (6/16)
+t=4560 pos=-220, 15, 225 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (2번)
+t=4600 pos=-220, 15, 225 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (2번)
+t=4640 pos=-221, 15, 225 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (2번)
+t=4680 pos=-221, 15, 225 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (2번)
+t=4720 pos=-221, 15, 225 hp=20 status=가운데 굴 파는 중 (7/16)
+t=4760 pos=-221, 15, 225 hp=20 status=가운데 굴 파는 중 (7/16)
+t=4800 pos=-220, 15, 226 hp=20 status=가운데 굴 파는 중 (8/16)
+t=4840 pos=-220, 15, 226 hp=20 status=가운데 굴 파는 중 (8/16)
+t=4880 pos=-220, 15, 227 hp=20 status=가운데 굴 파는 중 (9/16)
+t=4920 pos=-220, 15, 227 hp=20 status=가운데 굴 파는 중 (9/16)
+t=4960 pos=-220, 15, 228 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (3번)
+t=5000 pos=-220, 15, 228 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (3번)
+t=5040 pos=-221, 15, 228 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (3번)
+t=5080 pos=-221, 15, 228 hp=20 status=가운데 굴 파는 중 (10/16)
+t=5120 pos=-221, 15, 228 hp=20 status=가운데 굴 파는 중 (10/16)
+t=5160 pos=-220, 15, 229 hp=20 status=가운데 굴 파는 중 (11/16)
+t=5200 pos=-220, 15, 229 hp=20 status=가운데 굴 파는 중 (11/16)
+t=5240 pos=-220, 15, 230 hp=20 status=가운데 굴 파는 중 (11/16)
+t=5280 pos=-220, 15, 230 hp=20 status=가운데 굴 파는 중 (12/16)
+t=5320 pos=-220, 15, 231 hp=20 status=가운데 굴 파는 중 (12/16)
+t=5360 pos=-220, 15, 231 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (4번)
+t=5400 pos=-220, 15, 231 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (4번)
+t=5440 pos=-221, 15, 231 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (4번)
+t=5480 pos=-221, 15, 231 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (4번)
+t=5520 pos=-221, 15, 231 hp=20 status=가운데 굴 파는 중 (13/16)
+t=5560 pos=-221, 15, 231 hp=20 status=가운데 굴 파는 중 (13/16)
+t=5600 pos=-220, 15, 232 hp=20 status=가운데 굴 파는 중 (14/16)
+t=5640 pos=-220, 15, 232 hp=20 status=가운데 굴 파는 중 (14/16)
+t=5680 pos=-220, 15, 233 hp=20 status=가운데 굴 파는 중 (15/16)
+t=5720 pos=-220, 15, 233 hp=20 status=가운데 굴 파는 중 (15/16)
+t=5760 pos=-220, 15, 234 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (5번)
+t=5800 pos=-220, 15, 234 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (5번)
+t=5840 pos=-221, 15, 234 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (5번)
+t=5880 pos=-221, 15, 234 hp=20 status=가운데 굴 파는 중 (16/16)
+t=5920 pos=-221, 15, 234 hp=20 status=가운데 굴 파는 중 (16/16)
+t=5960 pos=-220, 15, 235 hp=20 status=가운데 굴 파는 중 (16/16)
+t=6000 pos=-220, 15, 227 hp=20 status=시작 지점으로 돌아가는 중
+t=6040 pos=-220, 16, 218 hp=20 status=시작 지점으로 돌아가는 중
+t=6080 pos=-220, 20, 214 hp=20 status=시작 지점으로 돌아가는 중
+t=6120 pos=-220, 24, 211 hp=20 status=시작 지점으로 돌아가는 중
+t=6160 pos=-220, 27, 207 hp=20 status=시작 지점으로 돌아가는 중
+t=6200 pos=-220, 31, 203 hp=20 status=시작 지점으로 돌아가는 중
+t=6240 pos=-220, 35, 200 hp=20 status=시작 지점으로 돌아가는 중
+t=6280 pos=-220, 38, 196 hp=20 status=시작 지점으로 돌아가는 중
+t=6320 pos=-220, 42, 192 hp=20 status=시작 지점으로 돌아가는 중
+t=6360 pos=-220, 44, 190 hp=20 status=상자에 보관하는 중
+t=6400 pos=-220, 44, 190 hp=20 status=꺼짐
+stopped after 6400 ticks (320 s): 채광 완료! / 정리까지 끝내고 시작 지점으로 돌아왔어요
+path: walks=2 arrived=2 gaveUp=0 {} plans=2 notFound=0 gaveUpGoals=[] waitTicks=2 walkTicks=6 slowestPlan=15ms
+walk: 45 blocks in 19 s = 2.39 blocks/s, sprinting 67%, sprint-jumps 0
+defense: flees=0 dodges=0 creeperEscapes=0 fights=0 kills=0 hitsTaken=0 lowestHealth=20.0 unreachableTicks=0 fightsGivenUp=0 ghastShelters=0
+lowest health 20.0, burning 0 s, in lava 0 s, outside the dug tunnels 0 s
+DROPS: 24 ore items seen, 2 lost (8.3%), 6 picked up only after more than 15 s (counted as left behind by the old check)
+  lost 2: lying free / appeared while: 광석 캐는 중
+  LOST quartz x2:
+      t1420 appeared at -218, 34, 206 | player -220, 32, 202 | 광석 캐는 중
+  pocket: round 1: dig a walkway of 3 to the drop at -221, 34, 204
+  pocket: round 1: 3 drops off the tunnel at [BlockPos{x=-219, y=35, z=204}, BlockPos{x=-218, y=35, z=205}, BlockPos{x=-218, y=34, z=206}], way out found for 10 cells (4 drop down by themselves), 5 to fill, filler 603
+  pocket: round 2: 1 drops off the tunnel at [BlockPos{x=-218, y=34, z=206}], way out found for 0 cells (0 drop down by themselves), 0 to fill, filler 598
+blocks mined=208 lava/water plugged=55 chest trips=2
+  ore minecraft:nether_quartz_ore: 17
+job: stairs 29, main step 16, ores 17
+inventory: minecraft:diamond_pickaxe x1, minecraft:diamond_pickaxe x1, minecraft:torch x51, minecraft:iron_sword x1, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:bread x16, 

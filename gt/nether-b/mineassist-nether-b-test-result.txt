@@ -1,0 +1,457 @@
+RESULT: PASS
+
+start in the Nether at 180, 99, -140
+target y 15, main 16, poke holes every 3 (depth 4)
+t=40 pos=180, 99, -140 hp=20 status=계단 파는 중 (1/84)
+t=80 pos=180, 99, -140 hp=20 status=동굴 벽 쌓는 중
+t=120 pos=180, 99, -140 hp=20 status=동굴 벽 쌓는 중
+t=160 pos=180, 99, -140 hp=20 status=동굴 벽 쌓는 중
+t=200 pos=180, 98, -139 hp=20 status=계단 파는 중 (2/84)
+t=240 pos=180, 98, -139 hp=20 status=동굴 벽 쌓는 중
+t=280 pos=180, 98, -139 hp=20 status=동굴 벽 쌓는 중
+t=320 pos=180, 97, -138 hp=20 status=계단 파는 중 (3/84)
+t=360 pos=180, 97, -138 hp=20 status=계단 파는 중 (3/84)
+t=400 pos=180, 96, -137 hp=20 status=계단 파는 중 (4/84)
+t=440 pos=180, 96, -137 hp=20 status=계단 파는 중 (4/84)
+t=480 pos=180, 95, -136 hp=20 status=계단 파는 중 (5/84)
+t=520 pos=180, 94, -135 hp=20 status=계단 파는 중 (5/84)
+t=560 pos=180, 94, -135 hp=20 status=계단 파는 중 (6/84)
+t=600 pos=180, 93, -134 hp=20 status=계단 파는 중 (6/84)
+t=640 pos=180, 93, -134 hp=20 status=계단 파는 중 (7/84)
+t=680 pos=180, 92, -133 hp=20 status=계단 파는 중 (7/84)
+t=720 pos=180, 92, -133 hp=20 status=계단 파는 중 (8/84)
+t=760 pos=180, 91, -132 hp=20 status=계단 파는 중 (8/84)
+t=800 pos=180, 91, -132 hp=20 status=계단 파는 중 (9/84)
+t=840 pos=180, 90, -131 hp=20 status=계단 파는 중 (10/84)
+t=880 pos=180, 89, -130 hp=20 status=계단 파는 중 (10/84)
+t=920 pos=180, 89, -130 hp=20 status=계단 파는 중 (11/84)
+t=960 pos=180, 89, -130 hp=20 status=계단 파는 중 (11/84)
+t=1000 pos=180, 88, -129 hp=20 status=계단 파는 중 (12/84)
+t=1040 pos=180, 87, -128 hp=20 status=계단 파는 중 (13/84)
+t=1080 pos=180, 87, -127 hp=20 status=계단 파는 중 (13/84)
+t=1120 pos=180, 86, -127 hp=20 status=계단 파는 중 (14/84)
+t=1160 pos=180, 86, -127 hp=20 status=계단 파는 중 (14/84)
+t=1200 pos=180, 85, -126 hp=20 status=계단 파는 중 (15/84)
+t=1240 pos=180, 84, -125 hp=20 status=계단 파는 중 (16/84)
+t=1280 pos=180, 84, -125 hp=20 status=동굴 위에 다리 놓는 중
+t=1320 pos=180, 84, -125 hp=20 status=동굴 위에 다리 놓는 중
+t=1360 pos=180, 83, -124 hp=20 status=광석 캐는 중
+t=1400 pos=180, 84, -124 hp=20 status=떨어진 아이템 줍는 중
+t=1440 pos=180, 83, -124 hp=20 status=떨어진 아이템 줍는 중
+t=1480 pos=180, 83, -124 hp=20 status=계단 파는 중 (17/84)
+t=1520 pos=180, 83, -124 hp=20 status=동굴 위에 다리 놓는 중
+t=1560 pos=180, 83, -124 hp=20 status=동굴 위에 다리 놓는 중
+t=1600 pos=180, 83, -124 hp=20 status=동굴 위에 다리 놓는 중
+t=1640 pos=180, 82, -123 hp=20 status=동굴 위에 다리 놓는 중
+t=1680 pos=180, 82, -123 hp=20 status=동굴 위에 다리 놓는 중
+t=1720 pos=180, 82, -123 hp=20 status=동굴 위에 다리 놓는 중
+t=1760 pos=180, 82, -123 hp=20 status=동굴 위에 다리 놓는 중
+t=1800 pos=180, 82, -122 hp=20 status=동굴 벽 쌓는 중
+t=1840 pos=180, 81, -122 hp=20 status=동굴 위에 다리 놓는 중
+t=1880 pos=180, 81, -122 hp=20 status=동굴 위에 다리 놓는 중
+t=1920 pos=180, 81, -122 hp=20 status=동굴 위에 다리 놓는 중
+t=1960 pos=180, 81, -122 hp=20 status=동굴 위에 다리 놓는 중
+t=2000 pos=180, 80, -121 hp=20 status=동굴 위에 다리 놓는 중
+t=2040 pos=180, 80, -121 hp=20 status=동굴 위에 다리 놓는 중
+t=2080 pos=180, 80, -121 hp=20 status=동굴 벽 쌓는 중
+t=2120 pos=180, 80, -121 hp=20 status=동굴 벽 쌓는 중
+t=2160 pos=180, 80, -121 hp=20 status=동굴 벽 쌓는 중
+t=2200 pos=180, 79, -120 hp=20 status=동굴 벽 쌓는 중
+t=2240 pos=180, 79, -120 hp=20 status=동굴 위에 다리 놓는 중
+t=2280 pos=180, 79, -120 hp=20 status=동굴 위에 다리 놓는 중
+t=2320 pos=180, 79, -120 hp=20 status=동굴 위에 다리 놓는 중
+t=2360 pos=180, 79, -120 hp=20 status=동굴 위에 다리 놓는 중
+t=2400 pos=180, 78, -119 hp=20 status=동굴 위에 다리 놓는 중
+t=2440 pos=180, 78, -119 hp=20 status=동굴 벽 쌓는 중
+t=2480 pos=180, 78, -119 hp=20 status=동굴 벽 쌓는 중
+t=2520 pos=180, 78, -119 hp=20 status=동굴 벽 쌓는 중
+t=2560 pos=180, 78, -118 hp=20 status=동굴 벽 쌓는 중
+t=2600 pos=180, 77, -118 hp=20 status=동굴 벽 쌓는 중
+t=2640 pos=180, 77, -118 hp=20 status=동굴 위에 다리 놓는 중
+t=2680 pos=180, 77, -118 hp=20 status=동굴 위에 다리 놓는 중
+t=2720 pos=180, 77, -118 hp=20 status=동굴 위에 다리 놓는 중
+t=2760 pos=180, 77, -118 hp=20 status=동굴 위에 다리 놓는 중
+t=2800 pos=180, 76, -116 hp=20 status=동굴 벽 쌓는 중
+t=2840 pos=180, 76, -116 hp=20 status=동굴 벽 쌓는 중
+t=2880 pos=180, 76, -117 hp=20 status=동굴 벽 쌓는 중
+t=2920 pos=180, 76, -117 hp=20 status=동굴 위에 다리 놓는 중
+t=2960 pos=180, 76, -117 hp=20 status=동굴 벽 쌓는 중
+t=3000 pos=180, 75, -116 hp=20 status=동굴 벽 쌓는 중
+t=3040 pos=180, 75, -116 hp=20 status=동굴 위에 다리 놓는 중
+t=3080 pos=180, 75, -116 hp=20 status=동굴 위에 다리 놓는 중
+t=3120 pos=180, 75, -116 hp=20 status=동굴 위에 다리 놓는 중
+t=3160 pos=180, 75, -115 hp=20 status=동굴 벽 쌓는 중
+t=3200 pos=180, 74, -115 hp=20 status=동굴 벽 쌓는 중
+t=3240 pos=180, 74, -115 hp=20 status=동굴 위에 다리 놓는 중
+t=3280 pos=180, 74, -115 hp=20 status=동굴 위에 다리 놓는 중
+t=3320 pos=180, 74, -115 hp=20 status=동굴 위에 다리 놓는 중
+t=3360 pos=180, 74, -115 hp=20 status=동굴 위에 다리 놓는 중
+t=3400 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3440 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3480 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3520 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3560 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3600 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3640 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3680 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3720 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3760 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3800 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3840 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3880 pos=180, 74, -115 hp=20 status=가스트가 지나가길 기다리는 중
+t=3920 pos=180, 73, -114 hp=20 status=동굴 위에 다리 놓는 중
+t=3960 pos=180, 73, -114 hp=20 status=동굴 벽 쌓는 중
+t=4000 pos=180, 73, -114 hp=20 status=동굴 벽 쌓는 중
+t=4040 pos=180, 73, -114 hp=20 status=동굴 벽 쌓는 중
+t=4080 pos=180, 73, -114 hp=20 status=동굴 벽 쌓는 중
+t=4120 pos=180, 72, -113 hp=20 status=동굴 위에 다리 놓는 중
+t=4160 pos=180, 72, -113 hp=20 status=동굴 벽 쌓는 중
+t=4200 pos=180, 72, -113 hp=20 status=동굴 벽 쌓는 중
+t=4240 pos=180, 72, -113 hp=20 status=동굴 벽 쌓는 중
+t=4280 pos=180, 71, -112 hp=20 status=동굴 벽 쌓는 중
+t=4320 pos=180, 71, -112 hp=20 status=동굴 위에 다리 놓는 중
+t=4360 pos=180, 71, -112 hp=20 status=동굴 벽 쌓는 중
+t=4400 pos=180, 71, -112 hp=20 status=동굴 벽 쌓는 중
+t=4440 pos=180, 71, -112 hp=20 status=동굴 벽 쌓는 중
+t=4480 pos=180, 71, -111 hp=20 status=동굴 벽 쌓는 중
+t=4520 pos=180, 70, -111 hp=20 status=동굴 위에 다리 놓는 중
+t=4560 pos=180, 70, -111 hp=20 status=동굴 위에 다리 놓는 중
+t=4600 pos=180, 70, -111 hp=20 status=동굴 위에 다리 놓는 중
+t=4640 pos=180, 70, -111 hp=20 status=동굴 위에 다리 놓는 중
+t=4680 pos=180, 69, -110 hp=20 status=동굴 위에 다리 놓는 중
+t=4720 pos=180, 69, -110 hp=20 status=동굴 벽 쌓는 중
+t=4760 pos=180, 69, -110 hp=20 status=동굴 벽 쌓는 중
+t=4800 pos=180, 69, -110 hp=20 status=동굴 벽 쌓는 중
+t=4840 pos=180, 68, -109 hp=20 status=동굴 벽 쌓는 중
+t=4880 pos=180, 68, -109 hp=20 status=동굴 위에 다리 놓는 중
+t=4920 pos=180, 68, -109 hp=20 status=동굴 벽 쌓는 중
+t=4960 pos=180, 68, -109 hp=20 status=동굴 벽 쌓는 중
+t=5000 pos=180, 68, -109 hp=20 status=동굴 벽 쌓는 중
+t=5040 pos=180, 67, -108 hp=20 status=동굴 벽 쌓는 중
+t=5080 pos=180, 67, -108 hp=20 status=동굴 위에 다리 놓는 중
+t=5120 pos=180, 67, -108 hp=20 status=동굴 벽 쌓는 중
+t=5160 pos=180, 67, -108 hp=20 status=동굴 벽 쌓는 중
+t=5200 pos=180, 67, -108 hp=20 status=동굴 벽 쌓는 중
+t=5240 pos=180, 66, -107 hp=20 status=동굴 위에 다리 놓는 중
+t=5280 pos=180, 66, -107 hp=20 status=동굴 벽 쌓는 중
+t=5320 pos=180, 66, -107 hp=20 status=동굴 벽 쌓는 중
+t=5360 pos=180, 66, -107 hp=20 status=동굴 벽 쌓는 중
+t=5400 pos=180, 65, -106 hp=20 status=동굴 벽 쌓는 중
+t=5440 pos=180, 65, -106 hp=20 status=동굴 위에 다리 놓는 중
+t=5480 pos=180, 65, -106 hp=20 status=동굴 벽 쌓는 중
+t=5520 pos=180, 65, -106 hp=20 status=동굴 벽 쌓는 중
+t=5560 pos=180, 65, -106 hp=20 status=동굴 벽 쌓는 중
+t=5600 pos=180, 64, -105 hp=20 status=동굴 벽 쌓는 중
+t=5640 pos=180, 64, -104 hp=20 status=동굴 벽 쌓는 중
+t=5680 pos=180, 64, -104 hp=20 status=동굴 벽 쌓는 중
+t=5720 pos=180, 64, -105 hp=20 status=동굴 위에 다리 놓는 중
+t=5760 pos=180, 64, -105 hp=20 status=동굴 벽 쌓는 중
+t=5800 pos=180, 63, -104 hp=20 status=동굴 위에 다리 놓는 중
+t=5840 pos=180, 63, -104 hp=20 status=동굴 위에 다리 놓는 중
+t=5880 pos=180, 63, -104 hp=20 status=동굴 위에 다리 놓는 중
+t=5920 pos=180, 63, -104 hp=20 status=동굴 위에 다리 놓는 중
+t=5960 pos=180, 62, -103 hp=20 status=동굴 벽 쌓는 중
+t=6000 pos=180, 62, -103 hp=20 status=동굴 위에 다리 놓는 중
+t=6040 pos=180, 62, -103 hp=20 status=동굴 위에 다리 놓는 중
+t=6080 pos=180, 62, -103 hp=20 status=동굴 위에 다리 놓는 중
+t=6120 pos=180, 62, -103 hp=20 status=동굴 위에 다리 놓는 중
+t=6160 pos=180, 61, -102 hp=20 status=동굴 위에 다리 놓는 중
+t=6200 pos=180, 61, -102 hp=20 status=동굴 벽 쌓는 중
+t=6240 pos=180, 61, -102 hp=20 status=동굴 벽 쌓는 중
+t=6280 pos=180, 61, -102 hp=20 status=동굴 벽 쌓는 중
+t=6320 pos=180, 60, -100 hp=20 status=동굴 벽 쌓는 중
+t=6360 pos=180, 60, -100 hp=20 status=동굴 벽 쌓는 중
+t=6400 pos=180, 60, -100 hp=20 status=동굴 벽 쌓는 중
+t=6440 pos=180, 60, -101 hp=20 status=동굴 위에 다리 놓는 중
+t=6480 pos=180, 60, -101 hp=20 status=동굴 벽 쌓는 중
+t=6520 pos=180, 59, -100 hp=20 status=동굴 벽 쌓는 중
+t=6560 pos=180, 59, -100 hp=20 status=동굴 위에 다리 놓는 중
+t=6600 pos=180, 59, -100 hp=20 status=동굴 위에 다리 놓는 중
+t=6640 pos=180, 59, -100 hp=20 status=동굴 위에 다리 놓는 중
+t=6680 pos=180, 59, -100 hp=20 status=동굴 위에 다리 놓는 중
+t=6720 pos=180, 58, -99 hp=20 status=동굴 위에 다리 놓는 중
+t=6760 pos=180, 58, -99 hp=20 status=동굴 벽 쌓는 중
+t=6800 pos=180, 58, -99 hp=20 status=동굴 벽 쌓는 중
+t=6840 pos=180, 58, -99 hp=20 status=동굴 벽 쌓는 중
+t=6880 pos=180, 58, -99 hp=20 status=동굴 벽 쌓는 중
+t=6920 pos=180, 57, -98 hp=20 status=동굴 위에 다리 놓는 중
+t=6960 pos=180, 57, -98 hp=20 status=동굴 벽 쌓는 중
+t=7000 pos=180, 57, -98 hp=20 status=동굴 벽 쌓는 중
+t=7040 pos=180, 57, -98 hp=20 status=동굴 벽 쌓는 중
+t=7080 pos=180, 57, -98 hp=20 status=동굴 벽 쌓는 중
+t=7120 pos=180, 56, -97 hp=20 status=동굴 벽 쌓는 중
+t=7160 pos=180, 56, -97 hp=20 status=동굴 위에 다리 놓는 중
+t=7200 pos=180, 56, -97 hp=20 status=동굴 위에 다리 놓는 중
+t=7240 pos=180, 56, -97 hp=20 status=동굴 위에 다리 놓는 중
+t=7280 pos=180, 56, -97 hp=20 status=동굴 위에 다리 놓는 중
+t=7320 pos=180, 55, -96 hp=20 status=동굴 위에 다리 놓는 중
+t=7360 pos=180, 55, -96 hp=20 status=동굴 벽 쌓는 중
+t=7400 pos=180, 55, -96 hp=20 status=동굴 벽 쌓는 중
+t=7440 pos=180, 55, -96 hp=20 status=동굴 벽 쌓는 중
+t=7480 pos=180, 55, -96 hp=20 status=동굴 벽 쌓는 중
+t=7520 pos=180, 54, -95 hp=20 status=동굴 벽 쌓는 중
+t=7560 pos=180, 54, -95 hp=20 status=동굴 위에 다리 놓는 중
+t=7600 pos=180, 54, -95 hp=20 status=동굴 위에 다리 놓는 중
+t=7640 pos=180, 54, -95 hp=20 status=동굴 위에 다리 놓는 중
+t=7680 pos=180, 54, -95 hp=20 status=동굴 위에 다리 놓는 중
+t=7720 pos=180, 53, -93 hp=20 status=동굴 벽 쌓는 중
+t=7760 pos=180, 53, -93 hp=20 status=동굴 벽 쌓는 중
+t=7800 pos=180, 53, -94 hp=20 status=동굴 벽 쌓는 중
+t=7840 pos=180, 53, -94 hp=20 status=동굴 위에 다리 놓는 중
+t=7880 pos=180, 53, -94 hp=20 status=동굴 벽 쌓는 중
+t=7920 pos=180, 52, -93 hp=20 status=동굴 벽 쌓는 중
+t=7960 pos=180, 52, -93 hp=20 status=동굴 위에 다리 놓는 중
+t=8000 pos=180, 52, -93 hp=20 status=동굴 위에 다리 놓는 중
+t=8040 pos=180, 52, -93 hp=20 status=동굴 위에 다리 놓는 중
+t=8080 pos=180, 52, -92 hp=20 status=동굴 벽 쌓는 중
+t=8120 pos=180, 51, -92 hp=20 status=동굴 위에 다리 놓는 중
+t=8160 pos=180, 51, -92 hp=20 status=동굴 위에 다리 놓는 중
+t=8200 pos=180, 51, -92 hp=20 status=동굴 위에 다리 놓는 중
+t=8240 pos=180, 51, -92 hp=20 status=동굴 위에 다리 놓는 중
+t=8280 pos=180, 50, -91 hp=20 status=동굴 위에 다리 놓는 중
+t=8320 pos=180, 50, -91 hp=20 status=동굴 위에 다리 놓는 중
+t=8360 pos=180, 50, -91 hp=20 status=동굴 벽 쌓는 중
+t=8400 pos=180, 50, -91 hp=20 status=동굴 벽 쌓는 중
+t=8440 pos=180, 50, -91 hp=20 status=동굴 벽 쌓는 중
+t=8480 pos=180, 50, -91 hp=20 status=동굴 벽 쌓는 중
+t=8520 pos=180, 49, -90 hp=20 status=동굴 위에 다리 놓는 중
+t=8560 pos=180, 49, -90 hp=20 status=동굴 벽 쌓는 중
+t=8600 pos=180, 49, -90 hp=20 status=동굴 벽 쌓는 중
+t=8640 pos=180, 49, -90 hp=20 status=동굴 벽 쌓는 중
+t=8680 pos=180, 48, -89 hp=20 status=동굴 벽 쌓는 중
+t=8720 pos=180, 48, -89 hp=20 status=동굴 위에 다리 놓는 중
+t=8760 pos=180, 48, -89 hp=20 status=동굴 위에 다리 놓는 중
+t=8800 pos=180, 48, -89 hp=20 status=동굴 위에 다리 놓는 중
+t=8840 pos=180, 48, -89 hp=20 status=동굴 위에 다리 놓는 중
+t=8880 pos=180, 47, -88 hp=20 status=동굴 위에 다리 놓는 중
+t=8920 pos=180, 47, -88 hp=20 status=동굴 벽 쌓는 중
+t=8960 pos=180, 47, -88 hp=20 status=동굴 벽 쌓는 중
+t=9000 pos=180, 47, -88 hp=20 status=동굴 벽 쌓는 중
+t=9040 pos=180, 47, -88 hp=20 status=동굴 벽 쌓는 중
+t=9080 pos=180, 46, -87 hp=20 status=동굴 위에 다리 놓는 중
+t=9120 pos=180, 46, -87 hp=20 status=동굴 벽 쌓는 중
+t=9160 pos=180, 46, -87 hp=20 status=동굴 벽 쌓는 중
+t=9200 pos=180, 46, -87 hp=20 status=동굴 벽 쌓는 중
+t=9240 pos=180, 45, -86 hp=20 status=동굴 벽 쌓는 중
+t=9280 pos=180, 45, -86 hp=20 status=동굴 벽 쌓는 중
+t=9320 pos=180, 45, -86 hp=20 status=동굴 벽 쌓는 중
+t=9360 pos=180, 45, -86 hp=20 status=동굴 벽 쌓는 중
+t=9400 pos=180, 45, -86 hp=20 status=동굴 벽 쌓는 중
+t=9440 pos=180, 44, -85 hp=20 status=동굴 벽 쌓는 중
+t=9480 pos=180, 44, -85 hp=20 status=동굴 위에 다리 놓는 중
+t=9520 pos=180, 44, -85 hp=20 status=동굴 벽 쌓는 중
+t=9560 pos=180, 44, -85 hp=20 status=동굴 벽 쌓는 중
+t=9600 pos=180, 44, -85 hp=20 status=동굴 벽 쌓는 중
+t=9640 pos=180, 44, -84 hp=20 status=동굴 벽 쌓는 중
+t=9680 pos=180, 43, -83 hp=20 status=동굴 벽 쌓는 중
+t=9720 pos=180, 43, -83 hp=20 status=동굴 벽 쌓는 중
+t=9760 pos=180, 43, -84 hp=20 status=동굴 위에 다리 놓는 중
+t=9800 pos=180, 43, -84 hp=20 status=동굴 벽 쌓는 중
+t=9840 pos=180, 43, -84 hp=20 status=동굴 벽 쌓는 중
+t=9880 pos=180, 42, -83 hp=20 status=동굴 위에 다리 놓는 중
+t=9920 pos=180, 42, -83 hp=20 status=동굴 위에 다리 놓는 중
+t=9960 pos=180, 42, -83 hp=20 status=동굴 위에 다리 놓는 중
+t=10000 pos=180, 42, -83 hp=20 status=동굴 위에 다리 놓는 중
+t=10040 pos=180, 42, -82 hp=20 status=동굴 벽 쌓는 중
+t=10080 pos=180, 41, -82 hp=20 status=동굴 위에 다리 놓는 중
+t=10120 pos=180, 41, -82 hp=20 status=동굴 위에 다리 놓는 중
+t=10160 pos=180, 41, -82 hp=20 status=동굴 위에 다리 놓는 중
+t=10200 pos=180, 41, -82 hp=20 status=동굴 위에 다리 놓는 중
+t=10240 pos=180, 40, -81 hp=20 status=동굴 위에 다리 놓는 중
+t=10280 pos=180, 40, -81 hp=20 status=동굴 벽 쌓는 중
+t=10320 pos=180, 40, -81 hp=20 status=동굴 벽 쌓는 중
+t=10360 pos=180, 40, -81 hp=20 status=동굴 벽 쌓는 중
+t=10400 pos=180, 40, -81 hp=20 status=동굴 벽 쌓는 중
+t=10440 pos=180, 39, -80 hp=20 status=동굴 위에 다리 놓는 중
+t=10480 pos=180, 39, -80 hp=20 status=동굴 벽 쌓는 중
+t=10520 pos=180, 39, -80 hp=20 status=동굴 벽 쌓는 중
+t=10560 pos=180, 39, -80 hp=20 status=동굴 벽 쌓는 중
+t=10600 pos=180, 39, -80 hp=20 status=동굴 벽 쌓는 중
+t=10640 pos=180, 39, -79 hp=20 status=동굴 벽 쌓는 중
+t=10680 pos=180, 38, -79 hp=20 status=동굴 위에 다리 놓는 중
+t=10720 pos=180, 38, -79 hp=20 status=동굴 위에 다리 놓는 중
+t=10760 pos=180, 38, -79 hp=20 status=동굴 위에 다리 놓는 중
+t=10800 pos=180, 38, -79 hp=20 status=동굴 위에 다리 놓는 중
+t=10840 pos=180, 37, -78 hp=20 status=동굴 위에 다리 놓는 중
+t=10880 pos=180, 37, -78 hp=20 status=동굴 벽 쌓는 중
+t=10920 pos=180, 37, -78 hp=20 status=동굴 벽 쌓는 중
+t=10960 pos=180, 37, -78 hp=20 status=동굴 벽 쌓는 중
+t=11000 pos=180, 36, -77 hp=20 status=동굴 벽 쌓는 중
+t=11040 pos=180, 36, -77 hp=20 status=동굴 위에 다리 놓는 중
+t=11080 pos=180, 36, -77 hp=20 status=동굴 벽 쌓는 중
+t=11120 pos=180, 36, -77 hp=20 status=동굴 벽 쌓는 중
+t=11160 pos=180, 36, -77 hp=20 status=동굴 벽 쌓는 중
+t=11200 pos=180, 35, -76 hp=20 status=동굴 위에 다리 놓는 중
+t=11240 pos=180, 35, -76 hp=20 status=동굴 벽 쌓는 중
+t=11280 pos=180, 35, -76 hp=20 status=동굴 벽 쌓는 중
+t=11320 pos=180, 35, -76 hp=20 status=동굴 벽 쌓는 중
+t=11360 pos=180, 35, -76 hp=20 status=동굴 벽 쌓는 중
+t=11400 pos=180, 34, -75 hp=20 status=동굴 위에 다리 놓는 중
+t=11440 pos=180, 34, -75 hp=20 status=동굴 벽 쌓는 중
+t=11480 pos=180, 34, -75 hp=20 status=동굴 벽 쌓는 중
+t=11520 pos=180, 34, -75 hp=20 status=동굴 벽 쌓는 중
+t=11560 pos=180, 34, -74 hp=20 status=동굴 벽 쌓는 중
+t=11600 pos=180, 33, -74 hp=20 status=동굴 위에 다리 놓는 중
+t=11640 pos=180, 33, -74 hp=20 status=동굴 위에 다리 놓는 중
+t=11680 pos=180, 33, -74 hp=20 status=동굴 위에 다리 놓는 중
+t=11720 pos=180, 33, -74 hp=20 status=동굴 위에 다리 놓는 중
+t=11760 pos=180, 32, -73 hp=20 status=동굴 위에 다리 놓는 중
+t=11800 pos=180, 32, -73 hp=20 status=용암·물 막는 중
+t=11840 pos=180, 32, -73 hp=20 status=용암·물 막는 중
+t=11880 pos=180, 32, -73 hp=20 status=동굴 벽 쌓는 중
+t=11920 pos=180, 32, -73 hp=20 status=동굴 벽 쌓는 중
+t=11960 pos=180, 31, -72 hp=20 status=동굴 벽 쌓는 중
+t=12000 pos=180, 31, -72 hp=20 status=용암·물 막는 중
+t=12040 pos=180, 31, -72 hp=20 status=용암·물 막는 중
+t=12080 pos=180, 31, -72 hp=20 status=용암·물 막는 중
+t=12120 pos=180, 31, -72 hp=20 status=동굴 벽 쌓는 중
+t=12160 pos=180, 30, -71 hp=20 status=동굴 벽 쌓는 중
+t=12200 pos=180, 30, -71 hp=20 status=용암·물 막는 중
+t=12240 pos=180, 30, -71 hp=20 status=동굴 쪽을 먼저 막는 중
+t=12280 pos=180, 30, -71 hp=20 status=용암·물 막는 중
+t=12320 pos=180, 30, -71 hp=20 status=용암·물 막는 중
+t=12360 pos=180, 30, -71 hp=20 status=용암·물 막는 중
+t=12400 pos=180, 29, -70 hp=20 status=용암·물 막는 중
+t=12440 pos=180, 29, -70 hp=20 status=용암·물 막는 중
+t=12480 pos=180, 29, -70 hp=20 status=용암·물 막는 중
+t=12520 pos=180, 29, -70 hp=20 status=용암·물 막는 중
+t=12560 pos=180, 29, -70 hp=20 status=용암·물 막는 중
+t=12600 pos=180, 29, -70 hp=20 status=용암·물 막는 중
+t=12640 pos=180, 28, -69 hp=20 status=용암·물 막는 중
+t=12680 pos=180, 28, -69 hp=20 status=용암·물 막는 중
+t=12720 pos=180, 28, -69 hp=20 status=용암·물 막는 중
+t=12760 pos=180, 28, -69 hp=20 status=용암·물 막는 중
+t=12800 pos=180, 28, -69 hp=20 status=용암·물 막는 중
+t=12840 pos=180, 27, -68 hp=20 status=용암·물 막는 중
+t=12880 pos=180, 27, -68 hp=20 status=용암·물 막는 중
+t=12920 pos=180, 27, -68 hp=20 status=용암·물 막는 중
+t=12960 pos=180, 27, -68 hp=20 status=용암·물 막는 중
+t=13000 pos=180, 27, -68 hp=20 status=용암·물 막는 중
+t=13040 pos=180, 26, -67 hp=20 status=용암·물 막는 중
+t=13080 pos=180, 26, -67 hp=20 status=용암·물 막는 중
+t=13120 pos=180, 26, -67 hp=20 status=용암·물 막는 중
+t=13160 pos=180, 26, -67 hp=20 status=용암·물 막는 중
+t=13200 pos=180, 26, -67 hp=20 status=용암·물 막는 중
+t=13240 pos=180, 26, -67 hp=20 status=용암·물 막는 중
+t=13280 pos=180, 26, -66 hp=20 status=용암·물 막는 중
+t=13320 pos=180, 25, -66 hp=20 status=용암·물 막는 중
+t=13360 pos=180, 25, -66 hp=20 status=용암·물 막는 중
+t=13400 pos=180, 25, -66 hp=20 status=용암·물 막는 중
+t=13440 pos=180, 25, -66 hp=20 status=용암·물 막는 중
+t=13480 pos=180, 25, -66 hp=20 status=용암·물 막는 중
+t=13520 pos=180, 24, -65 hp=20 status=용암·물 막는 중
+t=13560 pos=180, 24, -65 hp=20 status=용암·물 막는 중
+t=13600 pos=180, 24, -65 hp=20 status=용암·물 막는 중
+t=13640 pos=180, 24, -65 hp=20 status=용암·물 막는 중
+t=13680 pos=180, 24, -65 hp=20 status=용암·물 막는 중
+t=13720 pos=180, 23, -64 hp=20 status=용암·물 막는 중
+t=13760 pos=180, 23, -64 hp=20 status=용암·물 막는 중
+t=13800 pos=180, 23, -64 hp=20 status=용암·물 막는 중
+t=13840 pos=180, 23, -64 hp=20 status=용암·물 막는 중
+t=13880 pos=180, 22, -63 hp=20 status=용암·물 막는 중
+t=13920 pos=180, 22, -63 hp=20 status=용암·물 막는 중
+t=13960 pos=180, 21, -62 hp=20 status=용암·물 막는 중
+t=14000 pos=180, 21, -62 hp=20 status=계단 파는 중 (79/84)
+t=14040 pos=180, 20, -61 hp=20 status=계단 파는 중 (80/84)
+t=14080 pos=180, 20, -61 hp=20 status=계단 파는 중 (80/84)
+t=14120 pos=180, 19, -60 hp=20 status=계단 파는 중 (81/84)
+t=14160 pos=180, 18, -59 hp=20 status=계단 파는 중 (81/84)
+t=14200 pos=180, 18, -59 hp=20 status=계단 파는 중 (82/84)
+t=14240 pos=180, 17, -58 hp=20 status=계단 파는 중 (82/84)
+t=14280 pos=180, 17, -58 hp=20 status=계단 파는 중 (83/84)
+t=14320 pos=180, 16, -57 hp=20 status=계단 파는 중 (84/84)
+t=14360 pos=180, 16, -57 hp=20 status=계단 파는 중 (84/84)
+t=14400 pos=180, 15, -56 hp=20 status=가운데 굴 파는 중 (1/16)
+t=14440 pos=180, 15, -55 hp=20 status=가운데 굴 파는 중 (1/16)
+t=14480 pos=180, 15, -55 hp=20 status=가운데 굴 파는 중 (2/16)
+t=14520 pos=180, 15, -55 hp=20 status=가운데 굴 파는 중 (2/16)
+t=14560 pos=180, 15, -54 hp=20 status=가운데 굴 파는 중 (3/16)
+t=14600 pos=180, 15, -54 hp=20 status=가운데 굴 파는 중 (3/16)
+t=14640 pos=180, 15, -53 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (1번)
+t=14680 pos=180, 15, -53 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (1번)
+t=14720 pos=179, 15, -53 hp=20 status=떨어진 아이템 줍는 중
+t=14760 pos=179, 15, -53 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (1번)
+t=14800 pos=179, 15, -53 hp=20 status=가운데 굴 파는 중 (4/16)
+t=14840 pos=179, 15, -53 hp=20 status=가운데 굴 파는 중 (4/16)
+t=14880 pos=179, 15, -53 hp=20 status=가운데 굴 파는 중 (4/16)
+t=14920 pos=180, 15, -52 hp=20 status=가운데 굴 파는 중 (5/16)
+t=14960 pos=180, 15, -52 hp=20 status=가운데 굴 파는 중 (5/16)
+t=15000 pos=180, 15, -51 hp=20 status=가운데 굴 파는 중 (6/16)
+t=15040 pos=180, 15, -51 hp=20 status=가운데 굴 파는 중 (6/16)
+t=15080 pos=180, 15, -50 hp=20 status=가운데 굴 파는 중 (6/16)
+t=15120 pos=180, 15, -50 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (2번)
+t=15160 pos=180, 15, -50 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (2번)
+t=15200 pos=179, 15, -50 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (2번)
+t=15240 pos=179, 15, -50 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (2번)
+t=15280 pos=179, 15, -50 hp=20 status=가운데 굴 파는 중 (7/16)
+t=15320 pos=179, 15, -50 hp=20 status=가운데 굴 파는 중 (7/16)
+t=15360 pos=180, 15, -49 hp=20 status=가운데 굴 파는 중 (8/16)
+t=15400 pos=180, 15, -49 hp=20 status=가운데 굴 파는 중 (8/16)
+t=15440 pos=180, 15, -48 hp=20 status=가운데 굴 파는 중 (9/16)
+t=15480 pos=180, 15, -48 hp=20 status=가운데 굴 파는 중 (9/16)
+t=15520 pos=180, 15, -47 hp=20 status=가운데 굴 파는 중 (9/16)
+t=15560 pos=180, 15, -47 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (3번)
+t=15600 pos=180, 15, -47 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (3번)
+t=15640 pos=179, 15, -47 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (3번)
+t=15680 pos=179, 15, -47 hp=20 status=가운데 굴 파는 중 (10/16)
+t=15720 pos=179, 15, -47 hp=20 status=가운데 굴 파는 중 (10/16)
+t=15760 pos=179, 15, -47 hp=20 status=가운데 굴 파는 중 (10/16)
+t=15800 pos=180, 15, -46 hp=20 status=가운데 굴 파는 중 (11/16)
+t=15840 pos=180, 15, -46 hp=20 status=가운데 굴 파는 중 (11/16)
+t=15880 pos=180, 15, -45 hp=20 status=가운데 굴 파는 중 (12/16)
+t=15920 pos=180, 15, -45 hp=20 status=가운데 굴 파는 중 (12/16)
+t=15960 pos=180, 15, -44 hp=20 status=가운데 굴 파는 중 (12/16)
+t=16000 pos=180, 15, -44 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (4번)
+t=16040 pos=180, 15, -44 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (4번)
+t=16080 pos=180, 15, -44 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (4번)
+t=16120 pos=179, 15, -44 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (4번)
+t=16160 pos=179, 15, -44 hp=20 status=가운데 굴 파는 중 (13/16)
+t=16200 pos=179, 15, -44 hp=20 status=가운데 굴 파는 중 (13/16)
+t=16240 pos=180, 15, -43 hp=20 status=가운데 굴 파는 중 (13/16)
+t=16280 pos=180, 15, -43 hp=20 status=가운데 굴 파는 중 (14/16)
+t=16320 pos=180, 15, -42 hp=20 status=가운데 굴 파는 중 (14/16)
+t=16360 pos=180, 15, -42 hp=20 status=가운데 굴 파는 중 (15/16)
+t=16400 pos=180, 15, -42 hp=20 status=가운데 굴 파는 중 (15/16)
+t=16440 pos=180, 15, -41 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (5번)
+t=16480 pos=180, 15, -41 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (5번)
+t=16520 pos=179, 15, -41 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (5번)
+t=16560 pos=179, 15, -41 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (5번)
+t=16600 pos=179, 15, -41 hp=20 status=가운데 굴 파는 중 (16/16)
+t=16640 pos=179, 15, -41 hp=20 status=가운데 굴 파는 중 (16/16)
+t=16680 pos=180, 15, -40 hp=20 status=시작 지점으로 돌아가는 중
+t=16720 pos=180, 15, -50 hp=20 status=시작 지점으로 돌아가는 중
+t=16760 pos=180, 17, -58 hp=20 status=시작 지점으로 돌아가는 중
+t=16800 pos=180, 21, -61 hp=20 status=시작 지점으로 돌아가는 중
+t=16840 pos=180, 24, -65 hp=20 status=시작 지점으로 돌아가는 중
+t=16880 pos=180, 28, -69 hp=20 status=시작 지점으로 돌아가는 중
+t=16920 pos=180, 32, -72 hp=20 status=시작 지점으로 돌아가는 중
+t=16960 pos=180, 35, -76 hp=20 status=시작 지점으로 돌아가는 중
+t=17000 pos=180, 39, -80 hp=20 status=시작 지점으로 돌아가는 중
+t=17040 pos=180, 43, -83 hp=20 status=시작 지점으로 돌아가는 중
+t=17080 pos=180, 46, -87 hp=20 status=시작 지점으로 돌아가는 중
+t=17120 pos=180, 50, -90 hp=20 status=시작 지점으로 돌아가는 중
+t=17160 pos=180, 53, -94 hp=20 status=시작 지점으로 돌아가는 중
+t=17200 pos=180, 57, -98 hp=20 status=시작 지점으로 돌아가는 중
+t=17240 pos=180, 61, -101 hp=20 status=시작 지점으로 돌아가는 중
+t=17280 pos=180, 64, -105 hp=20 status=시작 지점으로 돌아가는 중
+t=17320 pos=180, 68, -109 hp=20 status=시작 지점으로 돌아가는 중
+t=17360 pos=180, 72, -112 hp=20 status=시작 지점으로 돌아가는 중
+t=17400 pos=180, 75, -116 hp=20 status=시작 지점으로 돌아가는 중
+t=17440 pos=180, 79, -120 hp=20 status=시작 지점으로 돌아가는 중
+t=17480 pos=180, 83, -123 hp=20 status=시작 지점으로 돌아가는 중
+t=17520 pos=180, 86, -127 hp=20 status=시작 지점으로 돌아가는 중
+t=17560 pos=180, 90, -131 hp=20 status=시작 지점으로 돌아가는 중
+t=17600 pos=180, 94, -134 hp=20 status=시작 지점으로 돌아가는 중
+t=17640 pos=180, 97, -138 hp=20 status=시작 지점으로 돌아가는 중
+t=17680 pos=180, 99, -140 hp=20 status=상자에 보관하는 중
+t=17720 pos=180, 99, -140 hp=20 status=꺼짐
+stopped after 17720 ticks (886 s): 채광 완료! / 정리까지 끝내고 시작 지점으로 돌아왔어요
+path: walks=4 arrived=4 gaveUp=0 {} plans=4 notFound=0 gaveUpGoals=[] waitTicks=5 walkTicks=29 slowestPlan=41ms
+walk: 101 blocks in 50 s = 2.02 blocks/s, sprinting 68%, sprint-jumps 0
+defense: flees=0 dodges=0 creeperEscapes=0 fights=0 kills=0 hitsTaken=0 lowestHealth=20.0 unreachableTicks=0 fightsGivenUp=0 ghastShelters=1
+lowest health 20.0, burning 0 s, in lava 0 s, outside the dug tunnels 0 s
+DROPS: 5 ore items seen, 0 lost (0.0%), 0 picked up only after more than 15 s (counted as left behind by the old check)
+blocks mined=198 lava/water plugged=100 chest trips=2
+  ore minecraft:nether_gold_ore: 1
+job: stairs 84, main step 16, ores 1
+inventory: minecraft:diamond_pickaxe x1, minecraft:diamond_pickaxe x1, minecraft:torch x34, minecraft:iron_sword x1, minecraft:netherrack x49, minecraft:netherrack x64, minecraft:bread x16, 

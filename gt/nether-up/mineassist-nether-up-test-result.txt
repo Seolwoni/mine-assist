@@ -1,0 +1,128 @@
+RESULT: PASS
+
+start in the Nether at 32, 56, 34 (stairs up)
+target y 64, main 16, poke holes every 3 (depth 4)
+t=40 pos=32, 56, 34 hp=20 status=계단 파는 중 (1/8)
+t=80 pos=32, 56, 34 hp=20 status=계단 파는 중 (1/8)
+t=120 pos=32, 56, 34 hp=20 status=동굴 벽 쌓는 중
+t=160 pos=32, 56, 34 hp=20 status=동굴 벽 쌓는 중
+t=200 pos=32, 56, 34 hp=20 status=동굴 벽 쌓는 중
+t=240 pos=32, 57, 35 hp=20 status=계단 파는 중 (2/8)
+t=280 pos=32, 57, 35 hp=20 status=계단 파는 중 (2/8)
+t=320 pos=32, 57, 35 hp=20 status=계단 파는 중 (2/8)
+t=360 pos=32, 58, 36 hp=20 status=계단 파는 중 (3/8)
+t=400 pos=32, 58, 36 hp=20 status=계단 파는 중 (3/8)
+t=440 pos=32, 59, 37 hp=20 status=계단 파는 중 (3/8)
+t=480 pos=32, 59, 37 hp=20 status=계단 파는 중 (4/8)
+t=520 pos=32, 59, 37 hp=20 status=계단 파는 중 (4/8)
+t=560 pos=32, 60, 38 hp=20 status=계단 파는 중 (5/8)
+t=600 pos=32, 60, 38 hp=20 status=계단 파는 중 (5/8)
+t=640 pos=32, 61, 39 hp=20 status=계단 파는 중 (6/8)
+t=680 pos=32, 61, 39 hp=20 status=계단 파는 중 (6/8)
+t=720 pos=32, 62, 40 hp=20 status=계단 파는 중 (6/8)
+t=760 pos=32, 62, 40 hp=20 status=계단 파는 중 (7/8)
+t=800 pos=32, 63, 40 hp=20 status=계단 파는 중 (7/8)
+t=840 pos=32, 63, 41 hp=20 status=계단 파는 중 (8/8)
+t=880 pos=32, 63, 41 hp=20 status=계단 파는 중 (8/8)
+t=920 pos=32, 64, 42 hp=20 status=가운데 굴 파는 중 (1/16)
+t=960 pos=32, 64, 42 hp=20 status=동굴 쪽을 먼저 막는 중
+t=1000 pos=32, 64, 43 hp=20 status=가운데 굴 파는 중 (2/16)
+t=1040 pos=32, 64, 43 hp=20 status=동굴 쪽을 먼저 막는 중
+t=1080 pos=32, 64, 43 hp=20 status=동굴 쪽을 먼저 막는 중
+t=1120 pos=32, 64, 44 hp=20 status=가운데 굴 파는 중 (3/16)
+t=1160 pos=32, 64, 44 hp=20 status=가운데 굴 파는 중 (3/16)
+t=1200 pos=32, 64, 45 hp=20 status=가운데 굴 파는 중 (3/16)
+t=1240 pos=32, 64, 45 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (1번)
+t=1280 pos=32, 64, 45 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (1번)
+t=1320 pos=31, 64, 45 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (1번)
+t=1360 pos=31, 64, 45 hp=20 status=동굴 쪽을 먼저 막는 중
+t=1400 pos=31, 64, 45 hp=20 status=동굴 쪽을 먼저 막는 중
+t=1440 pos=31, 64, 45 hp=20 status=동굴 쪽을 먼저 막는 중
+t=1480 pos=31, 64, 45 hp=20 status=가운데 굴 파는 중 (4/16)
+t=1520 pos=31, 64, 45 hp=20 status=가운데 굴 파는 중 (4/16)
+t=1560 pos=32, 64, 46 hp=20 status=가운데 굴 파는 중 (5/16)
+t=1600 pos=32, 64, 46 hp=20 status=가운데 굴 파는 중 (5/16)
+t=1640 pos=32, 64, 47 hp=20 status=가운데 굴 파는 중 (6/16)
+t=1680 pos=32, 64, 47 hp=20 status=가운데 굴 파는 중 (6/16)
+t=1720 pos=32, 64, 47 hp=20 status=가운데 굴 파는 중 (6/16)
+t=1760 pos=32, 64, 48 hp=20 status=가운데 굴 파는 중 (6/16)
+t=1800 pos=32, 64, 48 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (2번)
+t=1840 pos=32, 64, 48 hp=20 status=광석 캐는 중
+t=1880 pos=32, 64, 48 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=1920 pos=34, 64, 48 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=1960 pos=35, 64, 48 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=2000 pos=36, 64, 48 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=2040 pos=36, 64, 48 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=2080 pos=36, 64, 48 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=2120 pos=36, 64, 48 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=2160 pos=31, 64, 48 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=2200 pos=31, 64, 48 hp=20 status=광석 구멍에서 아이템 꺼내는 중
+t=2240 pos=32, 64, 48 hp=20 status=가스트가 지나가길 기다리는 중
+t=2280 pos=32, 64, 48 hp=20 status=가스트가 지나가길 기다리는 중
+t=2320 pos=32, 64, 48 hp=20 status=가스트가 지나가길 기다리는 중
+t=2360 pos=32, 64, 48 hp=20 status=가스트가 지나가길 기다리는 중
+t=2400 pos=32, 64, 48 hp=20 status=가스트가 지나가길 기다리는 중
+t=2440 pos=32, 64, 48 hp=20 status=가스트가 지나가길 기다리는 중
+t=2480 pos=32, 64, 48 hp=20 status=가스트가 지나가길 기다리는 중
+t=2520 pos=32, 64, 48 hp=20 status=가스트가 지나가길 기다리는 중
+t=2560 pos=32, 64, 48 hp=20 status=가스트가 지나가길 기다리는 중
+t=2600 pos=32, 64, 48 hp=20 status=가스트가 지나가길 기다리는 중
+t=2640 pos=32, 64, 48 hp=20 status=가스트가 지나가길 기다리는 중
+t=2680 pos=32, 64, 48 hp=20 status=가스트가 지나가길 기다리는 중
+t=2720 pos=31, 64, 48 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (2번)
+t=2760 pos=31, 64, 48 hp=20 status=동굴 쪽을 먼저 막는 중
+t=2800 pos=31, 64, 48 hp=20 status=동굴 쪽을 먼저 막는 중
+t=2840 pos=31, 64, 48 hp=20 status=가운데 굴 파는 중 (7/16)
+t=2880 pos=31, 64, 48 hp=20 status=가운데 굴 파는 중 (7/16)
+t=2920 pos=31, 64, 49 hp=20 status=가운데 굴 파는 중 (7/16)
+t=2960 pos=32, 64, 49 hp=20 status=가운데 굴 파는 중 (8/16)
+t=3000 pos=32, 64, 49 hp=20 status=가운데 굴 파는 중 (8/16)
+t=3040 pos=32, 64, 50 hp=20 status=가운데 굴 파는 중 (9/16)
+t=3080 pos=32, 64, 50 hp=20 status=동굴 쪽을 먼저 막는 중
+t=3120 pos=32, 64, 51 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (3번)
+t=3160 pos=32, 64, 51 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (3번)
+t=3200 pos=32, 64, 51 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (3번)
+t=3240 pos=31, 64, 51 hp=20 status=동굴 쪽을 먼저 막는 중
+t=3280 pos=31, 64, 51 hp=20 status=동굴 쪽을 먼저 막는 중
+t=3320 pos=31, 64, 51 hp=20 status=가운데 굴 파는 중 (10/16)
+t=3360 pos=31, 64, 51 hp=20 status=동굴 쪽을 먼저 막는 중
+t=3400 pos=32, 64, 52 hp=20 status=동굴 쪽을 먼저 막는 중
+t=3440 pos=32, 64, 52 hp=20 status=가운데 굴 파는 중 (11/16)
+t=3480 pos=32, 64, 52 hp=20 status=동굴 쪽을 먼저 막는 중
+t=3520 pos=32, 64, 53 hp=20 status=가운데 굴 파는 중 (12/16)
+t=3560 pos=32, 64, 53 hp=20 status=가운데 굴 파는 중 (12/16)
+t=3600 pos=32, 64, 54 hp=20 status=가운데 굴 파는 중 (12/16)
+t=3640 pos=32, 64, 54 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (4번)
+t=3680 pos=32, 64, 54 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (4번)
+t=3720 pos=31, 64, 54 hp=20 status=동굴 쪽을 먼저 막는 중
+t=3760 pos=31, 64, 54 hp=20 status=동굴 쪽을 먼저 막는 중
+t=3800 pos=31, 64, 54 hp=20 status=동굴 쪽을 먼저 막는 중
+t=3840 pos=31, 64, 54 hp=20 status=가운데 굴 파는 중 (13/16)
+t=3880 pos=31, 64, 54 hp=20 status=가운데 굴 파는 중 (13/16)
+t=3920 pos=32, 64, 55 hp=20 status=가운데 굴 파는 중 (14/16)
+t=3960 pos=32, 64, 56 hp=20 status=가운데 굴 파는 중 (14/16)
+t=4000 pos=32, 64, 56 hp=20 status=가운데 굴 파는 중 (15/16)
+t=4040 pos=32, 64, 57 hp=20 status=가운데 굴 파는 중 (15/16)
+t=4080 pos=32, 64, 57 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (5번)
+t=4120 pos=32, 64, 57 hp=20 status=왼쪽 벽에 구멍 뚫는 중 (5번)
+t=4160 pos=31, 64, 57 hp=20 status=오른쪽 벽에 구멍 뚫는 중 (5번)
+t=4200 pos=31, 64, 57 hp=20 status=동굴 쪽을 먼저 막는 중
+t=4240 pos=31, 64, 57 hp=20 status=가운데 굴 파는 중 (16/16)
+t=4280 pos=31, 64, 57 hp=20 status=가운데 굴 파는 중 (16/16)
+t=4320 pos=32, 64, 54 hp=20 status=시작 지점으로 돌아가는 중
+t=4360 pos=32, 64, 43 hp=20 status=시작 지점으로 돌아가는 중
+t=4400 pos=32, 59, 37 hp=20 status=시작 지점으로 돌아가는 중
+t=4440 pos=32, 56, 34 hp=20 status=상자에 보관하는 중
+t=4480 pos=32, 56, 34 hp=20 status=꺼짐
+stopped after 4480 ticks (224 s): 채광 완료! / 정리까지 끝내고 시작 지점으로 돌아왔어요
+path: walks=4 arrived=4 gaveUp=0 {} plans=4 notFound=0 gaveUpGoals=[] waitTicks=4 walkTicks=28 slowestPlan=47ms
+walk: 26 blocks in 7 s = 3.45 blocks/s, sprinting 50%, sprint-jumps 0
+defense: flees=0 dodges=0 creeperEscapes=0 fights=1 kills=1 hitsTaken=0 lowestHealth=20.0 unreachableTicks=0 fightsGivenUp=0 ghastShelters=1
+  defense: fight at 31, 64, 48 | piglin 4.0 unseen
+lowest health 20.0, burning 0 s, in lava 0 s, outside the dug tunnels 4 s
+DROPS: 7 ore items seen, 0 lost (0.0%), 0 picked up only after more than 15 s (counted as left behind by the old check)
+  pocket: round 1: dig a walkway of 5 to the drop at 36, 65, 47
+blocks mined=122 lava/water plugged=0 chest trips=2
+  ore minecraft:nether_gold_ore: 2
+job: stairs 8, main step 16, ores 2
+inventory: minecraft:diamond_pickaxe x1, minecraft:diamond_pickaxe x1, minecraft:torch x59, minecraft:iron_sword x1, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:netherrack x64, minecraft:bread x16, 
