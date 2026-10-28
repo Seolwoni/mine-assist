@@ -1,0 +1,42 @@
+> Configure project :
+> Configure project :core
+> Configure project :path
+> Task :core:processIncludeJars
+> Task :processResources
+> Task :path:processResources
+> Task :core:processResources
+> Task :validateAccessWidener NO-SOURCE
+> Task :path:processIncludeJars
+> Task :processTestResources NO-SOURCE
+> Task :core:processTestResources NO-SOURCE
+> Task :path:processTestResources NO-SOURCE
+> Task :core:validateAccessWidener NO-SOURCE
+> Task :path:validateAccessWidener NO-SOURCE
+> Task :core:compileJava
+> Task :core:classes
+> Task :core:compileTestJava NO-SOURCE
+> Task :core:testClasses UP-TO-DATE
+> Task :core:test NO-SOURCE
+> Task :core:check UP-TO-DATE
+> Task :core:jar
+> Task :core:assemble
+> Task :core:build
+> Task :path:compileJava
+> Task :path:classes
+> Task :path:compileTestJava NO-SOURCE
+> Task :path:testClasses UP-TO-DATE
+> Task :path:test NO-SOURCE
+> Task :path:check UP-TO-DATE
+> Task :path:jar
+> Task :path:assemble
+> Task :path:build
+> Task :processIncludeJars
+> Task :compileJava
+> Task :classes
+> Task :compileTestJava NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :jar
+> Task :assemble
+> Task :build

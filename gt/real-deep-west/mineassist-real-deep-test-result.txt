@@ -1,0 +1,144 @@
+RESULT: FAIL (2)
+  FAIL 18 of 63 ore items lost (more than 5%)
+  FAIL stopped early: 채광을 멈췄어요 / 길이 막혀서 움직일 수 없어요
+
+start in ResourceKey[minecraft:worldgen/biome / minecraft:plains] at -274, 63, -230
+target y -54, main 16, branches 5 every 3
+t=40 pos=-274, 63, -230 hp=20 status=용암·물 막는 중
+t=80 pos=-274, 63, -230 hp=20 status=동굴 벽 쌓는 중
+t=120 pos=-274, 63, -230 hp=20 status=동굴 벽 쌓는 중
+t=160 pos=-274, 63, -230 hp=20 status=동굴 벽 쌓는 중
+t=200 pos=-276, 61, -230 hp=20 status=떨어진 아이템 줍는 중
+t=240 pos=-275, 62, -230 hp=20 status=동굴 벽 쌓는 중
+t=280 pos=-275, 62, -230 hp=20 status=동굴 벽 쌓는 중
+t=320 pos=-276, 61, -230 hp=20 status=동굴 벽 쌓는 중
+t=360 pos=-276, 61, -230 hp=20 status=동굴 벽 쌓는 중
+t=400 pos=-276, 61, -230 hp=20 status=동굴 벽 쌓는 중
+t=440 pos=-277, 60, -230 hp=20 status=동굴 벽 쌓는 중
+t=480 pos=-277, 60, -230 hp=20 status=동굴 벽 쌓는 중
+t=520 pos=-277, 60, -230 hp=20 status=동굴 벽 쌓는 중
+t=560 pos=-277, 60, -230 hp=20 status=동굴 벽 쌓는 중
+t=600 pos=-278, 59, -230 hp=20 status=계단 파는 중 (5/117)
+t=640 pos=-278, 59, -230 hp=20 status=계단 파는 중 (5/117)
+t=680 pos=-278, 59, -230 hp=20 status=동굴 벽 쌓는 중
+t=720 pos=-279, 59, -230 hp=20 status=동굴 벽 쌓는 중
+t=760 pos=-279, 58, -230 hp=20 status=계단 파는 중 (6/117)
+t=800 pos=-279, 58, -230 hp=20 status=계단 파는 중 (6/117)
+t=840 pos=-279, 58, -230 hp=20 status=계단 파는 중 (6/117)
+t=880 pos=-279, 58, -230 hp=20 status=계단 파는 중 (6/117)
+t=920 pos=-280, 57, -230 hp=20 status=계단 파는 중 (7/117)
+t=960 pos=-280, 57, -230 hp=20 status=계단 파는 중 (7/117)
+t=1000 pos=-280, 57, -230 hp=20 status=계단 파는 중 (7/117)
+t=1040 pos=-280, 57, -230 hp=20 status=계단 파는 중 (7/117)
+t=1080 pos=-280, 57, -230 hp=20 status=계단 파는 중 (7/117)
+t=1120 pos=-281, 56, -230 hp=20 status=계단 파는 중 (7/117)
+t=1160 pos=-281, 56, -230 hp=20 status=계단 파는 중 (8/117)
+t=1200 pos=-281, 56, -230 hp=20 status=계단 파는 중 (8/117)
+t=1240 pos=-281, 56, -230 hp=20 status=계단 파는 중 (8/117)
+t=1280 pos=-281, 56, -230 hp=20 status=계단 파는 중 (8/117)
+t=1320 pos=-282, 56, -230 hp=20 status=계단 파는 중 (8/117)
+t=1360 pos=-282, 55, -230 hp=20 status=계단 파는 중 (8/117)
+t=1400 pos=-282, 55, -230 hp=20 status=계단 파는 중 (9/117)
+t=1440 pos=-282, 55, -230 hp=20 status=계단 파는 중 (9/117)
+t=1480 pos=-282, 55, -230 hp=20 status=계단 파는 중 (9/117)
+t=1520 pos=-282, 55, -230 hp=20 status=동굴 쪽을 먼저 막는 중
+t=1560 pos=-282, 55, -230 hp=20 status=동굴 쪽을 먼저 막는 중
+t=1600 pos=-282, 55, -230 hp=20 status=동굴 쪽을 먼저 막는 중
+t=1640 pos=-283, 54, -230 hp=20 status=계단 파는 중 (10/117)
+t=1680 pos=-284, 53, -230 hp=20 status=계단 파는 중 (10/117)
+t=1720 pos=-284, 53, -230 hp=20 status=계단 파는 중 (11/117)
+t=1760 pos=-284, 53, -230 hp=20 status=계단 파는 중 (11/117)
+t=1800 pos=-285, 52, -230 hp=20 status=계단 파는 중 (12/117)
+t=1840 pos=-285, 52, -230 hp=20 status=계단 파는 중 (12/117)
+t=1880 pos=-286, 51, -230 hp=20 status=계단 파는 중 (13/117)
+t=1920 pos=-286, 51, -230 hp=20 status=계단 파는 중 (13/117)
+t=1960 pos=-287, 50, -230 hp=20 status=계단 파는 중 (14/117)
+t=2000 pos=-287, 50, -230 hp=20 status=계단 파는 중 (14/117)
+t=2040 pos=-287, 50, -230 hp=20 status=동굴 쪽을 먼저 막는 중
+t=2080 pos=-288, 49, -230 hp=20 status=계단 파는 중 (15/117)
+t=2120 pos=-288, 49, -230 hp=20 status=동굴 쪽을 먼저 막는 중
+t=2160 pos=-289, 48, -230 hp=20 status=계단 파는 중 (16/117)
+t=2200 pos=-289, 48, -230 hp=20 status=동굴 쪽을 먼저 막는 중
+t=2240 pos=-290, 48, -230 hp=20 status=동굴 쪽을 먼저 막는 중
+t=2280 pos=-290, 47, -230 hp=20 status=계단 파는 중 (17/117)
+t=2320 pos=-290, 47, -230 hp=20 status=계단 파는 중 (17/117)
+t=2360 pos=-291, 46, -230 hp=20 status=계단 파는 중 (18/117)
+t=2400 pos=-291, 46, -230 hp=20 status=계단 파는 중 (18/117)
+t=2440 pos=-292, 45, -230 hp=20 status=계단 파는 중 (19/117)
+t=2480 pos=-292, 45, -230 hp=20 status=동굴 쪽을 먼저 막는 중
+t=2520 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=2560 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=2600 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=2640 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=2680 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=2720 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=2760 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=2800 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=2840 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=2880 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=2920 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=2960 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=3000 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=3040 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+t=3080 pos=-293, 44, -230 hp=20 status=광석 캐는 중
+    left behind: minecraft:raw_copper x6 at -295, 46, -230, player at -293, 44, -230
+    left behind: minecraft:raw_copper x2 at -295, 46, -230, player at -293, 44, -230
+t=3120 pos=-293, 44, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3160 pos=-293, 44, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3200 pos=-295, 40, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3240 pos=-295, 41, -230 hp=20 status=떨어진 아이템 줍는 중
+    left behind: minecraft:raw_copper x8 at -296, 44, -230, player at -295, 41, -230
+t=3280 pos=-295, 40, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3320 pos=-295, 40, -230 hp=20 status=떨어진 아이템 줍는 중
+    left behind: minecraft:coal x4 at -296, 44, -230, player at -295, 40, -230
+t=3360 pos=-295, 40, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3400 pos=-295, 41, -230 hp=20 status=떨어진 아이템 줍는 중
+    left behind: minecraft:coal x6 at -297, 44, -230, player at -295, 40, -230
+t=3440 pos=-295, 41, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3480 pos=-295, 40, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3520 pos=-295, 41, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3560 pos=-295, 41, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3600 pos=-295, 40, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3640 pos=-293, 40, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3680 pos=-293, 41, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3720 pos=-293, 40, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3760 pos=-293, 41, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3800 pos=-293, 40, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3840 pos=-293, 41, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3880 pos=-293, 40, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3920 pos=-293, 40, -230 hp=20 status=떨어진 아이템 줍는 중
+t=3960 pos=-293, 41, -230 hp=20 status=떨어진 아이템 줍는 중
+t=4000 pos=-293, 40, -230 hp=20 status=꺼짐
+stopped after 4000 ticks (200 s): 채광을 멈췄어요 / 길이 막혀서 움직일 수 없어요
+timing: 40 ticks took 2018 ms on average (game speed 99%), slowest 2921 ms, server tick 2.5 ms
+path: walks=1 arrived=1 gaveUp=0 {} plans=1 notFound=0 gaveUpGoals=[] waitTicks=1 walkTicks=3 slowestPlan=18ms
+walk: 0 blocks in 0 s = 0.00 blocks/s, sprinting 0%, sprint-jumps 0
+outside the dug tunnels: 20 s, walking back after Defense: 0 s
+defense: flees=0 dodges=0 creeperEscapes=0 fights=0 kills=0 hitsTaken=1 lowestHealth=19.0 unreachableTicks=0 fightsGivenUp=0 giveUp=null night=false
+lowest health 20.0
+DROPS: 63 ore items seen, 18 lost (28.6%), 8 picked up only after more than 15 s (counted as left behind by the old check)
+  lost 18: lying free / appeared while: 광석 캐는 중
+  LOST raw_copper x8:
+      t2830 appeared at -296, 46, -230 | player -293, 44, -230 | 광석 캐는 중
+      t2840 moved -296, 46, -230 -> -296, 45, -230 | 광석 캐는 중
+      t2885 moved -296, 45, -230 -> -296, 44, -230 | 광석 캐는 중
+  LOST coal x4:
+      t2880 appeared at -296, 44, -230 | player -293, 44, -230 | 광석 캐는 중
+  LOST coal x6:
+      t2960 appeared at -297, 45, -230 | player -293, 44, -230 | 광석 캐는 중
+      t3010 moved -297, 45, -230 -> -297, 44, -230 | 광석 캐는 중
+(old check, drops lying 15 s or more, many picked up later: 5)
+blocks mined=86 lava/water plugged=1 chest trips=1
+  ore minecraft:copper_ore: 12
+  ore minecraft:coal_ore: 10
+job: stairs 19, main step 0, ores 22
+blocks around -293, 40, -230 (rows: z-1, z, z+1; each row x-3..x+3; levels y-3..y+2):
+  y42: cobb : : : : : cobb | cobb : : : : : cobb | cobb : : : : : cobb | 
+  y41: cobb : : : : : cobb | cobb : : : : : cobb | cobb : : : : : cobb | 
+  y40: cobb : : spaw : : cobb | cobb : : : : : cobb | cobb : : : : : cobb | 
+  y39: moss moss cobb moss moss moss moss | moss cobb moss moss moss moss cobb | moss moss moss moss cobb moss moss | 
+  y38: ande ande gran gran gran gran gran | ande ande gran gran gran gran gran | ande ande gran gran gran gran gran | 
+  y37: . . . . . gran gran | ston ston gran copp gran gran gran | ston ston copp copp gran gran gran | 
+chest: 
+items left lying around the job: 3 — minecraft:raw_copper x8 at -296, 44, -230; minecraft:coal x4 at -296, 44, -230; minecraft:coal x6 at -297, 44, -230; 
+inventory: minecraft:diamond_pickaxe x1, minecraft:diamond_pickaxe x1, minecraft:torch x59, minecraft:torch x64, minecraft:cobblestone x52, minecraft:cobblestone x64, minecraft:sand x20, minecraft:sandstone x6, minecraft:bread x32, minecraft:diorite x1, minecraft:raw_copper x31, 

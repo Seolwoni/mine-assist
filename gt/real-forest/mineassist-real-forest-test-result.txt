@@ -1,0 +1,246 @@
+RESULT: PASS
+
+start in ResourceKey[minecraft:worldgen/biome / minecraft:forest] at -268, 72, 364
+target y 42, main 16, branches 5 every 3
+t=40 pos=-268, 72, 364 hp=20 status=계단 파는 중 (1/30)
+t=80 pos=-268, 72, 364 hp=20 status=계단 파는 중 (1/30)
+t=120 pos=-268, 72, 364 hp=20 status=동굴 벽 쌓는 중
+t=160 pos=-268, 71, 365 hp=20 status=계단 파는 중 (2/30)
+t=200 pos=-268, 71, 365 hp=20 status=계단 파는 중 (2/30)
+t=240 pos=-268, 71, 365 hp=20 status=계단 파는 중 (2/30)
+t=280 pos=-268, 70, 366 hp=20 status=계단 파는 중 (2/30)
+t=320 pos=-268, 70, 366 hp=20 status=계단 파는 중 (3/30)
+t=360 pos=-268, 70, 366 hp=20 status=계단 파는 중 (3/30)
+t=400 pos=-268, 70, 366 hp=20 status=동굴 벽 쌓는 중
+t=440 pos=-268, 69, 367 hp=20 status=계단 파는 중 (4/30)
+t=480 pos=-268, 69, 367 hp=20 status=계단 파는 중 (4/30)
+t=520 pos=-268, 69, 367 hp=20 status=동굴 벽 쌓는 중
+t=560 pos=-268, 68, 368 hp=20 status=계단 파는 중 (5/30)
+t=600 pos=-268, 68, 368 hp=20 status=계단 파는 중 (5/30)
+t=640 pos=-268, 68, 369 hp=20 status=계단 파는 중 (5/30)
+t=680 pos=-268, 67, 369 hp=20 status=계단 파는 중 (6/30)
+t=720 pos=-268, 67, 369 hp=20 status=계단 파는 중 (6/30)
+t=760 pos=-268, 66, 370 hp=20 status=계단 파는 중 (7/30)
+t=800 pos=-268, 66, 370 hp=20 status=계단 파는 중 (7/30)
+t=840 pos=-268, 65, 371 hp=20 status=계단 파는 중 (7/30)
+t=880 pos=-268, 65, 371 hp=20 status=계단 파는 중 (8/30)
+t=920 pos=-268, 64, 372 hp=20 status=계단 파는 중 (8/30)
+t=960 pos=-268, 64, 372 hp=20 status=계단 파는 중 (9/30)
+t=1000 pos=-268, 63, 373 hp=20 status=계단 파는 중 (10/30)
+t=1040 pos=-268, 63, 373 hp=20 status=계단 파는 중 (10/30)
+t=1080 pos=-268, 62, 374 hp=20 status=계단 파는 중 (10/30)
+t=1120 pos=-268, 62, 374 hp=20 status=계단 파는 중 (11/30)
+t=1160 pos=-268, 61, 375 hp=20 status=계단 파는 중 (12/30)
+t=1200 pos=-268, 61, 375 hp=20 status=계단 파는 중 (12/30)
+t=1240 pos=-268, 60, 376 hp=20 status=계단 파는 중 (13/30)
+t=1280 pos=-268, 60, 376 hp=20 status=계단 파는 중 (13/30)
+t=1320 pos=-268, 59, 377 hp=20 status=계단 파는 중 (13/30)
+t=1360 pos=-268, 59, 377 hp=20 status=계단 파는 중 (14/30)
+t=1400 pos=-268, 58, 378 hp=20 status=계단 파는 중 (14/30)
+t=1440 pos=-268, 58, 378 hp=20 status=계단 파는 중 (15/30)
+t=1480 pos=-268, 57, 379 hp=20 status=계단 파는 중 (16/30)
+t=1520 pos=-268, 57, 379 hp=20 status=계단 파는 중 (16/30)
+t=1560 pos=-268, 56, 380 hp=20 status=계단 파는 중 (17/30)
+t=1600 pos=-268, 56, 380 hp=20 status=계단 파는 중 (17/30)
+t=1640 pos=-268, 55, 381 hp=20 status=계단 파는 중 (17/30)
+t=1680 pos=-268, 55, 381 hp=20 status=계단 파는 중 (18/30)
+t=1720 pos=-268, 54, 382 hp=20 status=계단 파는 중 (19/30)
+t=1760 pos=-268, 54, 382 hp=20 status=계단 파는 중 (19/30)
+t=1800 pos=-268, 53, 383 hp=20 status=계단 파는 중 (20/30)
+t=1840 pos=-268, 53, 383 hp=20 status=계단 파는 중 (20/30)
+t=1880 pos=-268, 52, 384 hp=20 status=계단 파는 중 (21/30)
+t=1920 pos=-268, 52, 384 hp=20 status=계단 파는 중 (21/30)
+t=1960 pos=-268, 51, 385 hp=20 status=계단 파는 중 (22/30)
+t=2000 pos=-268, 51, 385 hp=20 status=계단 파는 중 (22/30)
+t=2040 pos=-268, 50, 386 hp=20 status=계단 파는 중 (23/30)
+t=2080 pos=-268, 50, 386 hp=20 status=계단 파는 중 (23/30)
+t=2120 pos=-268, 49, 387 hp=20 status=계단 파는 중 (24/30)
+t=2160 pos=-268, 49, 387 hp=20 status=계단 파는 중 (24/30)
+t=2200 pos=-268, 48, 388 hp=20 status=계단 파는 중 (25/30)
+t=2240 pos=-268, 48, 388 hp=20 status=계단 파는 중 (25/30)
+t=2280 pos=-268, 47, 389 hp=20 status=계단 파는 중 (25/30)
+t=2320 pos=-268, 47, 389 hp=20 status=계단 파는 중 (26/30)
+t=2360 pos=-268, 46, 390 hp=20 status=계단 파는 중 (26/30)
+t=2400 pos=-268, 46, 390 hp=20 status=계단 파는 중 (27/30)
+t=2440 pos=-268, 45, 391 hp=20 status=동굴 위에 다리 놓는 중
+t=2480 pos=-268, 45, 391 hp=20 status=동굴 위에 다리 놓는 중
+t=2520 pos=-268, 45, 391 hp=20 status=동굴 위에 다리 놓는 중
+t=2560 pos=-268, 44, 392 hp=20 status=동굴 위에 다리 놓는 중
+t=2600 pos=-268, 44, 392 hp=20 status=동굴 위에 다리 놓는 중
+t=2640 pos=-268, 44, 392 hp=20 status=동굴 위에 다리 놓는 중
+t=2680 pos=-268, 44, 392 hp=20 status=동굴 위에 다리 놓는 중
+t=2720 pos=-268, 44, 392 hp=20 status=동굴 위에 다리 놓는 중
+t=2760 pos=-268, 43, 393 hp=20 status=동굴 벽 쌓는 중
+t=2800 pos=-268, 43, 393 hp=20 status=동굴 벽 쌓는 중
+t=2840 pos=-268, 43, 393 hp=20 status=동굴 벽 쌓는 중
+t=2880 pos=-268, 42, 394 hp=20 status=동굴 쪽을 먼저 막는 중
+t=2920 pos=-268, 42, 394 hp=20 status=동굴 쪽을 먼저 막는 중
+t=2960 pos=-268, 42, 394 hp=20 status=동굴 벽 쌓는 중
+t=3000 pos=-268, 42, 395 hp=20 status=동굴 벽 쌓는 중
+t=3040 pos=-268, 42, 395 hp=20 status=가운데 굴 파는 중 (2/16)
+t=3080 pos=-268, 42, 395 hp=20 status=동굴 쪽을 먼저 막는 중
+t=3120 pos=-268, 42, 395 hp=20 status=동굴 쪽을 먼저 막는 중
+t=3160 pos=-268, 42, 396 hp=20 status=가운데 굴 파는 중 (3/16)
+t=3200 pos=-268, 42, 396 hp=20 status=가운데 굴 파는 중 (3/16)
+t=3240 pos=-268, 42, 397 hp=20 status=가운데 굴 파는 중 (3/16)
+t=3280 pos=-268, 42, 397 hp=20 status=왼쪽 가지굴 1번 (1/5)
+t=3320 pos=-267, 42, 397 hp=20 status=왼쪽 가지굴 1번 (2/5)
+t=3360 pos=-266, 42, 397 hp=20 status=왼쪽 가지굴 1번 (3/5)
+t=3400 pos=-265, 42, 397 hp=20 status=왼쪽 가지굴 1번 (4/5)
+t=3440 pos=-264, 42, 397 hp=20 status=왼쪽 가지굴 1번 (4/5)
+t=3480 pos=-264, 42, 397 hp=20 status=왼쪽 가지굴 1번 (5/5)
+t=3520 pos=-263, 42, 397 hp=20 status=왼쪽 가지굴에서 돌아오는 중
+t=3560 pos=-268, 42, 397 hp=20 status=필요 없는 블록 버리는 중
+t=3600 pos=-269, 42, 397 hp=20 status=필요 없는 블록 버리는 중
+t=3640 pos=-270, 42, 397 hp=20 status=오른쪽 가지굴 1번 (1/5)
+t=3680 pos=-270, 42, 397 hp=20 status=오른쪽 가지굴 1번 (2/5)
+t=3720 pos=-271, 42, 397 hp=20 status=오른쪽 가지굴 1번 (2/5)
+t=3760 pos=-271, 42, 397 hp=20 status=오른쪽 가지굴 1번 (3/5)
+t=3800 pos=-272, 42, 397 hp=20 status=오른쪽 가지굴 1번 (3/5)
+t=3840 pos=-272, 42, 397 hp=20 status=오른쪽 가지굴 1번 (4/5)
+t=3880 pos=-273, 42, 397 hp=20 status=오른쪽 가지굴 1번 (4/5)
+t=3920 pos=-273, 42, 397 hp=20 status=동굴 쪽을 먼저 막는 중
+t=3960 pos=-273, 42, 397 hp=20 status=동굴 쪽을 먼저 막는 중
+t=4000 pos=-274, 42, 397 hp=20 status=오른쪽 가지굴에서 돌아오는 중
+t=4040 pos=-268, 42, 397 hp=20 status=가운데 굴 파는 중 (4/16)
+    left behind: minecraft:dirt x12 at -264, 42, 397 inside Block{minecraft:torch}, player at -268, 42, 397
+t=4080 pos=-268, 42, 397 hp=20 status=동굴 쪽을 먼저 막는 중
+t=4120 pos=-268, 42, 397 hp=20 status=동굴 쪽을 먼저 막는 중
+t=4160 pos=-268, 42, 398 hp=20 status=동굴 쪽을 먼저 막는 중
+t=4200 pos=-268, 42, 398 hp=20 status=가운데 굴 파는 중 (5/16)
+t=4240 pos=-268, 42, 398 hp=20 status=가운데 굴 파는 중 (5/16)
+t=4280 pos=-268, 42, 399 hp=20 status=가운데 굴 파는 중 (6/16)
+t=4320 pos=-268, 42, 399 hp=20 status=가운데 굴 파는 중 (6/16)
+t=4360 pos=-268, 42, 400 hp=20 status=가운데 굴 파는 중 (6/16)
+t=4400 pos=-268, 42, 400 hp=20 status=왼쪽 가지굴 2번 (1/5)
+t=4440 pos=-267, 42, 400 hp=20 status=왼쪽 가지굴 2번 (1/5)
+t=4480 pos=-267, 42, 400 hp=20 status=왼쪽 가지굴 2번 (2/5)
+t=4520 pos=-266, 42, 400 hp=20 status=왼쪽 가지굴 2번 (3/5)
+t=4560 pos=-265, 42, 400 hp=20 status=왼쪽 가지굴 2번 (4/5)
+t=4600 pos=-264, 42, 400 hp=20 status=왼쪽 가지굴 2번 (5/5)
+t=4640 pos=-263, 42, 400 hp=20 status=왼쪽 가지굴 2번 (5/5)
+t=4680 pos=-268, 42, 400 hp=20 status=왼쪽 가지굴에서 돌아오는 중
+t=4720 pos=-269, 42, 400 hp=20 status=오른쪽 가지굴 2번 (1/5)
+t=4760 pos=-270, 42, 400 hp=20 status=오른쪽 가지굴 2번 (2/5)
+t=4800 pos=-271, 42, 400 hp=20 status=오른쪽 가지굴 2번 (2/5)
+t=4840 pos=-272, 42, 400 hp=20 status=오른쪽 가지굴 2번 (3/5)
+t=4880 pos=-272, 42, 400 hp=20 status=오른쪽 가지굴 2번 (3/5)
+t=4920 pos=-273, 42, 400 hp=20 status=오른쪽 가지굴 2번 (4/5)
+t=4960 pos=-273, 42, 400 hp=20 status=오른쪽 가지굴 2번 (4/5)
+t=5000 pos=-273, 42, 400 hp=20 status=오른쪽 가지굴 2번 (5/5)
+t=5040 pos=-274, 42, 400 hp=20 status=오른쪽 가지굴 2번 (5/5)
+t=5080 pos=-272, 42, 400 hp=20 status=오른쪽 가지굴에서 돌아오는 중
+t=5120 pos=-268, 42, 400 hp=20 status=가운데 굴 파는 중 (7/16)
+t=5160 pos=-268, 42, 400 hp=20 status=가운데 굴 파는 중 (7/16)
+t=5200 pos=-268, 42, 401 hp=20 status=가운데 굴 파는 중 (8/16)
+t=5240 pos=-268, 42, 401 hp=20 status=가운데 굴 파는 중 (8/16)
+t=5280 pos=-268, 42, 402 hp=20 status=가운데 굴 파는 중 (8/16)
+t=5320 pos=-268, 42, 402 hp=20 status=가운데 굴 파는 중 (9/16)
+t=5360 pos=-268, 42, 402 hp=20 status=가운데 굴 파는 중 (9/16)
+t=5400 pos=-268, 42, 403 hp=20 status=광석 캐는 중
+t=5440 pos=-268, 42, 403 hp=20 status=광석 캐는 중
+t=5480 pos=-268, 42, 403 hp=20 status=광석 캐는 중
+t=5520 pos=-268, 42, 403 hp=20 status=광석 캐는 중
+t=5560 pos=-268, 42, 403 hp=20 status=광석 캐는 중
+t=5600 pos=-268, 42, 403 hp=20 status=광석 캐는 중
+t=5640 pos=-268, 42, 403 hp=20 status=떨어진 아이템 줍는 중
+t=5680 pos=-268, 43, 405 hp=20 status=떨어진 아이템 줍는 중
+t=5720 pos=-268, 42, 403 hp=20 status=떨어진 아이템 줍는 중
+t=5760 pos=-268, 42, 403 hp=20 status=왼쪽 가지굴 3번 (1/5)
+t=5800 pos=-267, 42, 403 hp=20 status=왼쪽 가지굴 3번 (2/5)
+t=5840 pos=-266, 42, 403 hp=20 status=왼쪽 가지굴 3번 (2/5)
+t=5880 pos=-266, 42, 403 hp=20 status=왼쪽 가지굴 3번 (3/5)
+t=5920 pos=-265, 42, 403 hp=20 status=왼쪽 가지굴 3번 (4/5)
+t=5960 pos=-264, 42, 403 hp=20 status=왼쪽 가지굴 3번 (4/5)
+t=6000 pos=-264, 42, 403 hp=20 status=왼쪽 가지굴 3번 (5/5)
+t=6040 pos=-263, 42, 403 hp=20 status=왼쪽 가지굴에서 돌아오는 중
+t=6080 pos=-269, 42, 403 hp=20 status=오른쪽 가지굴 3번 (1/5)
+t=6120 pos=-269, 42, 403 hp=20 status=오른쪽 가지굴 3번 (1/5)
+t=6160 pos=-270, 42, 403 hp=20 status=오른쪽 가지굴 3번 (2/5)
+t=6200 pos=-271, 42, 403 hp=20 status=동굴 쪽을 먼저 막는 중
+t=6240 pos=-271, 42, 403 hp=20 status=동굴 쪽을 먼저 막는 중
+t=6280 pos=-273, 42, 403 hp=20 status=오른쪽 가지굴 3번 (4/5)
+t=6320 pos=-273, 42, 403 hp=20 status=오른쪽 가지굴 3번 (5/5)
+t=6360 pos=-274, 42, 403 hp=20 status=오른쪽 가지굴 3번 (5/5)
+t=6400 pos=-274, 42, 403 hp=20 status=오른쪽 가지굴 3번 (5/5)
+t=6440 pos=-269, 42, 403 hp=20 status=오른쪽 가지굴에서 돌아오는 중
+t=6480 pos=-268, 42, 403 hp=20 status=가운데 굴 파는 중 (10/16)
+t=6520 pos=-268, 42, 404 hp=20 status=가운데 굴 파는 중 (10/16)
+t=6560 pos=-268, 42, 404 hp=20 status=가운데 굴 파는 중 (11/16)
+t=6600 pos=-268, 42, 405 hp=20 status=가운데 굴 파는 중 (12/16)
+t=6640 pos=-268, 42, 405 hp=20 status=가운데 굴 파는 중 (12/16)
+t=6680 pos=-268, 42, 406 hp=20 status=가운데 굴 파는 중 (12/16)
+t=6720 pos=-268, 42, 406 hp=20 status=왼쪽 가지굴 4번 (1/5)
+t=6760 pos=-267, 42, 406 hp=20 status=왼쪽 가지굴 4번 (1/5)
+t=6800 pos=-266, 42, 406 hp=20 status=왼쪽 가지굴 4번 (2/5)
+t=6840 pos=-266, 42, 406 hp=20 status=왼쪽 가지굴 4번 (3/5)
+t=6880 pos=-265, 42, 406 hp=20 status=왼쪽 가지굴 4번 (4/5)
+t=6920 pos=-264, 42, 406 hp=20 status=왼쪽 가지굴 4번 (5/5)
+t=6960 pos=-263, 42, 406 hp=20 status=왼쪽 가지굴에서 돌아오는 중
+t=7000 pos=-268, 42, 406 hp=20 status=왼쪽 가지굴에서 돌아오는 중
+t=7040 pos=-269, 42, 406 hp=20 status=오른쪽 가지굴 4번 (1/5)
+t=7080 pos=-270, 42, 406 hp=20 status=오른쪽 가지굴 4번 (2/5)
+t=7120 pos=-271, 42, 406 hp=20 status=오른쪽 가지굴 4번 (3/5)
+t=7160 pos=-272, 42, 406 hp=20 status=동굴 쪽을 먼저 막는 중
+t=7200 pos=-272, 42, 406 hp=20 status=동굴 쪽을 먼저 막는 중
+t=7240 pos=-273, 42, 406 hp=20 status=동굴 쪽을 먼저 막는 중
+t=7280 pos=-274, 42, 406 hp=20 status=오른쪽 가지굴 4번 (5/5)
+t=7320 pos=-274, 42, 406 hp=20 status=오른쪽 가지굴 4번 (5/5)
+t=7360 pos=-268, 42, 406 hp=20 status=오른쪽 가지굴에서 돌아오는 중
+t=7400 pos=-268, 42, 406 hp=20 status=가운데 굴 파는 중 (13/16)
+t=7440 pos=-268, 42, 406 hp=20 status=가운데 굴 파는 중 (13/16)
+t=7480 pos=-268, 42, 407 hp=20 status=가운데 굴 파는 중 (14/16)
+t=7520 pos=-268, 42, 407 hp=20 status=가운데 굴 파는 중 (14/16)
+t=7560 pos=-268, 42, 408 hp=20 status=가운데 굴 파는 중 (15/16)
+t=7600 pos=-268, 42, 408 hp=20 status=가운데 굴 파는 중 (15/16)
+t=7640 pos=-268, 42, 409 hp=20 status=가운데 굴 파는 중 (15/16)
+t=7680 pos=-268, 42, 409 hp=20 status=왼쪽 가지굴 5번 (1/5)
+t=7720 pos=-267, 42, 409 hp=20 status=왼쪽 가지굴 5번 (2/5)
+t=7760 pos=-266, 42, 409 hp=20 status=왼쪽 가지굴 5번 (3/5)
+t=7800 pos=-266, 42, 409 hp=20 status=왼쪽 가지굴 5번 (3/5)
+t=7840 pos=-265, 42, 409 hp=20 status=왼쪽 가지굴 5번 (4/5)
+t=7880 pos=-265, 42, 409 hp=20 status=왼쪽 가지굴 5번 (4/5)
+t=7920 pos=-264, 42, 409 hp=20 status=왼쪽 가지굴 5번 (4/5)
+t=7960 pos=-264, 42, 409 hp=20 status=왼쪽 가지굴 5번 (5/5)
+t=8000 pos=-263, 42, 409 hp=20 status=왼쪽 가지굴에서 돌아오는 중
+t=8040 pos=-268, 42, 409 hp=20 status=필요 없는 블록 버리는 중
+t=8080 pos=-269, 42, 409 hp=20 status=오른쪽 가지굴 5번 (1/5)
+t=8120 pos=-269, 42, 409 hp=20 status=오른쪽 가지굴 5번 (1/5)
+t=8160 pos=-270, 42, 409 hp=20 status=오른쪽 가지굴 5번 (2/5)
+t=8200 pos=-271, 42, 409 hp=20 status=오른쪽 가지굴 5번 (3/5)
+t=8240 pos=-272, 42, 409 hp=20 status=오른쪽 가지굴 5번 (4/5)
+t=8280 pos=-273, 42, 409 hp=20 status=동굴 쪽을 먼저 막는 중
+t=8320 pos=-273, 42, 409 hp=20 status=동굴 쪽을 먼저 막는 중
+t=8360 pos=-274, 42, 409 hp=20 status=동굴 쪽을 먼저 막는 중
+t=8400 pos=-269, 42, 409 hp=20 status=오른쪽 가지굴에서 돌아오는 중
+    left behind: minecraft:gravel x5 at -265, 42, 409 inside Block{minecraft:torch}, player at -269, 42, 409
+t=8440 pos=-268, 42, 409 hp=20 status=가운데 굴 파는 중 (16/16)
+t=8480 pos=-268, 42, 409 hp=20 status=가운데 굴 파는 중 (16/16)
+t=8520 pos=-268, 42, 410 hp=20 status=가운데 굴 파는 중 (16/16)
+t=8560 pos=-268, 42, 404 hp=20 status=시작 지점으로 돌아가는 중
+t=8600 pos=-268, 43, 394 hp=20 status=시작 지점으로 돌아가는 중
+t=8640 pos=-268, 46, 390 hp=20 status=시작 지점으로 돌아가는 중
+t=8680 pos=-268, 50, 386 hp=20 status=시작 지점으로 돌아가는 중
+t=8720 pos=-268, 54, 383 hp=20 status=시작 지점으로 돌아가는 중
+t=8760 pos=-268, 57, 379 hp=20 status=시작 지점으로 돌아가는 중
+t=8800 pos=-268, 61, 376 hp=20 status=시작 지점으로 돌아가는 중
+t=8840 pos=-268, 64, 372 hp=20 status=시작 지점으로 돌아가는 중
+t=8880 pos=-268, 68, 368 hp=20 status=시작 지점으로 돌아가는 중
+t=8920 pos=-268, 72, 365 hp=20 status=시작 지점으로 돌아가는 중
+t=8960 pos=-268, 72, 364 hp=20 status=상자에 보관하는 중
+t=9000 pos=-268, 72, 364 hp=20 status=꺼짐
+stopped after 9000 ticks (450 s): 채광 완료! / 정리까지 끝내고 시작 지점으로 돌아왔어요
+timing: 40 ticks took 2001 ms on average (game speed 100%), slowest 2097 ms, server tick 2.0 ms
+path: walks=2 arrived=2 gaveUp=0 {} plans=2 notFound=0 gaveUpGoals=[] waitTicks=2 walkTicks=8 slowestPlan=14ms
+walk: 102 blocks in 34 s = 3.01 blocks/s, sprinting 37%, sprint-jumps 0
+outside the dug tunnels: 0 s, walking back after Defense: 0 s
+defense: flees=0 dodges=0 creeperEscapes=0 fights=0 kills=0 hitsTaken=0 lowestHealth=20.0 unreachableTicks=0 fightsGivenUp=0 giveUp=null night=false
+lowest health 20.0
+DROPS: 31 ore items seen, 0 lost (0.0%), 0 picked up only after more than 15 s (counted as left behind by the old check)
+(old check, drops lying 15 s or more, many picked up later: 0)
+blocks mined=223 lava/water plugged=0 chest trips=2
+  ore minecraft:copper_ore: 8
+job: stairs 30, main step 16, ores 8
+chest: minecraft:andesite x41, minecraft:granite x7, minecraft:diorite x4, minecraft:flint x1, minecraft:raw_copper x28, minecraft:leaf_litter x8, 
+items left lying around the job: 5 — minecraft:egg x1 at -299, 62, 417 (inside Block{minecraft:water}); minecraft:egg x1 at -294, 66, 418 (inside Block{minecraft:leaf_litter}); minecraft:gravel x2 at -268, 72, 362; minecraft:dirt x12 at -264, 42, 397 (inside Block{minecraft:torch}); minecraft:gravel x5 at -265, 42, 409 (inside Block{minecraft:torch}); 
+inventory: minecraft:diamond_pickaxe x1, minecraft:diamond_pickaxe x1, minecraft:torch x47, minecraft:cobblestone x56, minecraft:cobblestone x64, minecraft:cobblestone x51, minecraft:bread x32, 
