@@ -9,6 +9,6 @@ public final class Compat {
 	}
 
 	public static void swing(LivingEntity p, InteractionHand hand) {
-		p.swing(hand, p.getItemInHand(hand).getSwingAnimation(), true);
+		p.swing(hand, p.getItemInHand(hand).getInteractAnimation(), true);
 	}
 }
