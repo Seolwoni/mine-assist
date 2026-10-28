@@ -1,7 +1,6 @@
 name: build
 on:
   push:
-    branches-ignore: ['mc-*']
   workflow_dispatch:
 
 permissions:
@@ -106,19 +105,19 @@ jobs:
           echo "overall=$overall" >> $GITHUB_OUTPUT
           git config user.name "ci"
           git config user.email "ci@users.noreply.github.com"
-          git checkout --orphan ci-log
+          git checkout --orphan ci-log-26.3
           git rm -rf --cached . > /dev/null
           git clean -fdq -e arts
           cp -r /tmp/log/* .
           git add -A -- . ':!arts'
           git commit -qm "build log ${{ github.run_number }}"
-          git push -f origin ci-log
+          git push -f origin ci-log-26.3
       - name: release notes
         run: |
           git checkout -q ${{ github.sha }} -- CHANGELOG.md gradle.properties
           VER=$(grep '^version=' gradle.properties | cut -d= -f2)
           awk -v v="## $VER" '$0 ~ "^## " { if (p) exit; if (index($0, v) == 1) p = 1 } p' CHANGELOG.md > release-notes.md
-          printf '\n---\nFabric 26.2용. 아래 jar 파일을 받아 mods 폴더에 넣으세요. (Fabric API 필요, Mod Menu 권장)\n' >> release-notes.md
+          printf '\n---\nFabric 26.3용. 아래 jar 파일을 받아 mods 폴더에 넣으세요. (Fabric API 필요, Mod Menu 권장)\n' >> release-notes.md
       - uses: actions/upload-artifact@v4
         with:
           name: mineassist-jar

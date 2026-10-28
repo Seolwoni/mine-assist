@@ -2,8 +2,6 @@ name: port
 # Moving to another Minecraft version (branch mc-<version>): find the matching Fabric API, build, and leave the
 # compile errors (and the game's own class signatures asked for in .github/sigs.txt) on the orphan branch port-log.
 on:
-  push:
-    branches: ['mc-*']
   workflow_dispatch:
 
 permissions:
