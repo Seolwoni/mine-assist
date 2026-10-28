@@ -1,0 +1,64 @@
+name: port
+# Moving to another Minecraft version (branch mc-<version>): find the matching Fabric API, build, and leave the
+# compile errors (and the game's own class signatures asked for in .github/sigs.txt) on the orphan branch port-log.
+on:
+  push:
+    branches: ['mc-*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  port:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'microsoft'
+      - name: versions
+        run: |
+          WANT=${GITHUB_REF_NAME#mc-}
+          mkdir -p out
+          curl -s https://meta.fabricmc.net/v2/versions/game > out/games.json || true
+          MC=$(python3 -c "import json,sys; w=sys.argv[1]; v=[g['version'] for g in json.load(open('out/games.json')) if g['stable'] and (g['version']==w or g['version'].startswith(w+'.'))]; print(v[0] if v else w)" "$WANT")
+          LOADER=$(curl -s https://meta.fabricmc.net/v2/versions/loader | python3 -c "import json,sys; print([l['version'] for l in json.load(sys.stdin) if l['stable']][0])")
+          curl -s https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml > out/fapi.xml
+          FAPI=$(grep -o "<version>[^<]*+$MC</version>" out/fapi.xml | tail -1 | sed 's/<[^>]*>//g')
+          [ -z "$FAPI" ] && FAPI=$(grep -o "<version>[^<]*+$WANT[^<]*</version>" out/fapi.xml | tail -1 | sed 's/<[^>]*>//g')
+          LOOM=$(curl -s https://maven.fabricmc.net/net/fabricmc/fabric-loom/maven-metadata.xml | grep -o "<version>[^<]*</version>" | sed 's/<[^>]*>//g' | grep -v -i "beta\|alpha\|rc\|pre" | tail -1)
+          echo "minecraft=$MC loader=$LOADER fabric_api=$FAPI loom_latest=$LOOM" | tee out/versions.txt
+          sed -i "s/^minecraft_version=.*/minecraft_version=$MC/; s/^loader_version=.*/loader_version=$LOADER/; s/^fabric_api_version=.*/fabric_api_version=$FAPI/" gradle.properties
+          MINOR=$(echo "$MC" | cut -d. -f1-2)
+          for f in $(find . -name fabric.mod.json -path "*resources*"); do sed -i "s/\"minecraft\": \"~[0-9.]*\"/\"minecraft\": \"~$MINOR\"/" $f; done
+          cat gradle.properties >> out/versions.txt
+      - run: chmod +x ./gradlew
+      - name: build
+        id: build
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          ./gradlew build --stacktrace 2>&1 | tee build.log
+      - name: collect
+        if: always()
+        run: |
+          echo "${{ steps.build.outcome }}" > out/build-outcome.txt
+          [ -f build.log ] && grep -c "error:" build.log > out/error-count.txt || true
+          [ -f build.log ] && grep -A6 "error:" build.log | head -2000 > out/compile.txt || true
+          [ -f build.log ] && grep -E "What went wrong|^> |Caused by" build.log | head -100 > out/wrong.txt || true
+          [ -f build.log ] && tail -200 build.log > out/tail.txt || true
+          JAR=$(find ~/.gradle .gradle -name "minecraft-merged*.jar" 2>/dev/null | head -1)
+          [ -z "$JAR" ] && JAR=$(find ~/.gradle .gradle -name "minecraft-*.jar" -size +5M 2>/dev/null | grep -v sources | head -1)
+          echo "jar: $JAR" > out/sigs.txt
+          for c in $(cat .github/sigs.txt 2>/dev/null); do javap -p -cp "$JAR" $c >> out/sigs.txt 2>&1 || true; done
+          mkdir -p out/jars; cp build/libs/*.jar out/jars/ 2>/dev/null || true
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          cp -r out /tmp/out
+          git checkout --orphan port-log
+          git rm -rf -q . > /dev/null 2>&1 || true
+          rm -rf ./* .gradle build 2>/dev/null || true
+          cp -r /tmp/out/* .
+          git add -A; git commit -q -m "port log $GITHUB_REF_NAME $GITHUB_SHA" || true
+          git push -f -q origin port-log
