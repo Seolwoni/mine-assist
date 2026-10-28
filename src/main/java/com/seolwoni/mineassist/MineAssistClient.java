@@ -39,7 +39,7 @@ public class MineAssistClient implements ClientModInitializer {
 		markChestKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
 				"key.mineassist.mark_chest", InputConstants.Type.KEYBOARD, com.mojang.blaze3d.platform.InputConstants.KEY_K, category));
 		returnKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-				"key.mineassist.return_home", InputConstants.Type.KEYBOARD, com.mojang.blaze3d.platform.InputConstants.KEY_UNKNOWN, category));
+				"key.mineassist.return_home", InputConstants.Type.KEYBOARD, com.mojang.blaze3d.platform.InputConstants.UNKNOWN.getValue(), category));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (markChestKey.consumeClick()) {
