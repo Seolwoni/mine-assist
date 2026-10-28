@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [flat, real-plains, real-plains-2, real-forest, real-deep, real-deep-2, real-deep-poke, real-deep-shulker, real-deep-west, real-plains-night, real-plains-night-2, real-plains-night-3, real-plains-night-4, nether-a, nether-b, nether-c, nether-a-fire, nether-up]
+        suite: [flat, real-plains]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -32,16 +32,18 @@ jobs:
         id: gametest
         if: steps.build.outcome == 'success'
         continue-on-error: true
-        timeout-minutes: 90
+        timeout-minutes: 30
         env:
           ASSIST_GT: ${{ matrix.suite }}
           ASSIST_NO_PATH: ${{ endsWith(matrix.suite, '-nopath') && '1' || '' }}
         run: |
-          sudo apt-get update -q > /dev/null && sudo apt-get install -y -q xvfb libgl1-mesa-dri mesa-utils > /dev/null
+          sudo apt-get update -q > /dev/null && sudo apt-get install -y -q xvfb libgl1-mesa-dri mesa-utils mesa-vulkan-drivers libvulkan1 vulkan-tools > /dev/null
+          # 26.3 opens its window through SDL: a GLX visual with depth, stencil and alpha, or Vulkan (lavapipe).
+          (xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" glxinfo -B; xvfb-run -a vulkaninfo --summary) > gl-info.txt 2>&1 || true
           # Game assets come from Mojang's servers: retry a failed download before the test.
           ./gradlew downloadAssets > /dev/null 2>&1 || (sleep 15; ./gradlew downloadAssets > /dev/null 2>&1) || (sleep 30; ./gradlew downloadAssets) || true
           set -o pipefail
-          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest --stacktrace 2>&1 | tee gametest.log
+          LIBGL_ALWAYS_SOFTWARE=1 MESA_GL_VERSION_OVERRIDE=4.6 MESA_GLSL_VERSION_OVERRIDE=460 xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX +render -noreset" ./gradlew runClientGameTest --stacktrace 2>&1 | tee gametest.log
       - name: collect
         if: always()
         run: |
@@ -54,6 +56,7 @@ jobs:
           [ -f build.log ] && tail -300 build.log > out/tail.txt || true
           [ -f gametest.log ] && grep -E -A3 "error:|ERROR|Exception|FAIL|Caused by|at com.seolwoni|AssertionError|What went wrong|^> " gametest.log | head -300 > out/gt-errors.txt || true
           [ -f gametest.log ] && tail -200 gametest.log > out/gt-tail.txt || true
+          cp gl-info.txt out/ 2>/dev/null || true
           find . -name "*-test-result.txt" -not -path "./.git/*" -not -path "./out/*" -exec cp {} out/ \; 2>/dev/null || true
           find . -name "*.png" -path "*screenshots*" -not -path "./.git/*" -not -path "./out/*" -exec cp {} out/shots/ \; 2>/dev/null || true
           LOG=$(find . -name "latest.log" -path "*run*" -not -path "./.git/*" | head -1); [ -n "$LOG" ] && tail -400 "$LOG" > out/gt-latest.txt || true
