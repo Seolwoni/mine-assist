@@ -1,0 +1,15 @@
+minecraft=26.3 loader=0.20.1 fabric_api=0.165.0+26.3 loom_latest=1.19.3
+org.gradle.jvmargs=-Xmx2G
+org.gradle.parallel=true
+org.gradle.configuration-cache=true
+
+# Fabric
+minecraft_version=26.3
+loader_version=0.20.1
+loom_version=1.18-SNAPSHOT
+fabric_api_version=0.165.0+26.3
+
+# Mod
+version=1.10.11
+group=com.seolwoni.mineassist
+archives_base_name=mineassist
