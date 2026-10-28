@@ -238,7 +238,7 @@ public final class Storage {
 				case 3 -> { // look and open
 					if (!Body.lookAt(p, aim, 3f) || delay-- > 0) return Miner.RUN;
 					mc.gameMode.useItemOn(p, InteractionHand.MAIN_HAND, new BlockHitResult(aim, face, pos(chest()), false));
-					p.swing(InteractionHand.MAIN_HAND);
+					com.seolwoni.assistcore.util.Compat.swing(p, InteractionHand.MAIN_HAND);
 					waitTicks = 40;
 					stage = 4;
 					return Miner.RUN;

@@ -268,7 +268,7 @@ public final class PortableStorage implements Action {
 					return RUN;
 				}
 				mc.gameMode.useItemOn(p, InteractionHand.MAIN_HAND, new BlockHitResult(aim, face, box.below(), false));
-				p.swing(InteractionHand.MAIN_HAND);
+				com.seolwoni.assistcore.util.Compat.swing(p, InteractionHand.MAIN_HAND);
 				delay = 30;
 				stage = 3;
 				return RUN;
@@ -305,7 +305,7 @@ public final class PortableStorage implements Action {
 				if (!Body.lookAt(p, aim, 3f)) return RUN;
 				if (p.getEyePosition().distanceTo(aim) > REACH + 0.5) return fail(mc, p, com.seolwoni.assistcore.i18n.Tr.t("보관함에 손이 닿지 않아요"));
 				mc.gameMode.useItemOn(p, InteractionHand.MAIN_HAND, new BlockHitResult(aim, face, box, false));
-				p.swing(InteractionHand.MAIN_HAND);
+				com.seolwoni.assistcore.util.Compat.swing(p, InteractionHand.MAIN_HAND);
 				delay = 40;
 				stage = 6;
 				return RUN;
@@ -401,7 +401,7 @@ public final class PortableStorage implements Action {
 				}
 				Body.lookAt(p, aim, 1.5f);
 				mc.gameMode.continueDestroyBlock(box, face);
-				p.swing(InteractionHand.MAIN_HAND);
+				com.seolwoni.assistcore.util.Compat.swing(p, InteractionHand.MAIN_HAND);
 				if (--delay <= 0) {
 					mc.gameMode.stopDestroyBlock();
 					LEFT.add(box);

@@ -399,7 +399,7 @@ public final class Defense {
 		var f = level.getBlockState(feet);
 		var h = level.getBlockState(feet.above());
 		var b = level.getBlockState(feet.below());
-		if (f.blocksMotion() || h.blocksMotion() || !f.getFluidState().isEmpty() || !h.getFluidState().isEmpty()) return false;
+		if (f.isSolid() || h.isSolid() || !f.getFluidState().isEmpty() || !h.getFluidState().isEmpty()) return false;
 		if (!b.isFaceSturdy(level, feet.below(), net.minecraft.core.Direction.UP)) return false;
 		return b.getFluidState().isEmpty() && !b.is(net.minecraft.world.level.block.Blocks.MAGMA_BLOCK)
 				&& !b.is(net.minecraft.world.level.block.Blocks.CACTUS) && !f.is(net.minecraft.world.level.block.Blocks.FIRE);
@@ -490,7 +490,7 @@ public final class Defense {
 		mc.options.keyDown.setDown(d < 1.6 && safeStep(p, fwd.scale(-1)));
 		if (onTarget && d <= 3.0 && p.getAttackStrengthScale(0.5f) >= 0.95f && mc.gameMode != null) {
 			mc.gameMode.attack(p, target);
-			p.swing(InteractionHand.MAIN_HAND);
+			com.seolwoni.assistcore.util.Compat.swing(p, InteractionHand.MAIN_HAND);
 			swings++;
 		}
 	}

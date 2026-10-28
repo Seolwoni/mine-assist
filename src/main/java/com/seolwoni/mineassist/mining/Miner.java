@@ -1073,7 +1073,7 @@ public final class Miner {
 				case 2 -> {
 					Body.lookAt(p, aim, 1.5f);
 					mc.gameMode.continueDestroyBlock(pos, face);
-					p.swing(InteractionHand.MAIN_HAND);
+					com.seolwoni.assistcore.util.Compat.swing(p, InteractionHand.MAIN_HAND);
 					ticks++;
 					if (Blocks2.isOpen(pos)) {
 						dug.add(pos.immutable());
@@ -1253,7 +1253,7 @@ public final class Miner {
 				case 2 -> {
 					if (!Body.lookAt(p, hit, 3f)) return RUN;
 					mc.gameMode.useItemOn(p, InteractionHand.MAIN_HAND, new BlockHitResult(hit, face, support, false));
-					p.swing(InteractionHand.MAIN_HAND);
+					com.seolwoni.assistcore.util.Compat.swing(p, InteractionHand.MAIN_HAND);
 					wait = Human.rand(2, 4);
 					stage = 3;
 					return RUN;

@@ -41,7 +41,7 @@ public final class Blocks2 {
 	public static boolean isOpen(BlockPos p) {
 		BlockState s = state(p);
 		if (s.isAir()) return true;
-		return s.canBeReplaced() && s.getFluidState().isEmpty() && !s.blocksMotion();
+		return s.canBeReplaced() && s.getFluidState().isEmpty() && !s.isSolid();
 	}
 
 	/** Something we can stand on / place against. */

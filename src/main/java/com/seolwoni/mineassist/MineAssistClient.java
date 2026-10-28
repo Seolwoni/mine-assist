@@ -1,6 +1,5 @@
 package com.seolwoni.mineassist;
 
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +37,9 @@ public class MineAssistClient implements ClientModInitializer {
 
 		KeyMapping.Category category = KeyMapping.Category.register(id("main"));
 		markChestKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-				"key.mineassist.mark_chest", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, category));
+				"key.mineassist.mark_chest", InputConstants.Type.KEYBOARD, com.mojang.blaze3d.platform.InputConstants.KEY_K, category));
 		returnKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-				"key.mineassist.return_home", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, category));
+				"key.mineassist.return_home", InputConstants.Type.KEYBOARD, com.mojang.blaze3d.platform.InputConstants.KEY_UNKNOWN, category));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (markChestKey.consumeClick()) {

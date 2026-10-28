@@ -1,6 +1,5 @@
 package com.seolwoni.assistcore;
 
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,7 @@ public class AssistCore implements ClientModInitializer {
 		CoreConfig.load();
 		KeyMapping.Category category = KeyMapping.Category.register(id("main"));
 		toggleHudKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-				"key.assistcore.toggle_hud", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, category));
+				"key.assistcore.toggle_hud", InputConstants.Type.KEYBOARD, com.mojang.blaze3d.platform.InputConstants.KEY_H, category));
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (toggleHudKey.consumeClick()) AssistHud.toggleHidden();
 			com.seolwoni.assistcore.log.Journal.tick(client);

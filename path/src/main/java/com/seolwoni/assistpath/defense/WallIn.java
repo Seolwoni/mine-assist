@@ -84,7 +84,7 @@ final class WallIn implements Action {
 			case 2 -> {
 				if (!Body.lookAt(p, hit, 3f)) return RUN;
 				mc.gameMode.useItemOn(p, InteractionHand.MAIN_HAND, new BlockHitResult(hit, face, support, false));
-				p.swing(InteractionHand.MAIN_HAND);
+				com.seolwoni.assistcore.util.Compat.swing(p, InteractionHand.MAIN_HAND);
 				wait = Human.rand(2, 3);
 				stage = 3;
 			}
