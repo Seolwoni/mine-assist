@@ -53,6 +53,8 @@ jobs:
           [ -z "$JAR" ] && JAR=$(find ~/.gradle .gradle -name "minecraft-*.jar" -size +5M 2>/dev/null | grep -v sources | head -1)
           echo "jar: $JAR" > out/sigs.txt
           for c in $(cat .github/sigs.txt 2>/dev/null); do javap -p -cp "$JAR" $c >> out/sigs.txt 2>&1 || true; done
+          unzip -Z1 "$JAR" 2>/dev/null | grep -i -E "blaze3d/platform|/input/|keyboard|InputConstants|sdl|glfw" | head -300 > out/classes.txt || true
+          for j in $(find ~/.gradle -name "*.jar" -path "*lwjgl*" 2>/dev/null | head -20); do echo "$j"; done > out/lwjgl.txt || true
           mkdir -p out/jars; cp build/libs/*.jar out/jars/ 2>/dev/null || true
           git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
           cp -r out /tmp/out
